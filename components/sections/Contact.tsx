@@ -1,22 +1,9 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 import { Mail, MapPin, Clock, Send, CheckCircle, Github, Linkedin } from "lucide-react";
 import emailjs from '@emailjs/browser';
-
-const contactInfo = [
-  { icon: Mail, label: "Email", value: "jayaprakash.r024@gmail.com", href: "mailto:jayaprakash.r024@gmail.com" },
-  { icon: MapPin, label: "Location", value: "Coimbatore, Tamil Nadu, India", href: null },
-  { icon: Clock, label: "Availability", value: "Mon–Fri, 9AM–6PM IST", href: null },
-];
-
-const services = [
-  "Full-Stack Web App",
-  "UI/UX Design",
-  "Mobile App",
-  "E-Commerce",
-  "Design System",
-];
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
@@ -25,6 +12,36 @@ export default function Contact() {
   const [selectedService, setSelectedService] = useState("");
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contactData, setContactData] = useState<any>({
+    email: "jayaprakash.r024@gmail.com",
+    location: "Coimbatore, Tamil Nadu, India",
+    availability: "Mon-Fri, 9AM-6PM IST",
+    title1: "Lets build",
+    title2: "something great",
+    description: "Have a project in mind or want to discuss opportunities? I am always open to new challenges and interesting work. Lets connect!",
+    services: ["Full-Stack Web App", "UI/UX Design", "Mobile App", "E-Commerce", "Design System"]
+  });
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.contact) {
+          setContactData(result.data.contact);
+        }
+      })
+      .catch(err => {
+        console.error("Error loading contact data:", err);
+        // Keep default contact data on error
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,8 +111,8 @@ export default function Contact() {
             className="font-display font-bold"
             style={{ fontSize: "clamp(2.5rem, 6vw, 6rem)", lineHeight: 0.95, color: "var(--text-primary)" }}
           >
-            Let's build<br />
-            <em style={{ color: "var(--accent)" }}>something great</em>
+            {contactData.title1}<br />
+            <em style={{ color: "var(--accent)" }}>{contactData.title2}</em>
           </h2>
         </motion.div>
 
@@ -110,13 +127,16 @@ export default function Contact() {
               className="text-base leading-relaxed mb-10"
               style={{ color: "var(--text-secondary)", maxWidth: "38ch" }}
             >
-              Have a project in mind or want to discuss opportunities? I'm always open to
-              new challenges and interesting work. Let's connect!
+              {contactData.description}
             </p>
 
             {/* Contact info */}
             <div className="space-y-4 mb-10">
-              {contactInfo.map(({ icon: Icon, label, value, href }) => (
+              {[
+                { icon: Mail, label: "Email", value: contactData.email, href: `mailto:${contactData.email}` },
+                { icon: MapPin, label: "Location", value: contactData.location, href: null },
+                { icon: Clock, label: "Availability", value: contactData.availability, href: null },
+              ].map(({ icon: Icon, label, value, href }) => (
                 <div key={label} className="flex items-center gap-4 group">
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -227,7 +247,7 @@ export default function Contact() {
                     I need help with
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {services.map((s) => (
+                    {contactData.services.map((s: string) => (
                       <button
                         key={s}
                         type="button"

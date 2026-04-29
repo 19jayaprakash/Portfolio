@@ -55,6 +55,8 @@ export default function AdminDashboard() {
       if (res.ok) {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
+        // Notify other tabs to refresh data
+        localStorage.setItem('portfolio-data-updated', Date.now().toString());
       }
     } catch (error) {
       console.error("Save error:", error);

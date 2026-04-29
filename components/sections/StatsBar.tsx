@@ -1,13 +1,7 @@
 "use client";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { useInView } from "framer-motion";
-
-const stats = [
-  { value: 10, suffix: "+", label: "Projects Delivered" },
-  { value: 2, suffix: "+", label: "Years Experience" },
-  { value: 5, suffix: "+", label: "Happy Clients" },
-  { value: 99, suffix: "%", label: "Client Satisfaction" },
-];
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
 function AnimatedNumber({ value, suffix }: { value: number; suffix: string }) {
   const [current, setCurrent] = useState(0);
@@ -32,6 +26,36 @@ function AnimatedNumber({ value, suffix }: { value: number; suffix: string }) {
 }
 
 export default function StatsBar() {
+  const defaultStats = [
+    { value: 10, suffix: "+", label: "Projects Delivered" },
+    { value: 2, suffix: "+", label: "Years Experience" },
+    { value: 5, suffix: "+", label: "Happy Clients" },
+    { value: 99, suffix: "%", label: "Client Satisfaction" },
+  ];
+
+  const [stats, setStats] = useState(defaultStats);
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.stats) {
+          setStats(result.data.stats);
+        }
+      })
+      .catch(err => {
+        console.error("Error loading stats:", err);
+        // Keep default stats on error
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
+
   return (
     <div
       className="py-16 px-6 md:px-12"

@@ -1,93 +1,23 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 import { Code2, Palette, Smartphone, Globe, ShoppingCart, BarChart2, Layers, Shield } from "lucide-react";
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
-const services = [
-  {
-    icon: Code2,
-    number: "01",
-    title: "Full-Stack Development",
-    desc: "End-to-end web applications built with modern stacks. From architecture to deployment, I handle everything with precision.",
-    tags: ["React", "Next.js", "Node.js", "PostgreSQL"],
-    accent: "#C8956B",
-    glow: "rgba(200,149,107,0.25)",
-    featured: true,
-  },
-  {
-    icon: Palette,
-    number: "02",
-    title: "UI/UX Design",
-    desc: "Beautiful, intuitive interfaces crafted in Figma. Research, wireframing, and pixel-perfect prototypes.",
-    tags: ["Figma", "Prototyping", "Design Systems"],
-    accent: "#EC4899",
-    glow: "rgba(236,72,153,0.2)",
-    featured: false,
-  },
-  {
-    icon: Smartphone,
-    number: "03",
-    title: "Mobile Development",
-    desc: "Cross-platform mobile apps with React Native. Native performance, beautiful design.",
-    tags: ["React Native", "Expo", "iOS", "Android"],
-    accent: "#6366F1",
-    glow: "rgba(99,102,241,0.2)",
-    featured: false,
-  },
-  {
-    icon: Globe,
-    number: "04",
-    title: "Web Performance",
-    desc: "Audit and optimize for Core Web Vitals, SEO, and Lighthouse scores that matter.",
-    tags: ["SEO", "Core Web Vitals", "Caching"],
-    accent: "#14B8A6",
-    glow: "rgba(20,184,166,0.2)",
-    featured: false,
-  },
-  {
-    icon: ShoppingCart,
-    number: "05",
-    title: "E-Commerce Solutions",
-    desc: "Full-featured stores with Shopify, WooCommerce, or completely custom-built commerce platforms.",
-    tags: ["Shopify", "Stripe", "Inventory"],
-    accent: "#F59E0B",
-    glow: "rgba(245,158,11,0.2)",
-    featured: false,
-  },
-  // {
-  //   icon: BarChart2,
-  //   number: "06",
-  //   title: "Dashboards & Analytics",
-  //   desc: "Data visualization dashboards, admin panels, and real-time analytics tools.",
-  //   tags: ["D3.js", "Chart.js", "Recharts"],
-  //   accent: "#22C55E",
-  //   glow: "rgba(34,197,94,0.2)",
-  //   featured: false,
-  // },
-  {
-    icon: Layers,
-    number: "07",
-    title: "Design Systems",
-    desc: "Scalable component libraries that keep your product consistent across every surface.",
-    tags: ["Storybook", "Tailwind", "Tokens"],
-    accent: "#A78BFA",
-    glow: "rgba(167,139,250,0.2)",
-    featured: false,
-  },
-  {
-    icon: Shield,
-    number: "08",
-    title: "Security & Auth",
-    desc: "Authentication systems, authorization flows, and security audits for web applications.",
-    tags: ["OAuth", "JWT", "Auth0", "2FA"],
-    accent: "#F87171",
-    glow: "rgba(248,113,113,0.2)",
-    featured: false,
-  },
-];
+const iconMap: any = {
+  Code2,
+  Palette,
+  Smartphone,
+  Globe,
+  ShoppingCart,
+  BarChart2,
+  Layers,
+  Shield
+};
 
-function ServiceCard({ service, index, inView }: { service: typeof services[0]; index: number; inView: boolean }) {
+function ServiceCard({ service, index, inView }: { service: any; index: number; inView: boolean }) {
   const [hovered, setHovered] = useState(false);
+  const glow = service.accent + "20";
 
   return (
     <motion.div
@@ -145,7 +75,10 @@ function ServiceCard({ service, index, inView }: { service: typeof services[0]; 
               animate={{ scale: hovered ? 1.1 : 1, rotate: hovered ? 5 : 0 }}
               transition={{ duration: 0.3 }}
             >
-              <service.icon size={22} />
+              {(() => {
+                const IconComponent = iconMap[service.icon];
+                return IconComponent ? <IconComponent size={22} /> : null;
+              })()}
             </motion.div>
             <span
               className="font-mono text-xs opacity-30"
@@ -177,7 +110,7 @@ function ServiceCard({ service, index, inView }: { service: typeof services[0]; 
 
           {/* Tags */}
           <div className="flex flex-wrap gap-1.5">
-            {service.tags.map((tag) => (
+            {service.tags.map((tag: string) => (
               <span
                 key={tag}
                 className="text-xs px-2.5 py-1 rounded-full font-mono transition-all duration-300"
@@ -210,6 +143,39 @@ function ServiceCard({ service, index, inView }: { service: typeof services[0]; 
 export default function Services() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+
+  const defaultServices = [
+    { icon: "Code2", number: "01", title: "Full-Stack Development", desc: "End-to-end web applications with modern stacks.", tags: ["React", "Next.js", "Node.js"], accent: "#C8956B", glow: "rgba(200,149,107,0.25)", featured: true },
+    { icon: "Palette", number: "02", title: "UI/UX Design", desc: "Beautiful, intuitive interfaces crafted in Figma.", tags: ["Figma", "Prototyping"], accent: "#EC4899", glow: "rgba(236,72,153,0.2)", featured: false },
+    { icon: "Smartphone", number: "03", title: "Mobile Development", desc: "Cross-platform mobile apps with React Native.", tags: ["React Native", "Expo"], accent: "#6366F1", glow: "rgba(99,102,241,0.2)", featured: false },
+    { icon: "Globe", number: "04", title: "Web Performance", desc: "Optimize for Core Web Vitals and SEO.", tags: ["SEO", "Performance"], accent: "#14B8A6", glow: "rgba(20,184,166,0.2)", featured: false },
+    { icon: "ShoppingCart", number: "05", title: "E-Commerce Solutions", desc: "Full-featured stores with Shopify or custom.", tags: ["Shopify", "Stripe"], accent: "#F59E0B", glow: "rgba(245,158,11,0.2)", featured: false },
+    { icon: "Layers", number: "06", title: "Design Systems", desc: "Scalable component libraries.", tags: ["Storybook", "Tailwind"], accent: "#A78BFA", glow: "rgba(167,139,250,0.2)", featured: false },
+    { icon: "Shield", number: "07", title: "Security & Auth", desc: "Authentication and security audits.", tags: ["OAuth", "JWT"], accent: "#F87171", glow: "rgba(248,113,113,0.2)", featured: false }
+  ];
+
+  const [services, setServices] = useState<any[]>(defaultServices);
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.services) {
+          setServices(result.data.services);
+        }
+      })
+      .catch(err => {
+        console.error("Error loading services:", err);
+        // Keep default services on error
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
 
   return (
     <section

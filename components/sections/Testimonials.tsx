@@ -1,65 +1,8 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Quote, ChevronLeft, ChevronRight, Star } from "lucide-react";
-
-const testimonials = [
-  {
-    id: 1,
-    name: "Shri Ram",
-    role: "CEO",
-    company: "Pixel Cognitix",
-    avatar: "SR",
-    avatarColor: "#22C55E",
-    rating: 5,
-    text: "The website redesign and development project was executed flawlessly. The new site is not only visually stunning but also incredibly fast and user-friendly. We've received countless compliments from clients and partners. The team's attention to detail and commitment to quality truly set them apart.",
-    project: "Website Redesign & Development",
-  },
-  {
-    id: 2,
-    name: "Amal Denver",
-    role: "Manager",
-    company: "Square Yards",
-    avatar: "AD",
-    avatarColor: "#F59E0B",
-    rating: 5,
-    text: "The social media campaign they managed for us was nothing short of phenomenal. From content creation to analytics, every aspect was handled with professionalism and creativity. We saw a significant boost in engagement and brand awareness within weeks. Truly a pleasure to work with!",
-    project: "Social Media Campaign",
-  },
-  // {
-  //   id: 3,
-  //   name: "Dr. Kavitha Rajan",
-  //   role: "CTO",
-  //   company: "HealthTech Startup",
-  //   avatar: "KR",
-  //   avatarColor: "#EC4899",
-  //   rating: 5,
-  //   text: "Building a HIPAA-compliant platform is incredibly complex, but the execution was flawless. The video consultation system handles thousands of daily sessions without a hiccup. A rare combination of technical depth and product thinking.",
-  //   project: "Patient Management Portal",
-  // },
-  // {
-  //   id: 4,
-  //   name: "Rahul Verma",
-  //   role: "Product Manager",
-  //   company: "EdTech Platform",
-  //   avatar: "RV",
-  //   avatarColor: "#8B5CF6",
-  //   rating: 5,
-  //   text: "The LMS has transformed how our 5,000 students learn. The gamification features increased daily active users by 60%. The developer's ability to translate complex educational UX requirements into smooth, intuitive interfaces is truly remarkable.",
-  //   project: "Interactive Learning App",
-  // },
-  // {
-  //   id: 5,
-  //   name: "Sanjay Krishnan",
-  //   role: "Marketing Director",
-  //   company: "Luxury Fashion Brand",
-  //   avatar: "SK",
-  //   avatarColor: "#C8956B",
-  //   rating: 5,
-  //   text: "The website perfectly captures our brand's luxury essence. The animations are so smooth and the editorial layout has drawn compliments from our international partners. The design system they created has kept our team consistent for months.",
-  //   project: "Brand Website & Design System",
-  // },
-];
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
 export default function Testimonials() {
   const ref = useRef<HTMLElement>(null);
@@ -67,7 +10,37 @@ export default function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
 
+  const defaultTestimonials = [
+    { id: 1, name: "Sarah Chen", role: "CTO", company: "TechStart Inc", project: "SaaS Dashboard", text: "Jayaprakash delivered exceptional work on our dashboard. His attention to detail and problem-solving skills are outstanding.", avatar: "SC", avatarColor: "#EC4899", rating: 5 },
+    { id: 2, name: "Michael Park", role: "Product Manager", company: "InnovateCo", project: "Mobile App", text: "Working with Jayaprakash was a great experience. He understood our vision and brought it to life perfectly.", avatar: "MP", avatarColor: "#6366F1", rating: 5 },
+    { id: 3, name: "Emily Rodriguez", role: "Founder", company: "DesignHub", project: "E-Commerce Platform", text: "Incredible developer with a keen eye for design. Our e-commerce platform exceeded all expectations.", avatar: "ER", avatarColor: "#14B8A6", rating: 5 }
+  ];
+
+  const [testimonials, setTestimonials] = useState<any[]>(defaultTestimonials);
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.testimonials) {
+          setTestimonials(result.data.testimonials);
+        }
+      })
+      .catch(err => {
+        console.error("Error loading testimonials:", err);
+        // Keep default testimonials on error
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
+
   const paginate = (dir: number) => {
+    if (testimonials.length === 0) return;
     setDirection(dir);
     setCurrent((prev) => (prev + dir + testimonials.length) % testimonials.length);
   };
@@ -86,7 +59,7 @@ export default function Testimonials() {
     }),
   };
 
-  const t = testimonials[current];
+  const t = testimonials[current] || { text: "", name: "", role: "", company: "", project: "", avatar: "", avatarColor: "#C8956B", rating: 5 };
 
   return (
     <section

@@ -1,74 +1,12 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
-const categories = ["All", "Web App", "Mobile", "Design", "E-Commerce"];
+const categories = ["All", "Web App", "Mobile", "Design", "E-Commerce", "Product"];
 
-const projects = [
-  {
-    id: 1,
-    title: "Gk Cloud ",
-    category: "Web App",
-    desc: "Optimized landing pages, course modules, and admin dashboards to improve UI consistency,responsiveness, and loading performance.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "node.js", "razorpay"],
-    color: "#22C55E",
-    year: "2024",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "MetaCognitive AI",
-    category: "Web App",
-    desc: "Built a modern EdTech platform with reusable UI components, animations, and mobile-first layouts.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "razorpay"],
-    color: "#F59E0B",
-    year: "2024",
-    featured: true,
-  },
-  {
-    id: 3,
-    title: "VivaahAI Mobile",
-    category: "Mobile",
-    desc: "Developed a cross-platform mobile app for matchmaking with AI-driven compatibility scores, chat, and video features.",
-    tags: ["React Native", "Expo", "Firebase", "Redux"],
-    color: "#8B5CF6",
-    year: "2024",
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "PHC - Medico Healthcare",
-    category: "Product",
-    desc: "Developed a healthcare web app with AI-assisted features such as smart appointment suggestions,automated record insights, and predictive reminders, along with patient and provider management tools.",
-    tags: ["Next.js", "Node.js", "WebRTC", "MongoDB"],
-    color: "#EC4899",
-    year: "2025",
-    featured: false,
-  },
-  {
-    id: 5,
-    title: "STU – AI-Powered Educational Assistant",
-    category: "Design",
-    desc: "Built AI-driven chatbots using NLP models to deliver personalized answers, automated doubt-clearing,study recommendations, and interactive learning assistance for students.",
-    tags: ["Figma", "Illustrator", "Brand Strategy"],
-    color: "#C8956B",
-    year: "2023",
-    featured: false,
-  },
-  {
-    id: 6,
-    title: "AI Marketing Agent – Growth Automation Tool",
-    category: "Web App",
-    desc: "Developed an AI-based automation platform for B2B lead generation (Apollo.io), campaign scheduling,workflow automation, and client management dashboards.",
-    tags: ["Next.js", "AWS S3", "FFmpeg", "Stripe"],
-    color: "#14B8A6",
-    year: "2022",
-    featured: false,
-  },
-];
-
-function ProjectCard({ project, index, inView }: { project: typeof projects[0]; index: number; inView: boolean }) {
+function ProjectCard({ project, index, inView }: { project: any; index: number; inView: boolean }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -97,14 +35,18 @@ function ProjectCard({ project, index, inView }: { project: typeof projects[0]; 
         className="h-48 flex items-center justify-center relative overflow-hidden"
         style={{ background: `${project.color}10` }}
       >
-        <motion.div
-          className="font-display font-bold opacity-10"
-          style={{ fontSize: "8rem", color: project.color, lineHeight: 1 }}
-          animate={{ scale: hovered ? 1.1 : 1, rotate: hovered ? 3 : 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          {project.title[0]}
-        </motion.div>
+        {project.image ? (
+          <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+        ) : (
+          <motion.div
+            className="font-display font-bold opacity-10"
+            style={{ fontSize: "8rem", color: project.color, lineHeight: 1 }}
+            animate={{ scale: hovered ? 1.1 : 1, rotate: hovered ? 3 : 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {project.title[0]}
+          </motion.div>
+        )}
 
         {/* Hover overlay */}
         <motion.div
@@ -114,22 +56,30 @@ function ProjectCard({ project, index, inView }: { project: typeof projects[0]; 
           transition={{ duration: 0.25 }}
           style={{ background: `${project.color}20`, backdropFilter: "blur(4px)" }}
         >
-          <a
-            href="#"
-            className="p-3 rounded-full transition-all duration-300 hover:scale-110"
-            style={{ background: "var(--surface)", color: "var(--text-primary)" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ExternalLink size={16} />
-          </a>
-          <a
-            href="#"
-            className="p-3 rounded-full transition-all duration-300 hover:scale-110"
-            style={{ background: "var(--surface)", color: "var(--text-primary)" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Github size={16} />
-          </a>
+          {project.live && (
+            <a
+              href={project.live}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-full transition-all duration-300 hover:scale-110"
+              style={{ background: "var(--surface)", color: "var(--text-primary)" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ExternalLink size={16} />
+            </a>
+          )}
+          {project.github && (
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-full transition-all duration-300 hover:scale-110"
+              style={{ background: "var(--surface)", color: "var(--text-primary)" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Github size={16} />
+            </a>
+          )}
         </motion.div>
       </div>
 
@@ -158,7 +108,7 @@ function ProjectCard({ project, index, inView }: { project: typeof projects[0]; 
           {project.desc}
         </p>
         <div className="flex flex-wrap gap-1">
-          {project.tags.map((tag) => (
+          {project.tags.map((tag: string) => (
             <span
               key={tag}
               className="text-xs px-2 py-0.5 rounded-full"
@@ -178,7 +128,39 @@ export default function Projects() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const filtered = activeCategory === "All" ? projects : projects.filter(p => p.category === activeCategory);
+  const defaultProjects = [
+    { id: 1, title: "Gk Cloud", desc: "Modern cloud storage platform with file sharing, real-time sync, and team collaboration.", category: "Web App", tech: ["React", "Node.js", "AWS"], tags: ["Cloud", "Storage"], color: "#C8956B", featured: true, image: "", live: "", github: "" },
+    { id: 2, title: "Zenith UI", desc: "Comprehensive design system with 50+ components, dark mode, and accessibility.", category: "Design", tech: ["Figma", "React", "Tailwind"], tags: ["UI", "Components"], color: "#EC4899", featured: false, image: "", live: "", github: "" },
+    { id: 3, title: "ShopWave", desc: "High-performance e-commerce platform with AI recommendations.", category: "E-Commerce", tech: ["Next.js", "Stripe"], tags: ["Shop", "AI"], color: "#6366F1", featured: false, image: "", live: "", github: "" },
+    { id: 4, title: "CryptoTrack", desc: "Real-time cryptocurrency dashboard with portfolio tracking.", category: "Web App", tech: ["React", "WebSocket"], tags: ["Crypto", "Dashboard"], color: "#F59E0B", featured: false, image: "", live: "", github: "" },
+    { id: 5, title: "EduPro LMS", desc: "Learning management system with video courses and certificates.", category: "Product", tech: ["Next.js", "MongoDB"], tags: ["Education"], color: "#14B8A6", featured: false, image: "", live: "", github: "" },
+    { id: 6, title: "Portfolio v3", desc: "High-performance portfolio with glassmorphism and animations.", category: "Design", tech: ["Next.js", "Framer Motion"], tags: ["Portfolio"], color: "#8B5CF6", featured: false, image: "", live: "", github: "" }
+  ];
+
+  const [projects, setProjects] = useState<any[]>(defaultProjects);
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.projects) {
+          setProjects(result.data.projects);
+        }
+      })
+      .catch(err => {
+        console.error("Error loading projects:", err);
+        // Keep default projects on error
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
+
+  const filtered = activeCategory === "All" ? projects : projects.filter((p: any) => p.category === activeCategory);
 
   return (
     <section

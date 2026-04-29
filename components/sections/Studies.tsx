@@ -1,75 +1,54 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 import { GraduationCap, Award, BookOpen, ExternalLink } from "lucide-react";
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
-const education = [
-   {
-    type: "degree",
-    icon: GraduationCap,
-    institution: "Global Knowledge Technologies",
-    degree: "Software Engineer",
-    period: "2024 - 2025",
-    location: "Bengaluru, Karnataka",
-    grade: "Rating 4.5/5 based on Performance",
-    highlights: ["Full-Stack Development", "Mobile Development", "UI/UX Design", "Software Engineering"],
-  },
-  {
-    type: "degree",
-    icon: GraduationCap,
-    institution: "Dr.N.G.P. Institute of Technology",
-    degree: "B.Tech - Information Technology",
-    period: "2020 – 2024",
-    location: "Coimbatore, Tamil Nadu",
-    grade: "CGPA: 7.8 / 10",
-    highlights: ["Full-Stack Development", "Data Structures & Algorithms", "Database Management", "Software Engineering"],
-  },
-   {
-    type: "degree",
-    icon: GraduationCap,
-    institution: "Higher Secondary School",
-    degree: "Class XII — Computer Science",
-    period: "2019 – 2020",
-    location: "Coimbatore",
-    grade: "Percentage: 68%",
-    highlights: ["Computer Science", "Mathematics", "Physics"],
-  },
-];
-
-const certifications = [
-  {
-    icon: Award,
-    name: "Meta Front-End Developer",
-    issuer: "Meta (Coursera)",
-    year: "2022",
-    color: "#0084FF",
-  },
-  {
-    icon: BookOpen,
-    name: "Next.js & React — The Complete Guide",
-    issuer: "Udemy",
-    year: "2021",
-    color: "#A435F0",
-  },
-  {
-    icon: BookOpen,
-    name: "Node.js, Express & MongoDB",
-    issuer: "Udemy — Jonas Schmedtmann",
-    year: "2021",
-    color: "#A435F0",
-  },
-  {
-    icon: BookOpen,
-    name: "Advanced CSS",
-    issuer: "Udemy",
-    year: "2020",
-    color: "#A435F0",
-  },
-];
+const iconMap: any = {
+  GraduationCap,
+  Award,
+  BookOpen
+};
 
 export default function Studies() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+
+  const defaultEducation = [
+    { id: 1, icon: "GraduationCap", degree: "B.Tech in Computer Science", school: "Anna University", period: "2021 - 2025", location: "Coimbatore, India", grade: "CGPA: 8.5/10", highlights: ["Dean's List", "Hackathon Winner"] },
+    { id: 2, icon: "GraduationCap", degree: "Higher Secondary", school: "Central Board School", period: "2019 - 2021", location: "Coimbatore, India", grade: "92%", highlights: ["Science Stream"] }
+  ];
+
+  const defaultCertifications = [
+    { id: 1, icon: "Award", title: "AWS Cloud Practitioner", issuer: "Amazon Web Services", period: "2024", skills: ["Cloud", "AWS"] },
+    { id: 2, icon: "Award", title: "Meta Frontend Developer", issuer: "Meta", period: "2023", skills: ["React", "JavaScript"] },
+    { id: 3, icon: "BookOpen", title: "Full-Stack Web Dev", issuer: "Udemy", period: "2023", skills: ["Node.js", "MongoDB"] }
+  ];
+
+  const [education, setEducation] = useState<any[]>(defaultEducation);
+  const [certifications, setCertifications] = useState<any[]>(defaultCertifications);
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.studies) {
+          setEducation(result.data.studies.education || []);
+          setCertifications(result.data.studies.certifications || []);
+        }
+      })
+      .catch(err => {
+        console.error("Error loading studies:", err);
+        // Keep default data on error
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
 
   return (
     <section
@@ -129,7 +108,10 @@ export default function Studies() {
                       className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
                       style={{ background: "var(--accent)", color: "#fff" }}
                     >
-                      <edu.icon size={16} />
+                      {(() => {
+                        const IconComponent = iconMap[edu.icon];
+                        return IconComponent ? <IconComponent size={16} /> : null;
+                      })()}
                     </div>
                     {/* Content */}
                     <div
@@ -150,7 +132,7 @@ export default function Studies() {
                       <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>{edu.degree}</p>
                       <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>{edu.location} · {edu.grade}</p>
                       <div className="flex flex-wrap gap-1">
-                        {edu.highlights.map((h) => (
+                        {edu.highlights.map((h: string) => (
                           <span
                             key={h}
                             className="text-xs px-2 py-0.5 rounded-full"
@@ -199,7 +181,10 @@ export default function Studies() {
                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{ background: `${cert.color}20`, color: cert.color }}
                   >
-                    <cert.icon size={18} />
+                    {(() => {
+                      const IconComponent = iconMap[cert.icon];
+                      return IconComponent ? <IconComponent size={18} /> : null;
+                    })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>

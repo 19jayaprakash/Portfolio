@@ -1,46 +1,43 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowUpRight, Clock, DollarSign, Star, CheckCircle } from "lucide-react";
-
-const freelanceProjects = [
-  {
-    id: 1,
-    client: "Pixel Cognitix",
-    title: "Company Website",
-    desc: "Redesigned and developed a high-performance marketing website with Next.js, improving load times by 40% and user engagement.",
-    tags: ["Next.js", "TypeScript", "Tailwind"],
-    duration: "3 months",
-    budget: "₹ 10,000",
-    rating: 5,
-    status: "Completed",
-    color: "#22C55E",
-    category: "Web App",
-  },
-  {
-    id: 2,
-    client: "Square Yards",
-    title: "Social media campaign",
-    desc: "Managed and executed a comprehensive social media campaign across multiple platforms, resulting in a 30% increase in brand awareness and engagement.",
-    tags: ["Social Media", "Content Creation", "Analytics"],
-    duration: "6 weeks",
-    budget: "₹ 10,000",
-    rating: 5,
-    status: "Ongoing",
-    color: "#14B8A6",
-    category: "Web App",
-  },
-
-];
-
-const totalRevenue = freelanceProjects.reduce((acc, p) => {
-  return acc + parseInt(p.budget.replace(/[$,]/g, ""));
-}, 0);
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
 export default function FreelanceProjects() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+
+  const defaultFreelanceProjects = [
+    { id: 1, client: "TechStart Inc", title: "SaaS Dashboard", desc: "Built a comprehensive analytics dashboard with real-time data visualization.", category: "Web App", tags: ["React", "Node.js", "Charts"], color: "#C8956B", rating: 5, duration: "3 months", budget: "₹ 15,000", status: "Completed" },
+    { id: 2, client: "DesignHub", title: "E-Commerce Platform", desc: "Developed a full-featured online store with payment integration.", category: "E-Commerce", tags: ["Next.js", "Stripe", "Tailwind"], color: "#6366F1", rating: 5, duration: "2 months", budget: "₹ 12,000", status: "Completed" }
+  ];
+
+  const [freelanceProjects, setFreelanceProjects] = useState<any[]>(defaultFreelanceProjects);
+  const [stats, setStats] = useState({ clients: "2+", revenue: "₹ 20,000 +", rating: "5.0" });
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.freelance) {
+          setFreelanceProjects(result.data.freelance.projects || []);
+          setStats(result.data.freelance.stats || stats);
+        }
+      })
+      .catch(err => {
+        console.error("Error loading freelance projects:", err);
+        // Keep default freelance projects on error
+      });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
 
   return (
     <section
@@ -85,7 +82,7 @@ export default function FreelanceProjects() {
                 className="font-display font-bold text-3xl"
                 style={{ color: "var(--accent)" }}
               >
-                {freelanceProjects.length}+
+                {stats.clients}
               </div>
               <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Clients Served</div>
             </div>
@@ -98,7 +95,7 @@ export default function FreelanceProjects() {
                 className="font-display font-bold text-3xl"
                 style={{ color: "var(--accent)" }}
               >
-               ₹ 20,000 +
+               {stats.revenue}
               </div>
               <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Revenue Generated</div>
             </div>
@@ -111,7 +108,7 @@ export default function FreelanceProjects() {
                 className="font-display font-bold text-3xl"
                 style={{ color: "var(--accent)" }}
               >
-                5.0
+                {stats.rating}
               </div>
               <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Avg. Rating</div>
             </div>
@@ -184,7 +181,7 @@ export default function FreelanceProjects() {
                     {project.desc}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {project.tags.map((tag) => (
+                    {project.tags.map((tag: string) => (
                       <span
                         key={tag}
                         className="text-xs px-2 py-0.5 rounded-full"

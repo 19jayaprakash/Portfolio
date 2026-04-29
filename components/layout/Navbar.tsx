@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import Image from "next/image";
-import logo from "../../public/logo.png";
+import logo from "../../public/Logo.png";
 
 const navLinks = [
   { label: "About", href: "#about" },

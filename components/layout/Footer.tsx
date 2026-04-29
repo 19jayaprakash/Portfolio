@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Github, Linkedin, Twitter, Mail, ArrowUpRight, Heart } from "lucide-react";
 import Image from "next/image";
-import logo from "../../public/logo.png";
+import logo from "../../public/Logo.png";
 
 const footerLinks = {
   Sections: [

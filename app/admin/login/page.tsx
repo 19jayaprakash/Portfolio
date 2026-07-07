@@ -102,9 +102,7 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        <p className="text-xs text-center mt-6" style={{ color: "var(--text-muted)" }}>
-          Default password: admin123
-        </p>
+
       </div>
     </div>
   );

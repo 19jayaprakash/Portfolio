@@ -78,6 +78,30 @@ export interface PortfolioData {
     description: string;
     services: string[];
   };
+  pricing: {
+    title: string;
+    description: string;
+    offerTitle: string;
+    offerDiscount: string;
+    offerDescription: string;
+    offerPerks: Array<{
+      title: string;
+      desc: string;
+    }>;
+    plans: Array<{
+      name: string;
+      price: string;
+      desc: string;
+      features: string[];
+      cta: string;
+      popular: boolean;
+    }>;
+    startingEstimates: Array<{
+      service: string;
+      price: string;
+      color: string;
+    }>;
+  };
 }
 
 export const defaultPortfolioData: PortfolioData = {
@@ -224,4 +248,86 @@ export const defaultPortfolioData: PortfolioData = {
     description: "Have a project in mind or want to discuss opportunities? I'm always open to new challenges and interesting work. Let's connect!",
     services: ["Full-Stack Web App", "UI/UX Design", "Mobile App", "E-Commerce", "Design System"],
   },
+  pricing: {
+    title: "Pricing",
+    description: "Startup-friendly rates designed to deliver maximum quality without surprise invoices. Choose a plan or request a custom quotation based on your exact specifications.",
+    offerTitle: "Startup Launch Offer",
+    offerDiscount: "20% OFF",
+    offerDescription: "Helping early-stage startups and small businesses kickstart their digital presence with zero compromise on engineering and visual quality.",
+    offerPerks: [
+      { title: "1 Year Maintenance", desc: "Security and content support" },
+      { title: "Free Basic SEO", desc: "Rank higher on Google" },
+      { title: "Free Deployment Support", desc: "Domain, Vercel, Supabase" }
+    ],
+    plans: [
+      {
+        name: "Starter",
+        price: "₹9,999",
+        desc: "Perfect for personal branding, simple landing pages, and single-product launches.",
+        features: [
+          "1 Custom Responsive Page",
+          "Modern Glassmorphic Design",
+          "Basic SEO Optimization",
+          "Social Media Integrations",
+          "Contact Form Setup",
+          "Free Deployment Support"
+        ],
+        cta: "Start Project",
+        popular: false
+      },
+      {
+        name: "Business",
+        price: "₹24,999",
+        desc: "The ultimate package for startups and local businesses looking to establish a strong presence.",
+        features: [
+          "Up to 5 Pages (Static/Dynamic)",
+          "Next.js High-Performance Setup",
+          "1 Year Free Maintenance (Offer!)",
+          "Free Basic SEO & Analytics Setup",
+          "Advanced Lead Capture & Forms",
+          "Domain & Hosting Configuration",
+          "Custom UI/UX (Zero Templates)"
+        ],
+        cta: "Scale Your Business",
+        popular: true
+      },
+      {
+        name: "Professional",
+        price: "₹49,999",
+        desc: "For businesses needing e-commerce solutions, payment systems, and custom content management.",
+        features: [
+          "Up to 10 Pages / Catalog Store",
+          "E-Commerce & Checkout Systems",
+          "Payment Gateway Integration",
+          "CMS / Admin Dashboard Panel",
+          "Dynamic Database Integration",
+          "Advanced SEO & Speed Optimization",
+          "Priority Maintenance & Support"
+        ],
+        cta: "Launch Store",
+        popular: false
+      },
+      {
+        name: "Enterprise",
+        price: "Let's Talk",
+        desc: "Custom iOS/Android mobile apps, highly scalable enterprise solutions, and complex software systems.",
+        features: [
+          "Custom Mobile App (React Native)",
+          "Enterprise Custom Software",
+          "Custom API & Server Integrations",
+          "Advanced Authentication & Security",
+          "Unlimited Scalability Architecture",
+          "Direct Slack/WhatsApp Developer Support"
+        ],
+        cta: "Schedule Consultation",
+        popular: false
+      }
+    ],
+    startingEstimates: [
+      { service: "Website Development", price: "Starting from ₹9,999", color: "#C8956B" },
+      { service: "Mobile App Development", price: "Starting from ₹39,999", color: "#6366F1" },
+      { service: "E-commerce Solutions", price: "Starting from ₹39,999", color: "#14B8A6" },
+      { service: "Custom Software", price: "Contact Us", color: "#EC4899" }
+    ]
+  }
 };

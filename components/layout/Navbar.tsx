@@ -7,12 +7,10 @@ import Image from "next/image";
 import logo from "../../public/Logo.png";
 
 const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Projects", href: "#projects" },
-  { label: "Studies", href: "#studies" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "Projects", href: "/projects" },
+  { label: "About", href: "/about" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 export default function Navbar() {
@@ -65,21 +63,9 @@ export default function Navbar() {
 
         {/* Right actions */}
         <div className="flex items-center gap-4">
-          {mounted && (
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-full transition-all duration-300 hover:scale-110"
-              style={{
-                background: "var(--surface-elevated)",
-                color: "var(--text-secondary)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
-          )}
+
           <a
-            href="#contact"
+            href="/contact"
             className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
             style={{
               background: "var(--accent)",

@@ -3,6 +3,7 @@ import { ThemeProvider } from "next-themes";
 import "../styles/globals.css";
 import CustomCursor from "@/components/ui/CustomCursor";
 import SmoothScroll from "@/components/ui/SmoothScroll";
+import Preloader from "@/components/ui/Preloader";
 
 export const metadata: Metadata = {
   title: "Software Developer",
@@ -28,7 +29,8 @@ export default function RootLayout({
         />
       </head>
       <body className="noise">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
+          <Preloader />
           <CustomCursor />
           <SmoothScroll>
             {children}

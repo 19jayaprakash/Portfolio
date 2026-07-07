@@ -6,19 +6,19 @@ import logo from "../../public/Logo.png";
 
 const footerLinks = {
   Sections: [
-    { label: "About", href: "#about" },
-    { label: "Services", href: "#services" },
-    { label: "Projects", href: "#projects" },
-    { label: "Studies", href: "#studies" },
-    { label: "Freelance", href: "#freelance" },
-    { label: "Testimonials", href: "#testimonials" },
+    { label: "About", href: "/about" },
+    { label: "Services", href: "/#services" },
+    { label: "Projects", href: "/projects" },
+    { label: "Studies", href: "/about" },
+    { label: "Freelance", href: "/projects" },
+    { label: "Testimonials", href: "/#testimonials" },
   ],
   Services: [
-    { label: "Full-Stack Dev", href: "#services" },
-    { label: "UI/UX Design", href: "#services" },
-    { label: "Mobile Apps", href: "#services" },
-    { label: "E-Commerce", href: "#services" },
-    { label: "Consulting", href: "#contact" },
+    { label: "Full-Stack Dev", href: "/#services" },
+    { label: "UI/UX Design", href: "/#services" },
+    { label: "Mobile Apps", href: "/#services" },
+    { label: "E-Commerce", href: "/#services" },
+    { label: "Consulting", href: "/contact" },
   ],
 };
 
@@ -143,7 +143,7 @@ export default function Footer() {
             </p>
           </div>
           <a
-            href="#contact"
+            href="/contact"
             className="flex items-center gap-2 px-6 py-3 rounded-full font-medium text-sm transition-all duration-300 hover:scale-105 whitespace-nowrap flex-shrink-0"
             style={{ background: "#fff", color: "var(--accent)" }}
           >

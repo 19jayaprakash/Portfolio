@@ -1,12 +1,71 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { 
-  LogOut, Save, CheckCircle,
+  LogOut, Save, CheckCircle, Sparkles, DollarSign,
   User, BarChart3, FolderOpen, BookOpen, MessageSquare,
-  Briefcase, Grid, Mail, Plus, Trash2, Image as ImageIcon, Edit2
+  Briefcase, Grid, Mail, Plus, Trash2, Image as ImageIcon, Edit2, Check, AlertTriangle
 } from "lucide-react";
+import { defaultPortfolioData } from "@/lib/portfolio-data";
+
+// Helper components declared outside the main component to prevent focus loss on re-render
+function InputField({ label, value, onChange, multiline = false, type = "text", placeholder = "" }: any) {
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-[11px] font-mono uppercase tracking-widest text-neutral-400">
+        {label}
+      </label>
+      {multiline ? (
+        <textarea
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          rows={3}
+          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 resize-none bg-neutral-900/60 text-white border border-white/5 focus:border-amber-500/50 focus:bg-neutral-900 focus:ring-1 focus:ring-amber-500/20"
+        />
+      ) : (
+        <input
+          type={type}
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 bg-neutral-900/60 text-white border border-white/5 focus:border-amber-500/50 focus:bg-neutral-900 focus:ring-1 focus:ring-amber-500/20"
+        />
+      )}
+    </div>
+  );
+}
+
+function CommaSeparatedInput({ label, value, onChange, placeholder = "" }: { label: string; value: string[]; onChange: (val: string[]) => void; placeholder?: string }) {
+  const [localVal, setLocalVal] = useState(value ? value.join(", ") : "");
+  
+  // Sync with outer changes
+  useEffect(() => {
+    setLocalVal(value ? value.join(", ") : "");
+  }, [value]);
+  
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-[11px] font-mono uppercase tracking-widest text-neutral-400">
+        {label}
+      </label>
+      <input
+        type="text"
+        value={localVal}
+        onChange={(e) => setLocalVal(e.target.value)}
+        onBlur={() => {
+          const parsed = localVal.split(",")
+            .map(s => s.trim())
+            .filter(Boolean);
+          onChange(parsed);
+        }}
+        placeholder={placeholder}
+        className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 bg-neutral-900/60 text-white border border-white/5 focus:border-amber-500/50 focus:bg-neutral-900 focus:ring-1 focus:ring-amber-500/20"
+      />
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -28,7 +87,12 @@ export default function AdminDashboard() {
       .then(res => res.json())
       .then(result => {
         if (result.data) {
-          setData(result.data);
+          // Robust check to auto-inject pricing default template if missing
+          const mergedData = {
+            ...result.data,
+            pricing: result.data.pricing || defaultPortfolioData.pricing
+          };
+          setData(mergedData);
         }
         setLoading(false);
       })
@@ -55,7 +119,7 @@ export default function AdminDashboard() {
       if (res.ok) {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
-        // Notify other tabs to refresh data
+        // Notify other components/tabs to refresh data
         localStorage.setItem('portfolio-data-updated', Date.now().toString());
       }
     } catch (error) {
@@ -145,7 +209,7 @@ export default function AdminDashboard() {
       period: "2020 - 2024",
       location: "Location",
       grade: "Grade",
-      highlights: ["Highlight 1", "Highlight 2"]
+      highlights: ["Highlight 1"]
     };
     setData({
       ...data,
@@ -289,18 +353,74 @@ export default function AdminDashboard() {
     });
   };
 
+  // Pricing handlers
+  const updatePricingField = (field: string, value: any) => {
+    setData({
+      ...data,
+      pricing: {
+        ...data.pricing,
+        [field]: value
+      }
+    });
+  };
+
+  const updateOfferPerk = (index: number, field: string, value: any) => {
+    const newPerks = [...data.pricing.offerPerks];
+    newPerks[index] = { ...newPerks[index], [field]: value };
+    setData({
+      ...data,
+      pricing: {
+        ...data.pricing,
+        offerPerks: newPerks
+      }
+    });
+  };
+
+  const updatePricingPlan = (index: number, field: string, value: any) => {
+    const newPlans = [...data.pricing.plans];
+    newPlans[index] = { ...newPlans[index], [field]: value };
+    setData({
+      ...data,
+      pricing: {
+        ...data.pricing,
+        plans: newPlans
+      }
+    });
+  };
+
+  const updateStartingEstimate = (index: number, field: string, value: any) => {
+    const newEstimates = [...data.pricing.startingEstimates];
+    newEstimates[index] = { ...newEstimates[index], [field]: value };
+    setData({
+      ...data,
+      pricing: {
+        ...data.pricing,
+        startingEstimates: newEstimates
+      }
+    });
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <p className="text-white text-lg font-mono">Loading...</p>
+      <div className="min-h-screen bg-[#070605] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
+          <p className="text-neutral-400 text-xs font-mono tracking-widest uppercase">Loading Systems...</p>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <p className="text-white text-lg">No data found. Please run the SQL setup in Supabase.</p>
+      <div className="min-h-screen bg-[#070605] flex items-center justify-center">
+        <div className="max-w-md p-8 rounded-3xl border border-red-500/10 bg-red-500/5 text-center space-y-4">
+          <AlertTriangle size={32} className="mx-auto text-red-500" />
+          <h2 className="text-white text-lg font-display font-bold">No Data Pipeline Discovered</h2>
+          <p className="text-xs text-neutral-400 leading-relaxed">
+            Please run the SQL schemas setup in Supabase and ensure database environment variables are loaded.
+          </p>
+        </div>
       </div>
     );
   }
@@ -309,6 +429,7 @@ export default function AdminDashboard() {
     { id: "hero", label: "Hero", icon: User },
     { id: "stats", label: "Stats", icon: BarChart3 },
     { id: "services", label: "Services", icon: Grid },
+    { id: "pricing", label: "Pricing & Offers", icon: DollarSign },
     { id: "projects", label: "Projects", icon: FolderOpen },
     { id: "studies", label: "Studies", icon: BookOpen },
     { id: "testimonials", label: "Testimonials", icon: MessageSquare },
@@ -316,177 +437,125 @@ export default function AdminDashboard() {
     { id: "contact", label: "Contact", icon: Mail },
   ];
 
-  const InputField = ({ label, value, onChange, multiline = false }: any) => (
-    <div>
-      <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-        {label}
-      </label>
-      {multiline ? (
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          rows={3}
-          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300 resize-none"
-          style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-        />
-      ) : (
-        <input
-          type="text"
-          value={value || ""}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-          style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-        />
-      )}
-    </div>
-  );
-
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
+    <div className="min-h-screen bg-[#070605] text-neutral-200">
+      {/* Decorative background glows */}
+      <div className="fixed top-0 left-0 w-[500px] h-[500px] pointer-events-none opacity-10 bg-radial-gradient from-amber-500/20 to-transparent blur-[120px]" />
+      <div className="fixed bottom-0 right-0 w-[600px] h-[600px] pointer-events-none opacity-5 bg-radial-gradient from-indigo-500/20 to-transparent blur-[150px]" />
+
       {/* Header */}
-      <header
-        className="sticky top-0 z-50 px-6 py-4 border-b"
-        style={{ background: "var(--surface)", borderColor: "var(--border)" }}
-      >
+      <header className="sticky top-0 z-50 px-6 py-4 border-b border-white/5 bg-[#070605]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="text-2xl font-black tracking-tight" style={{ color: "var(--accent-primary)" }}>
-              JP
-            </div>
-            <div className="h-6 w-px" style={{ background: "var(--border)" }} />
-            <h1 className="text-sm font-mono uppercase tracking-widest" style={{ color: "var(--text-secondary)" }}>
-              Admin Dashboard
+          <div className="flex items-center gap-3">
+            <span className="text-xl font-bold font-display tracking-tight text-white bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+              JP PORTFOLIO
+            </span>
+            <div className="h-4 w-px bg-white/10" />
+            <h1 className="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-400">
+              Admin Core
             </h1>
           </div>
-          <div className="flex items-center gap-4">
+          
+          <div className="flex items-center gap-3">
             {saved && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg" style={{ background: "var(--success)/10", border: "1px solid var(--success)/30" }}>
-                <CheckCircle className="w-4 h-4" style={{ color: "var(--success)" }} />
-                <span className="text-sm font-medium" style={{ color: "var(--success)" }}>Saved!</span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-xs font-mono">
+                <Check size={12} strokeWidth={3} />
+                <span>SAVED DATA</span>
               </div>
             )}
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50"
-              style={{ background: "var(--accent-primary)", color: "#FFFFFF" }}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold font-mono transition-all duration-300 bg-amber-500 hover:bg-amber-400 text-neutral-950 disabled:opacity-50 hover:scale-105 active:scale-95"
             >
-              <Save className="w-4 h-4" />
-              {saving ? "Saving..." : "Save Changes"}
+              <Save className="w-3.5 h-3.5" />
+              {saving ? "SAVING..." : "SAVE CHANGES"}
             </button>
             <button
               onClick={handleLogout}
-              className="p-3 rounded-xl transition-all duration-300 hover:scale-105"
-              style={{ background: "var(--bg-primary)", border: "1px solid var(--border)" }}
+              className="p-2.5 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/10 text-neutral-400 hover:text-white transition-all hover:scale-105"
             >
-              <LogOut className="w-5 h-5" style={{ color: "var(--text-secondary)" }} />
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Tabs */}
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  setEditingId(null);
-                }}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105"
-                style={{
-                  background: activeTab === tab.id ? "var(--accent-primary)" : "var(--surface)",
-                  color: activeTab === tab.id ? "#FFFFFF" : "var(--text-secondary)",
-                  border: `1px solid ${activeTab === tab.id ? "var(--accent-primary)" : "var(--border)"}`,
-                }}
-              >
-                <Icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+      {/* Main layout container */}
+      <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row gap-8">
+        
+        {/* Sidebar Nav */}
+        <aside className="md:w-64 flex-shrink-0">
+          <div className="sticky top-24 space-y-1.5 p-2 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md">
+            <div className="px-4 py-3 text-[10px] font-mono tracking-widest text-neutral-500 uppercase border-b border-white/5 mb-2">
+              Sections
+            </div>
+            <nav className="space-y-1">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setEditingId(null);
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all duration-300 ${
+                      isActive 
+                        ? "bg-amber-500 text-neutral-950 font-bold shadow-lg shadow-amber-500/10" 
+                        : "text-neutral-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </aside>
 
-        {/* Content */}
-        <div className="space-y-6">
+        {/* Content Area */}
+        <main className="flex-1 space-y-6">
+          
           {/* Hero Tab */}
           {activeTab === "hero" && (
-            <div className="p-6 rounded-2xl border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-              <h2 className="text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>Hero Section</h2>
-              <div className="space-y-4">
-                <InputField label="Status Badge" value={data.hero.status} onChange={(v: any) => updateHero("status", v)} />
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                    Title Words (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={data.hero.titleWords.join(", ")}
-                    onChange={(e) => updateHero("titleWords", e.target.value.split(",").map((s: string) => s.trim()))}
-                    className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                    style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                    Roles (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={data.hero.roles.join(", ")}
-                    onChange={(e) => updateHero("roles", e.target.value.split(",").map((s: string) => s.trim()))}
-                    className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                    style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                  />
-                </div>
-                <InputField label="Description" value={data.hero.description} onChange={(v: any) => updateHero("description", v)} multiline />
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
+              <div>
+                <h2 className="text-xl font-bold font-display text-white">Hero Parameters</h2>
+                <p className="text-xs text-neutral-400 mt-1">Configure layout, badges, role arrays, and external credentials.</p>
+              </div>
+              <div className="space-y-5">
+                <InputField label="Status Badge Text" value={data.hero.status} onChange={(v: any) => updateHero("status", v)} />
+                <CommaSeparatedInput label="Title Words (comma-separated)" value={data.hero.titleWords} onChange={(v) => updateHero("titleWords", v)} />
+                <CommaSeparatedInput label="Roles (comma-separated)" value={data.hero.roles} onChange={(v) => updateHero("roles", v)} />
+                <InputField label="Description paragraph" value={data.hero.description} onChange={(v: any) => updateHero("description", v)} multiline />
                 <div className="grid md:grid-cols-3 gap-4">
-                  <InputField label="Experience" value={data.hero.experience} onChange={(v: any) => updateHero("experience", v)} />
-                  <InputField label="Projects Count" value={data.hero.projectsCount} onChange={(v: any) => updateHero("projectsCount", v)} />
-                  <InputField label="Tech Stack" value={data.hero.techStack} onChange={(v: any) => updateHero("techStack", v)} />
+                  <InputField label="Experience Label" value={data.hero.experience} onChange={(v: any) => updateHero("experience", v)} />
+                  <InputField label="Projects Count Label" value={data.hero.projectsCount} onChange={(v: any) => updateHero("projectsCount", v)} />
+                  <InputField label="Tech Stack Label" value={data.hero.techStack} onChange={(v: any) => updateHero("techStack", v)} />
                 </div>
-                <InputField label="GitHub URL" value={data.hero.github} onChange={(v: any) => updateHero("github", v)} />
-                <InputField label="LinkedIn URL" value={data.hero.linkedin} onChange={(v: any) => updateHero("linkedin", v)} />
+                <InputField label="GitHub Portfolio Link" value={data.hero.github} onChange={(v: any) => updateHero("github", v)} />
+                <InputField label="LinkedIn Profile Link" value={data.hero.linkedin} onChange={(v: any) => updateHero("linkedin", v)} />
               </div>
             </div>
           )}
 
           {/* Stats Tab */}
           {activeTab === "stats" && (
-            <div className="p-6 rounded-2xl border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-              <h2 className="text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>Stats Bar</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
+              <div>
+                <h2 className="text-xl font-bold font-display text-white">Metrics & Stats</h2>
+                <p className="text-xs text-neutral-400 mt-1">Edit key numbers displayed on the primary landing strip.</p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
                 {data.stats.map((stat: any, index: number) => (
-                  <div key={index} className="p-4 rounded-xl border" style={{ background: "var(--bg-primary)", borderColor: "var(--border)" }}>
-                    <InputField label="Value" value={stat.value} onChange={(v: any) => updateStat(index, "value", v)} />
-                    <div className="mt-3">
-                      <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                        Suffix
-                      </label>
-                      <input
-                        type="text"
-                        value={stat.suffix}
-                        onChange={(e) => updateStat(index, "suffix", e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                        style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                      />
-                    </div>
-                    <div className="mt-3">
-                      <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                        Label
-                      </label>
-                      <input
-                        type="text"
-                        value={stat.label}
-                        onChange={(e) => updateStat(index, "label", e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                        style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                      />
-                    </div>
+                  <div key={index} className="p-5 rounded-2xl border border-white/5 bg-neutral-900/40 space-y-4">
+                    <div className="text-xs font-mono text-amber-500/80 font-bold">Metric Card #{index + 1}</div>
+                    <InputField label="Value (Number)" value={stat.value} onChange={(v: any) => updateStat(index, "value", v)} />
+                    <InputField label="Suffix (e.g. +, %)" value={stat.suffix} onChange={(v: any) => updateStat(index, "suffix", v)} />
+                    <InputField label="Label / Description" value={stat.label} onChange={(v: any) => updateStat(index, "label", v)} />
                   </div>
                 ))}
               </div>
@@ -495,50 +564,40 @@ export default function AdminDashboard() {
 
           {/* Services Tab */}
           {activeTab === "services" && (
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Services ({data.services.length})</h2>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold font-display text-white">Dynamic Services ({data.services.length})</h2>
+                  <p className="text-xs text-neutral-400 mt-1">Manage core development offerings and skills cards.</p>
+                </div>
                 <button
                   onClick={addService}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105"
-                  style={{ background: "var(--accent-primary)", color: "#FFFFFF" }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold font-mono bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 text-white transition-all duration-300"
                 >
-                  <Plus className="w-4 h-4" />
-                  Add Service
+                  <Plus className="w-3.5 h-3.5" />
+                  ADD SERVICE
                 </button>
               </div>
               <div className="space-y-4">
                 {data.services.map((service: any, index: number) => (
-                  <div key={index} className="p-6 rounded-2xl border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>{service.title}</h3>
+                  <div key={index} className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-sm space-y-5">
+                    <div className="flex items-start justify-between">
+                      <div className="text-xs font-mono text-amber-500 font-bold">Offer #{index + 1}: {service.title}</div>
                       <button
                         onClick={() => deleteService(index)}
-                        className="p-2 rounded-lg transition-colors"
-                        style={{ color: "var(--error)", background: "var(--error)/10" }}
+                        className="p-2 rounded-full border border-red-500/10 hover:border-red-500/20 text-neutral-400 hover:text-red-400 transition-colors bg-red-500/5 hover:bg-red-500/10"
                       >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <InputField label="Title" value={service.title} onChange={(v: any) => updateService(index, "title", v)} />
-                      <InputField label="Icon" value={service.icon} onChange={(v: any) => updateService(index, "icon", v)} />
+                      <InputField label="Service Title" value={service.title} onChange={(v: any) => updateService(index, "title", v)} />
+                      <InputField label="Icon Name (Lucide)" value={service.icon} onChange={(v: any) => updateService(index, "icon", v)} />
                       <div className="md:col-span-2">
                         <InputField label="Description" value={service.desc} onChange={(v: any) => updateService(index, "desc", v)} multiline />
                       </div>
-                      <div>
-                        <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                          Tags (comma-separated)
-                        </label>
-                        <input
-                          type="text"
-                          value={service.tags.join(", ")}
-                          onChange={(e) => updateService(index, "tags", e.target.value.split(",").map((t: string) => t.trim()))}
-                          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                          style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                        />
-                      </div>
-                      <InputField label="Accent Color" value={service.accent} onChange={(v: any) => updateService(index, "accent", v)} />
+                      <CommaSeparatedInput label="Tags (comma-separated)" value={service.tags} onChange={(v) => updateService(index, "tags", v)} />
+                      <InputField label="Accent Color Hex" value={service.accent} onChange={(v: any) => updateService(index, "accent", v)} />
                     </div>
                   </div>
                 ))}
@@ -546,94 +605,167 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {/* Pricing & Offers Tab */}
+          {activeTab === "pricing" && data?.pricing && (
+            <div className="space-y-8">
+              {/* Section Headers config */}
+              <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold font-display text-white">Pricing & Offer Config</h2>
+                  <p className="text-xs text-neutral-400 mt-1">Configure pricing headers, launch offers, perks, and packages.</p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <InputField label="Pricing Section Title" value={data.pricing.title || ""} onChange={(v: any) => updatePricingField("title", v)} />
+                  <div className="md:col-span-2">
+                    <InputField label="Pricing Section Subtext" value={data.pricing.description || ""} onChange={(v: any) => updatePricingField("description", v)} multiline />
+                  </div>
+                </div>
+              </div>
+
+              {/* Startup Launch Offer */}
+              <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] space-y-6">
+                <div>
+                  <h3 className="text-base font-bold font-display text-white">Launch Promo & Perks</h3>
+                  <p className="text-xs text-neutral-400 mt-1">Configure parameters for the startup launch deal block.</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <InputField label="Offer Badge Title" value={data.pricing.offerTitle || ""} onChange={(v: any) => updatePricingField("offerTitle", v)} />
+                  <InputField label="Discount highlight (e.g. 20% OFF)" value={data.pricing.offerDiscount || ""} onChange={(v: any) => updatePricingField("offerDiscount", v)} />
+                  <div className="md:col-span-3">
+                    <InputField label="Promo paragraph text" value={data.pricing.offerDescription || ""} onChange={(v: any) => updatePricingField("offerDescription", v)} multiline />
+                  </div>
+                </div>
+
+                <div className="h-px bg-white/5 my-4" />
+                <h4 className="text-xs font-mono font-bold tracking-widest text-neutral-400 uppercase">Promo Perks List (3 Perks)</h4>
+                
+                <div className="grid md:grid-cols-3 gap-4">
+                  {data.pricing.offerPerks?.map((perk: any, index: number) => (
+                    <div key={index} className="p-4 rounded-2xl border border-white/5 bg-neutral-900/40 space-y-3">
+                      <div className="text-[10px] font-mono text-amber-500 font-bold">Perk #{index + 1}</div>
+                      <InputField label="Perk Title" value={perk.title || ""} onChange={(v: any) => updateOfferPerk(index, "title", v)} />
+                      <InputField label="Perk Subtext" value={perk.desc || ""} onChange={(v: any) => updateOfferPerk(index, "desc", v)} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pricing Cards Configuration */}
+              <div className="space-y-4">
+                <h3 className="text-base font-bold font-display text-white px-2">Four Plans Config</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {data.pricing.plans?.map((plan: any, index: number) => (
+                    <div key={index} className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono text-amber-500 font-bold uppercase">{plan.name} Plan</span>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={plan.popular || false}
+                            onChange={(e) => updatePricingPlan(index, "popular", e.target.checked)}
+                            className="w-3.5 h-3.5 rounded accent-amber-500"
+                          />
+                          <label className="text-[11px] font-mono text-neutral-400 uppercase">Popular Card</label>
+                        </div>
+                      </div>
+                      <InputField label="Plan Name" value={plan.name || ""} onChange={(v: any) => updatePricingPlan(index, "name", v)} />
+                      <InputField label="Price / Option text" value={plan.price || ""} onChange={(v: any) => updatePricingPlan(index, "price", v)} />
+                      <InputField label="Plan Short description" value={plan.desc || ""} onChange={(v: any) => updatePricingPlan(index, "desc", v)} multiline />
+                      <InputField label="Call-To-Action text" value={plan.cta || ""} onChange={(v: any) => updatePricingPlan(index, "cta", v)} />
+                      <CommaSeparatedInput label="Plan Features list (comma-separated)" value={plan.features || []} onChange={(v) => updatePricingPlan(index, "features", v)} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Starting Estimates Baseline */}
+              <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] space-y-6">
+                <div>
+                  <h3 className="text-base font-bold font-display text-white">Starting Estimates rates</h3>
+                  <p className="text-xs text-neutral-400 mt-1">Adjust baseline prices displayed for starting estimation blocks.</p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {data.pricing.startingEstimates?.map((item: any, index: number) => (
+                    <div key={index} className="p-4 rounded-2xl border border-white/5 bg-neutral-900/40 grid grid-cols-2 gap-3 items-center">
+                      <div className="col-span-2 text-[10px] font-mono text-amber-500 font-bold uppercase">{item.service}</div>
+                      <InputField label="Service Name" value={item.service || ""} onChange={(v: any) => updateStartingEstimate(index, "service", v)} />
+                      <InputField label="Estimate Price" value={item.price || ""} onChange={(v: any) => updateStartingEstimate(index, "price", v)} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Projects Tab */}
           {activeTab === "projects" && (
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Projects ({data.projects.length})</h2>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold font-display text-white">Featured Projects ({data.projects.length})</h2>
+                  <p className="text-xs text-neutral-400 mt-1">Manage items displayed in your developer project showcase.</p>
+                </div>
                 <button
                   onClick={addProject}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105"
-                  style={{ background: "var(--accent-primary)", color: "#FFFFFF" }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold font-mono bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 text-white transition-all duration-300"
                 >
-                  <Plus className="w-4 h-4" />
-                  Add Project
+                  <Plus className="w-3.5 h-3.5" />
+                  ADD PROJECT
                 </button>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {data.projects.map((project: any) => (
                   <div
                     key={project.id}
-                    className="p-6 rounded-2xl border-2 transition-all duration-300"
-                    style={{ borderColor: editingId === project.id ? "var(--accent-primary)" : "var(--border)" }}
+                    className="p-6 rounded-2xl border transition-all duration-300 bg-white/[0.01] space-y-4"
+                    style={{ borderColor: editingId === project.id ? "var(--accent)" : "rgba(255,255,255,0.05)" }}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                    <div className="flex items-start justify-between">
+                      <h3 className="text-sm font-semibold text-white font-mono">{project.title}</h3>
                       <div className="flex gap-2">
                         <button
                           onClick={() => setEditingId(editingId === project.id ? null : project.id)}
-                          className="p-2 rounded-lg transition-all duration-300 hover:scale-110"
-                          style={{ background: editingId === project.id ? "var(--accent-primary)" : "var(--bg-primary)", color: "#fff" }}
+                          className={`p-2 rounded-full transition-all duration-300 ${
+                            editingId === project.id 
+                              ? "bg-amber-500 text-neutral-950" 
+                              : "border border-white/5 bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white"
+                          }`}
                         >
-                          {editingId === project.id ? <CheckCircle className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
+                          {editingId === project.id ? <Check className="w-3.5 h-3.5" /> : <Edit2 className="w-3.5 h-3.5" />}
                         </button>
                         <button
                           onClick={() => deleteProject(project.id)}
-                          className="p-2 rounded-lg transition-all duration-300 hover:scale-110"
-                          style={{ background: "#EF4444", color: "#fff" }}
+                          className="p-2 rounded-full border border-red-500/10 hover:border-red-500/20 text-neutral-400 hover:text-red-400 transition-colors bg-red-500/5 hover:bg-red-500/10"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
                     {editingId === project.id && (
-                      <div className="space-y-4">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <InputField label="Title" value={project.title} onChange={(v: any) => updateProject(project.id, "title", v)} />
-                          <InputField label="Category" value={project.category} onChange={(v: any) => updateProject(project.id, "category", v)} />
-                          <div className="md:col-span-2">
-                            <InputField label="Description" value={project.desc} onChange={(v: any) => updateProject(project.id, "desc", v)} multiline />
-                          </div>
-                          <div className="md:col-span-2">
-                            <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                              <ImageIcon className="w-3 h-3 inline mr-1" />
-                              Image URL (optional)
-                            </label>
-                            <input
-                              type="text"
-                              value={project.image || ""}
-                              onChange={(e) => updateProject(project.id, "image", e.target.value)}
-                              placeholder="https://example.com/image.jpg"
-                              className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                              style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                            />
-                            <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Leave empty to show letter icon</p>
-                          </div>
-                          <InputField label="GitHub URL" value={project.github} onChange={(v: any) => updateProject(project.id, "github", v)} />
-                          <InputField label="Live Demo URL" value={project.live} onChange={(v: any) => updateProject(project.id, "live", v)} />
-                          <InputField label="Year" value={project.year} onChange={(v: any) => updateProject(project.id, "year", v)} />
-                          <InputField label="Accent Color" value={project.color} onChange={(v: any) => updateProject(project.id, "color", v)} />
-                          <div className="md:col-span-2">
-                            <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                              Tags (comma-separated)
-                            </label>
-                            <input
-                              type="text"
-                              value={project.tags.join(", ")}
-                              onChange={(e) => updateProject(project.id, "tags", e.target.value.split(",").map((t: string) => t.trim()))}
-                              className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                              style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                            />
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="checkbox"
-                              checked={project.featured}
-                              onChange={(e) => updateProject(project.id, "featured", e.target.checked)}
-                              className="w-4 h-4"
-                            />
-                            <label className="text-sm" style={{ color: "var(--text-secondary)" }}>Featured</label>
-                          </div>
+                      <div className="grid md:grid-cols-2 gap-4 pt-4 border-t border-white/5 space-y-1">
+                        <InputField label="Project Title" value={project.title} onChange={(v: any) => updateProject(project.id, "title", v)} />
+                        <InputField label="Category / Type" value={project.category} onChange={(v: any) => updateProject(project.id, "category", v)} />
+                        <div className="md:col-span-2">
+                          <InputField label="Description Text" value={project.desc} onChange={(v: any) => updateProject(project.id, "desc", v)} multiline />
+                        </div>
+                        <div className="md:col-span-2">
+                          <InputField label="Image URL link (optional)" value={project.image} onChange={(v: any) => updateProject(project.id, "image", v)} placeholder="https://example.com/mock.jpg" />
+                        </div>
+                        <InputField label="GitHub Repo URL" value={project.github} onChange={(v: any) => updateProject(project.id, "github", v)} />
+                        <InputField label="Live Site URL" value={project.live} onChange={(v: any) => updateProject(project.id, "live", v)} />
+                        <InputField label="Project Year" value={project.year} onChange={(v: any) => updateProject(project.id, "year", v)} />
+                        <InputField label="Accent Color Hex code" value={project.color} onChange={(v: any) => updateProject(project.id, "color", v)} />
+                        <div className="md:col-span-2">
+                          <CommaSeparatedInput label="Project Tags (comma-separated)" value={project.tags} onChange={(v) => updateProject(project.id, "tags", v)} />
+                        </div>
+                        <div className="flex items-center gap-2 pt-2">
+                          <input
+                            type="checkbox"
+                            checked={project.featured}
+                            onChange={(e) => updateProject(project.id, "featured", e.target.checked)}
+                            className="w-3.5 h-3.5 rounded accent-amber-500"
+                          />
+                          <label className="text-xs text-neutral-400 font-mono uppercase">Featured Work</label>
                         </div>
                       </div>
                     )}
@@ -647,53 +779,43 @@ export default function AdminDashboard() {
           {activeTab === "studies" && (
             <div className="space-y-8">
               {/* Education */}
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Education ({data.studies.education.length})</h2>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold font-display text-white">Education Timeline ({data.studies.education.length})</h2>
+                    <p className="text-xs text-neutral-400 mt-1">Configure academic degrees and locations.</p>
+                  </div>
                   <button
                     onClick={addEducation}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105"
-                    style={{ background: "var(--accent-primary)", color: "#FFFFFF" }}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold font-mono bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 text-white transition-all duration-300"
                   >
-                    <Plus className="w-4 h-4" />
-                    Add Education
+                    <Plus className="w-3.5 h-3.5" />
+                    ADD EDUCATION
                   </button>
                 </div>
                 <div className="space-y-4">
                   {data.studies.education.map((edu: any, index: number) => (
-                    <div key={index} className="p-6 rounded-2xl border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-                      <div className="flex items-start justify-between mb-4">
-                        <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>{edu.degree}</h3>
+                    <div key={index} className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] space-y-4">
+                      <div className="flex items-start justify-between">
+                        <div className="text-xs font-mono text-amber-500 font-bold uppercase">{edu.degree || "New Education item"}</div>
                         <button
                           onClick={() => deleteEducation(index)}
-                          className="p-2 rounded-lg transition-colors"
-                          style={{ color: "var(--error)", background: "var(--error)/10" }}
+                          className="p-2 rounded-full border border-red-500/10 hover:border-red-500/20 text-neutral-400 hover:text-red-400 transition-colors bg-red-500/5 hover:bg-red-500/10"
                         >
-                          <Trash2 className="w-5 h-5" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                       <div className="grid md:grid-cols-2 gap-4">
-                        <InputField label="Degree" value={edu.degree} onChange={(v: any) => updateEducation(index, "degree", v)} />
-                        <InputField label="Institution" value={edu.institution} onChange={(v: any) => updateEducation(index, "institution", v)} />
-                        <InputField label="Period" value={edu.period} onChange={(v: any) => updateEducation(index, "period", v)} />
-                        <InputField label="Location" value={edu.location} onChange={(v: any) => updateEducation(index, "location", v)} />
-                        <InputField label="Grade" value={edu.grade} onChange={(v: any) => updateEducation(index, "grade", v)} />
-                        <div>
-                          <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                            Highlights (comma-separated)
-                          </label>
-                          <input
-                            type="text"
-                            value={edu.highlights.join(", ")}
-                            onChange={(e) => {
-                              const newEducation = [...data.studies.education];
-                              newEducation[index].highlights = e.target.value.split(",").map((h: string) => h.trim());
-                              setData({ ...data, studies: { ...data.studies, education: newEducation } });
-                            }}
-                            className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                            style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                          />
-                        </div>
+                        <InputField label="Degree / Field" value={edu.degree} onChange={(v: any) => updateEducation(index, "degree", v)} />
+                        <InputField label="Institution / School" value={edu.institution} onChange={(v: any) => updateEducation(index, "institution", v)} />
+                        <InputField label="Attendance Period" value={edu.period} onChange={(v: any) => updateEducation(index, "period", v)} />
+                        <InputField label="Location / City" value={edu.location} onChange={(v: any) => updateEducation(index, "location", v)} />
+                        <InputField label="Grade / Score" value={edu.grade} onChange={(v: any) => updateEducation(index, "grade", v)} />
+                        <CommaSeparatedInput label="Highlights (comma-separated)" value={edu.highlights} onChange={(v) => {
+                          const newEducation = [...data.studies.education];
+                          newEducation[index].highlights = v;
+                          setData({ ...data, studies: { ...data.studies, education: newEducation } });
+                        }} />
                       </div>
                     </div>
                   ))}
@@ -701,35 +823,36 @@ export default function AdminDashboard() {
               </div>
 
               {/* Certifications */}
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Certifications ({data.studies.certifications.length})</h2>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold font-display text-white">Certifications ({data.studies.certifications.length})</h2>
+                    <p className="text-xs text-neutral-400 mt-1">Configure development courses and issuer credentials.</p>
+                  </div>
                   <button
                     onClick={addCertification}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105"
-                    style={{ background: "var(--accent-primary)", color: "#FFFFFF" }}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold font-mono bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 text-white transition-all duration-300"
                   >
-                    <Plus className="w-4 h-4" />
-                    Add Certification
+                    <Plus className="w-3.5 h-3.5" />
+                    ADD CERT
                   </button>
                 </div>
                 <div className="space-y-4">
                   {data.studies.certifications.map((cert: any, index: number) => (
-                    <div key={index} className="p-6 rounded-2xl border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-                      <div className="flex items-start justify-between mb-4">
-                        <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>{cert.name}</h3>
+                    <div key={index} className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] space-y-4">
+                      <div className="flex items-start justify-between">
+                        <div className="text-xs font-mono text-amber-500 font-bold uppercase">{cert.name || "New Certification"}</div>
                         <button
                           onClick={() => deleteCertification(index)}
-                          className="p-2 rounded-lg transition-colors"
-                          style={{ color: "var(--error)", background: "var(--error)/10" }}
+                          className="p-2 rounded-full border border-red-500/10 hover:border-red-500/20 text-neutral-400 hover:text-red-400 transition-colors bg-red-500/5 hover:bg-red-500/10"
                         >
-                          <Trash2 className="w-5 h-5" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                       <div className="grid md:grid-cols-3 gap-4">
-                        <InputField label="Name" value={cert.name} onChange={(v: any) => updateCertification(index, "name", v)} />
-                        <InputField label="Issuer" value={cert.issuer} onChange={(v: any) => updateCertification(index, "issuer", v)} />
-                        <InputField label="Year" value={cert.year} onChange={(v: any) => updateCertification(index, "year", v)} />
+                        <InputField label="Certificate Name" value={cert.name} onChange={(v: any) => updateCertification(index, "name", v)} />
+                        <InputField label="Issuer Org" value={cert.issuer} onChange={(v: any) => updateCertification(index, "issuer", v)} />
+                        <InputField label="Acquired Year" value={cert.year} onChange={(v: any) => updateCertification(index, "year", v)} />
                       </div>
                     </div>
                   ))}
@@ -740,55 +863,45 @@ export default function AdminDashboard() {
 
           {/* Testimonials Tab */}
           {activeTab === "testimonials" && (
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Testimonials ({data.testimonials.length})</h2>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold font-display text-white">Client Testimonials ({data.testimonials.length})</h2>
+                  <p className="text-xs text-neutral-400 mt-1">Edit client statements and ratings displayed as social proof.</p>
+                </div>
                 <button
                   onClick={addTestimonial}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105"
-                  style={{ background: "var(--accent-primary)", color: "#FFFFFF" }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold font-mono bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 text-white transition-all duration-300"
                 >
-                  <Plus className="w-4 h-4" />
-                  Add Testimonial
+                  <Plus className="w-3.5 h-3.5" />
+                  ADD TESTIMONIAL
                 </button>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {data.testimonials.map((testimonial: any) => (
-                  <div key={testimonial.id} className="p-6 rounded-2xl border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>{testimonial.name}</h3>
+                  <div key={testimonial.id} className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="text-xs font-mono text-amber-500 font-bold uppercase">{testimonial.name}</div>
                       <button
                         onClick={() => deleteTestimonial(testimonial.id)}
-                        className="p-2 rounded-lg transition-colors"
-                        style={{ color: "var(--error)", background: "var(--error)/10" }}
+                        className="p-2 rounded-full border border-red-500/10 hover:border-red-500/20 text-neutral-400 hover:text-red-400 transition-colors bg-red-500/5 hover:bg-red-500/10"
                       >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <InputField label="Name" value={testimonial.name} onChange={(v: any) => updateTestimonial(testimonial.id, "name", v)} />
-                      <InputField label="Role" value={testimonial.role} onChange={(v: any) => updateTestimonial(testimonial.id, "role", v)} />
-                      <InputField label="Company" value={testimonial.company} onChange={(v: any) => updateTestimonial(testimonial.id, "company", v)} />
-                      <InputField label="Avatar Initials" value={testimonial.avatar} onChange={(v: any) => updateTestimonial(testimonial.id, "avatar", v)} />
-                      <InputField label="Avatar Color" value={testimonial.avatarColor} onChange={(v: any) => updateTestimonial(testimonial.id, "avatarColor", v)} />
-                      <div>
-                        <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                          Rating (1-5)
-                        </label>
-                        <input
-                          type="number"
-                          value={testimonial.rating}
-                          onChange={(e) => updateTestimonial(testimonial.id, "rating", parseInt(e.target.value))}
-                          min="1"
-                          max="5"
-                          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                          style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                        />
+                      <InputField label="Client Name" value={testimonial.name} onChange={(v: any) => updateTestimonial(testimonial.id, "name", v)} />
+                      <InputField label="Client Role" value={testimonial.role} onChange={(v: any) => updateTestimonial(testimonial.id, "role", v)} />
+                      <InputField label="Company Name" value={testimonial.company} onChange={(v: any) => updateTestimonial(testimonial.id, "company", v)} />
+                      <InputField label="Avatar initials" value={testimonial.avatar} onChange={(v: any) => updateTestimonial(testimonial.id, "avatar", v)} />
+                      <InputField label="Avatar Accent Color" value={testimonial.avatarColor} onChange={(v: any) => updateTestimonial(testimonial.id, "avatarColor", v)} />
+                      <InputField label="Project Completed" value={testimonial.project} onChange={(v: any) => updateTestimonial(testimonial.id, "project", v)} />
+                      <div className="md:col-span-2">
+                        <InputField label="Rating Stars (1-5)" value={testimonial.rating} type="number" onChange={(v: any) => updateTestimonial(testimonial.id, "rating", parseInt(v) || 5)} />
                       </div>
                       <div className="md:col-span-2">
-                        <InputField label="Testimonial Text" value={testimonial.text} onChange={(v: any) => updateTestimonial(testimonial.id, "text", v)} multiline />
+                        <InputField label="Testimonial Quote text" value={testimonial.text} onChange={(v: any) => updateTestimonial(testimonial.id, "text", v)} multiline />
                       </div>
-                      <InputField label="Project" value={testimonial.project} onChange={(v: any) => updateTestimonial(testimonial.id, "project", v)} />
                     </div>
                   </div>
                 ))}
@@ -798,52 +911,45 @@ export default function AdminDashboard() {
 
           {/* Freelance Tab */}
           {activeTab === "freelance" && (
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Freelance Projects ({data.freelance.projects.length})</h2>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold font-display text-white">Freelance Works ({data.freelance.projects.length})</h2>
+                  <p className="text-xs text-neutral-400 mt-1">Manage completed contract works and client invoices records.</p>
+                </div>
                 <button
                   onClick={addFreelance}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105"
-                  style={{ background: "var(--accent-primary)", color: "#FFFFFF" }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold font-mono bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 text-white transition-all duration-300"
                 >
-                  <Plus className="w-4 h-4" />
-                  Add Project
+                  <Plus className="w-3.5 h-3.5" />
+                  ADD FREELANCE
                 </button>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {data.freelance.projects.map((project: any) => (
-                  <div key={project.id} className="p-6 rounded-2xl border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>{project.client}</h3>
+                  <div key={project.id} className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="text-xs font-mono text-amber-500 font-bold uppercase">{project.client} - {project.title}</div>
                       <button
                         onClick={() => deleteFreelance(project.id)}
-                        className="p-2 rounded-lg transition-colors"
-                        style={{ color: "var(--error)", background: "var(--error)/10" }}
+                        className="p-2 rounded-full border border-red-500/10 hover:border-red-500/20 text-neutral-400 hover:text-red-400 transition-colors bg-red-500/5 hover:bg-red-500/10"
                       >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <InputField label="Client" value={project.client} onChange={(v: any) => updateFreelance(project.id, "client", v)} />
-                      <InputField label="Title" value={project.title} onChange={(v: any) => updateFreelance(project.id, "title", v)} />
+                      <InputField label="Client Name" value={project.client} onChange={(v: any) => updateFreelance(project.id, "client", v)} />
+                      <InputField label="Project Title" value={project.title} onChange={(v: any) => updateFreelance(project.id, "title", v)} />
                       <div className="md:col-span-2">
                         <InputField label="Description" value={project.desc} onChange={(v: any) => updateFreelance(project.id, "desc", v)} multiline />
                       </div>
-                      <InputField label="Duration" value={project.duration} onChange={(v: any) => updateFreelance(project.id, "duration", v)} />
-                      <InputField label="Budget" value={project.budget} onChange={(v: any) => updateFreelance(project.id, "budget", v)} />
-                      <InputField label="Status" value={project.status} onChange={(v: any) => updateFreelance(project.id, "status", v)} />
-                      <InputField label="Color" value={project.color} onChange={(v: any) => updateFreelance(project.id, "color", v)} />
+                      <InputField label="Duration Label" value={project.duration} onChange={(v: any) => updateFreelance(project.id, "duration", v)} />
+                      <InputField label="Budget Label" value={project.budget} onChange={(v: any) => updateFreelance(project.id, "budget", v)} />
+                      <InputField label="Project Status" value={project.status} onChange={(v: any) => updateFreelance(project.id, "status", v)} />
+                      <InputField label="Accent Color Hex" value={project.color} onChange={(v: any) => updateFreelance(project.id, "color", v)} />
+                      <InputField label="Project Category" value={project.category} onChange={(v: any) => updateFreelance(project.id, "category", v)} />
                       <div className="md:col-span-2">
-                        <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                          Tags (comma-separated)
-                        </label>
-                        <input
-                          type="text"
-                          value={project.tags.join(", ")}
-                          onChange={(e) => updateFreelance(project.id, "tags", e.target.value.split(",").map((t: string) => t.trim()))}
-                          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                          style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                        />
+                        <CommaSeparatedInput label="Tags (comma-separated)" value={project.tags} onChange={(v) => updateFreelance(project.id, "tags", v)} />
                       </div>
                     </div>
                   </div>
@@ -854,31 +960,24 @@ export default function AdminDashboard() {
 
           {/* Contact Tab */}
           {activeTab === "contact" && (
-            <div className="p-6 rounded-2xl border" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-              <h2 className="text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>Contact Section</h2>
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
+              <div>
+                <h2 className="text-xl font-bold font-display text-white">Contact & Connect Options</h2>
+                <p className="text-xs text-neutral-400 mt-1">Configure email inbox destinations, location and service items checklist.</p>
+              </div>
               <div className="space-y-4">
-                <InputField label="Email" value={data.contact.email} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, email: v } })} />
-                <InputField label="Location" value={data.contact.location} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, location: v } })} />
-                <InputField label="Availability" value={data.contact.availability} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, availability: v } })} />
-                <InputField label="Title Part 1" value={data.contact.title1} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title1: v } })} />
-                <InputField label="Title Part 2" value={data.contact.title2} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title2: v } })} />
-                <InputField label="Description" value={data.contact.description} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, description: v } })} multiline />
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>
-                    Services (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={data.contact.services.join(", ")}
-                    onChange={(e) => setData({ ...data, contact: { ...data.contact, services: e.target.value.split(",").map((s: string) => s.trim()) } })}
-                    className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
-                    style={{ background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                  />
-                </div>
+                <InputField label="Primary Contact Email" value={data.contact.email} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, email: v } })} />
+                <InputField label="Office / Base Location" value={data.contact.location} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, location: v } })} />
+                <InputField label="Weekly Availability Status" value={data.contact.availability} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, availability: v } })} />
+                <InputField label="Footer Header Part 1" value={data.contact.title1} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title1: v } })} />
+                <InputField label="Footer Header Part 2" value={data.contact.title2} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title2: v } })} />
+                <InputField label="Call-To-Action Description" value={data.contact.description} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, description: v } })} multiline />
+                <CommaSeparatedInput label="Services items list (comma-separated)" value={data.contact.services} onChange={(v) => setData({ ...data, contact: { ...data.contact, services: v } })} />
               </div>
             </div>
           )}
-        </div>
+
+        </main>
       </div>
     </div>
   );

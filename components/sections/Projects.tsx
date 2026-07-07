@@ -23,6 +23,9 @@ function ProjectCard({ project, index, inView }: { project: any; index: number; 
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileHover={{ y: -8 }}
+      onClick={() => {
+        window.location.href = `/project/${project.id}`;
+      }}
     >
       {/* Color band */}
       <div
@@ -232,7 +235,7 @@ export default function Projects() {
           transition={{ delay: 0.8 }}
         >
           <a
-            href="#"
+            href="/projects"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
             style={{ border: "1px solid var(--border)", color: "var(--text-secondary)" }}
             onMouseEnter={(e) => {

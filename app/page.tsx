@@ -5,6 +5,7 @@ import Services from "@/components/sections/Services";
 import Studies from "@/components/sections/Studies";
 import Projects from "@/components/sections/Projects";
 import FreelanceProjects from "@/components/sections/FreelanceProjects";
+import Pricing from "@/components/sections/Pricing";
 import Testimonials from "@/components/sections/Testimonials";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/layout/Footer";
@@ -23,6 +24,7 @@ export default function Home() {
       <Studies />
       <Projects />
       <FreelanceProjects />
+      <Pricing />
       <Testimonials />
       <Contact />
       <Footer />

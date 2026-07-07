@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Github, Linkedin, Twitter, Mail, ArrowUpRight, Heart } from "lucide-react";
 import Image from "next/image";
 import logo from "../../public/Logo.png";
+import Link from "next/link";
 
 const footerLinks = {
   Sections: [
@@ -110,7 +111,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="text-sm transition-colors duration-200"
                       style={{ color: "var(--text-muted)" }}
@@ -118,7 +119,7 @@ export default function Footer() {
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -142,14 +143,14 @@ export default function Footer() {
               Let's build something amazing together.
             </p>
           </div>
-          <a
+          <Link
             href="/contact"
             className="flex items-center gap-2 px-6 py-3 rounded-full font-medium text-sm transition-all duration-300 hover:scale-105 whitespace-nowrap flex-shrink-0"
             style={{ background: "#fff", color: "var(--accent)" }}
           >
             Get In Touch
             <ArrowUpRight size={14} />
-          </a>
+          </Link>
         </div>
 
         {/* Bottom row */}

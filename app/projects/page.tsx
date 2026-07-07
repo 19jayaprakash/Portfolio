@@ -87,9 +87,9 @@ export default function ProjectsPage() {
     <div className="min-h-screen transition-colors duration-300" style={{ background: "var(--bg)" }}>
       <Navbar />
 
-      <main className="pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
+      <main className="pt-28 md:pt-36 pb-16 md:pb-24 px-4 md:px-12 max-w-7xl mx-auto">
         {/* Header Block */}
-        <div className="mb-16 space-y-4">
+        <div className="mb-10 md:mb-16 space-y-4">
           <span className="font-mono text-xs tracking-[0.3em] uppercase block" style={{ color: "var(--accent)" }}>
             Showcase
           </span>

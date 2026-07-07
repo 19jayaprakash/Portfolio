@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, Menu, X } from "lucide-react";
 import Image from "next/image";
 import logo from "../../public/Logo.png";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -33,9 +34,9 @@ export default function Navbar() {
       
       >
         {/* Logo */}
-        <a href="#" className="font-display text-3xl font-bold block" style={{ color: "var(--text-primary)" }}>
+        <Link href="/" className="font-display text-3xl font-bold block" style={{ color: "var(--text-primary)" }}>
             <Image src={logo.src} alt="Logo" width={70} height={70} className="inline-block mr-2" />
-            </a>
+            </Link>
 
         {/* Desktop nav */}
         <motion.div className="hidden md:flex items-center gap-8 px-4 py-1.5 rounded-full transition-all duration-500"
@@ -48,7 +49,7 @@ export default function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}>
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="line-animate text-sm font-medium pb-1 transition-colors duration-300"
@@ -57,14 +58,14 @@ export default function Navbar() {
               onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </motion.div>
 
         {/* Right actions */}
         <div className="flex items-center gap-4">
 
-          <a
+          <Link
             href="/contact"
             className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105"
             style={{
@@ -74,7 +75,7 @@ export default function Navbar() {
             }}
           >
             Hire Me
-          </a>
+          </Link>
           <button
             className="md:hidden p-2"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -97,18 +98,21 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
           >
             {navLinks.map((link, i) => (
-              <motion.a
+              <motion.div
                 key={link.href}
-                href={link.href}
-                className="font-display text-4xl font-bold"
-                style={{ color: "var(--text-primary)" }}
-                onClick={() => setMenuOpen(false)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
               >
-                {link.label}
-              </motion.a>
+                <Link
+                  href={link.href}
+                  className="font-display text-4xl font-bold"
+                  style={{ color: "var(--text-primary)" }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
           </motion.div>
         )}

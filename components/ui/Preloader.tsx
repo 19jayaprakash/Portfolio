@@ -5,13 +5,23 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Preloader() {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    
+    // Check if preloader has already run in this session
+    const hasRun = sessionStorage.getItem("preloader-run");
+    if (hasRun) {
+      setLoading(false);
+      return;
+    }
+
     // Prevent scrolling while preloader is active
     document.body.style.overflow = "hidden";
 
-    // Increment progress counter rapidly up to 100% over 3.5 seconds
-    const duration = 3500;
+    // Increment progress counter rapidly up to 100% over 3 seconds
+    const duration = 2800; // Snappier loading duration
     const intervalTime = 30;
     const steps = duration / intervalTime;
     let stepCount = 0;
@@ -24,11 +34,12 @@ export default function Preloader() {
       if (nextProgress >= 100) {
         clearInterval(timer);
         
-        // Let the 100% state rest for 500ms, then fade out the preloader
+        // rest for 300ms, then hide and save status
         setTimeout(() => {
           setLoading(false);
           document.body.style.overflow = "auto";
-        }, 500);
+          sessionStorage.setItem("preloader-run", "true");
+        }, 300);
       }
     }, intervalTime);
 
@@ -38,6 +49,10 @@ export default function Preloader() {
     };
   }, []);
 
+  // Avoid hydration mismatch while SSR compiles
+  if (!mounted) return null;
+  if (!loading) return null;
+
   return (
     <AnimatePresence>
       {loading && (
@@ -46,7 +61,7 @@ export default function Preloader() {
           initial={{ opacity: 1 }}
           exit={{ 
             y: "-100%", 
-            transition: { duration: 0.95, ease: [0.76, 0, 0.24, 1] } 
+            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } 
           }}
         >
           {/* Top Row: Brand Label */}
@@ -74,7 +89,7 @@ export default function Preloader() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
               className="space-y-4"
             >
               <h2 

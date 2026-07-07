@@ -108,7 +108,7 @@ export default function ProjectDetailsPage() {
         }
       `}</style>
 
-      <main className="pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto space-y-16">
+      <main className="pt-28 md:pt-36 pb-16 md:pb-24 px-4 md:px-12 max-w-7xl mx-auto space-y-10 md:space-y-16">
         
         {/* Navigation & Title */}
         <div className="space-y-6">
@@ -128,7 +128,7 @@ export default function ProjectDetailsPage() {
               <span className="font-mono text-xs tracking-widest uppercase font-bold" style={{ color: projectColor }}>
                 {project.category} · {project.year || project.duration || "Case Study"}
               </span>
-              <h1 className="font-display text-4xl md:text-6xl font-bold leading-none" style={{ color: "var(--text-primary)" }}>
+              <h1 className="font-display text-3xl sm:text-4xl md:text-6xl font-bold leading-none" style={{ color: "var(--text-primary)" }}>
                 {project.title}
               </h1>
             </div>
@@ -217,7 +217,7 @@ export default function ProjectDetailsPage() {
 
               {/* Viewport Content */}
               <div 
-                className="relative h-[480px] md:h-[600px] w-full overflow-hidden flex items-center justify-center"
+                className="relative h-[280px] sm:h-[400px] md:h-[550px] lg:h-[600px] w-full overflow-hidden flex items-center justify-center"
                 style={{ background: "var(--bg)" }}
               >
                 {showIframe ? (
@@ -379,7 +379,7 @@ export default function ProjectDetailsPage() {
                 {timelineSteps.map((step, i) => (
                   <div 
                     key={i} 
-                    className="p-4 rounded-xl border flex flex-col justify-between h-24"
+                    className="p-4 rounded-xl border flex flex-col justify-between min-h-[96px] gap-2"
                     style={{ background: "var(--surface)", borderColor: "var(--border)" }}
                   >
                     <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>{step.phase}</span>

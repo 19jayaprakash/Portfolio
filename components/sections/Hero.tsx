@@ -383,7 +383,7 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", handle);
   }, [mouseX, mouseY]);
 
-  const titleWords = ["TESTING", "THE", "SOFTWARE", "FOR", "YOUR", "BUSINESS"];
+  const titleWords = ["Engineering", "Digital", "Excellence"];
 
   return (
     <section
@@ -395,7 +395,7 @@ export default function Hero() {
       <motion.div className="absolute inset-0 grid-bg pointer-events-none opacity-20" style={{ y: bgY }} />
 
       {/* Split background: dark vertical banner on right */}
-      <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[35%] bg-[#121212] border-l border-white/5 hidden lg:block z-0" />
+      <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[47%] bg-[#121212] border-l border-white/5 hidden lg:block z-0" />
 
       {/* Large vertical poster text "PEAK" */}
       <div 
@@ -413,58 +413,62 @@ export default function Hero() {
         style={{ opacity }}
         className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 pt-24 pb-12"
       >
-        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[85vh]">
+        <div className="grid lg:grid-cols-[53%_47%] gap-8 md:gap-12 items-center min-h-[85vh]">
 
           {/* ── LEFT: Text ── */}
           <motion.div style={{ y: textY }} className="flex flex-col justify-center relative z-10">
 
-            <span className="text-[11px] font-mono text-neutral-400 block mb-4 select-none">01.</span>
-
             {/* Status pill */}
             <motion.div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full w-fit mb-6 border border-white/10 bg-white/[0.03]"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full w-fit mb-8"
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(200,149,107,0.4)",
+                backdropFilter: "blur(12px)",
+              }}
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.1 }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E67E22] animate-pulse" />
-              <span className="text-[10px] font-mono font-medium text-neutral-400 uppercase tracking-wider">Now Accepting Client Projects</span>
+              <span className="w-2 h-2 rounded-full bg-[#22C55E]" style={{ boxShadow: "0 0 8px #22C55E" }} />
+              <span className="text-xs font-mono text-[var(--text-muted)]">Now Accepting Client Projects</span>
             </motion.div>
 
-            {/* Big title stacked vertically */}
-            <div className="mb-6 flex flex-col gap-1">
+            {/* Big title */}
+            <div className="mb-5">
               {titleWords.map((word, i) => (
                 <div key={word} style={{ overflow: "hidden", display: "block" }}>
-                  <motion.h1
-                    className="block font-bold uppercase"
+                  <motion.span
+                    className="block font-display font-bold"
                     style={{
-                      fontSize: "clamp(2rem, 5.2vw, 3.5rem)",
-                      lineHeight: 0.9,
+                      fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
+                      lineHeight: 0.95,
                       letterSpacing: "-0.03em",
-                      color: word === "BUSINESS" ? "var(--accent)" : "#FFFFFF",
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      color: i === 1 ? "transparent" : "var(--text-primary)",
+                      WebkitTextStroke: i === 1 ? "1.5px var(--accent)" : "none",
+                      fontStyle: i === 2 ? "italic" : "normal",
                     }}
                     initial={{ y: 100 }}
                     animate={{ y: 0 }}
                     transition={{ duration: 0.9, delay: 0.3 + i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
                   >
                     {word}
-                  </motion.h1>
+                  </motion.span>
                 </div>
               ))}
             </div>
 
             {/* Animated role ticker */}
             <motion.div
-              className="flex items-center gap-3 mb-6"
+              className="flex items-center gap-3 mb-8"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             >
-              <div className="w-8 h-px bg-white/10" />
+              <div className="w-8 h-px bg-[var(--accent)]" />
               <div className="h-7 overflow-hidden relative" style={{ minWidth: "280px" }}>
                 {roles.map((role, i) => (
                   <motion.span
                     key={role}
-                    className="absolute left-0 text-xs font-mono tracking-wider uppercase"
+                    className="absolute left-0 text-sm font-mono tracking-wide"
                     style={{ color: "var(--accent)" }}
                     initial={{ y: 28, opacity: 0 }}
                     animate={{
@@ -481,32 +485,89 @@ export default function Hero() {
 
             {/* Description */}
             <motion.p
-              className="text-sm leading-relaxed mb-8 max-w-md text-neutral-400"
+              className="text-base leading-relaxed mb-10 max-w-md"
+              style={{ color: "var(--text-secondary)" }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
               We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design. From SaaS dashboards to enterprise platforms — we build scalable digital systems that businesses trust.
             </motion.p>
 
             {/* CTAs */}
             <motion.div
-              className="flex flex-wrap items-center gap-6 mb-10"
+              className="flex flex-wrap gap-4 mb-10"
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.0 }}
             >
               <a
+                href="#projects"
+                className="group relative flex items-center gap-3 px-7 py-3.5 rounded-full font-medium text-sm overflow-hidden transition-transform duration-300 hover:scale-105"
+                style={{ background: "var(--accent)", color: "#fff" }}
+              >
+                <span>Explore Projects</span>
+                <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>→</motion.span>
+              </a>
+              <a
                 href="#contact"
-                className="group flex items-center gap-4 pl-6 pr-2.5 py-2.5 rounded-full font-medium text-xs tracking-wider uppercase transition-all duration-300 hover:scale-105 border border-[var(--accent)] shadow-md"
+                className="flex items-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm transition-all duration-300 hover:scale-105"
                 style={{
-                  background: "var(--accent)",
-                  color: "#fff",
-                  fontFamily: "'Space Grotesk', sans-serif"
+                  background: "rgba(255,255,255,0.04)",
+                  color: "var(--text-primary)",
+                  border: "1px solid var(--border)",
+                  backdropFilter: "blur(10px)",
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = "var(--border-accent)";
+                  el.style.color = "var(--accent)";
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = "var(--border)";
+                  el.style.color = "var(--text-primary)";
                 }}
               >
-                <span>Get In Touch</span>
-                <span className="w-8 h-8 rounded-full bg-[#111111] flex items-center justify-center text-white transition-transform duration-300 group-hover:rotate-45">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-                </span>
+                Request Proposal ↗
               </a>
+            </motion.div>
+
+            {/* Socials */}
+            <motion.div
+              className="flex items-center gap-3"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
+            >
+              <span className="text-xs font-mono uppercase tracking-widest text-[var(--text-muted)]">Follow</span>
+              <div className="w-8 h-px bg-[var(--border)]" />
+              {[
+                { icon: Github,   href: "https://github.com/19jayaprakash"   },
+                { icon: Linkedin, href: "https://linkedin.com/in/jayaprakash-r-218968310" },
+              ].map(({ icon: Icon, href }, idx) => (
+                <a
+                  key={idx}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    color: "var(--text-muted)",
+                    border: "1px solid var(--border)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.color = "var(--accent)";
+                    el.style.borderColor = "var(--border-accent)";
+                    el.style.background = "rgba(200,149,107,0.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.color = "var(--text-muted)";
+                    el.style.borderColor = "var(--border)";
+                    el.style.background = "rgba(255,255,255,0.05)";
+                  }}
+                >
+                  <Icon size={15} />
+                </a>
+              ))}
             </motion.div>
           </motion.div>
 
@@ -577,7 +638,7 @@ export default function Hero() {
         className="absolute right-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-4 z-10"
         style={{ writingMode: "vertical-rl" }}
       >
-        <span className="text-xs font-mono tracking-[0.3em] uppercase text-neutral-400 opacity-60">
+        <span className="text-xs font-mono tracking-[0.3em] uppercase text-neutral-500 opacity-60">
           Aeropeak · 2026
         </span>
         <div className="w-px h-16 bg-neutral-700" />

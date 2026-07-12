@@ -10,7 +10,7 @@ const roles = [
   "Digital Product Strategy"
 ];
 
-const R = 145;
+const R = 185;
 
 // Concentric circle paths for the 3D maze sphere
 const MAZE_PATHS: { p1: { lat: number; lon: number }; p2: { lat: number; lon: number } }[] = [];
@@ -85,16 +85,16 @@ function FuturisticSphereCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef  = useRef({ rotY: 0, rotX: 0.15, velX: 0, velY: 0, drag: false, lastX: 0, lastY: 0 });
   const rafRef    = useRef<number>(0);
-  const W = 520, H = 540;
+  const W = 620, H = 640;
   
   // Bubble particles
   const bubbles = useRef<Array<{ x: number; y: number; z: number; r: number; speed: number; phase: number }>>([]);
   if (bubbles.current.length === 0) {
     for (let i = 0; i < 15; i++) {
       bubbles.current.push({
-        x: (Math.random() - 0.5) * 200,
-        y: Math.random() * 320 - 160,
-        z: (Math.random() - 0.5) * 200,
+        x: (Math.random() - 0.5) * 260,
+        y: Math.random() * 380 - 190,
+        z: (Math.random() - 0.5) * 260,
         r: 2.5 + Math.random() * 5,
         speed: 0.4 + Math.random() * 0.7,
         phase: Math.random() * Math.PI * 2
@@ -112,10 +112,10 @@ function FuturisticSphereCanvas() {
     ctx.clearRect(0, 0, W, H);
     
     const baseX = W / 2;
-    const baseY = H - 65;
-    const radX = 145;
-    const radY = 32;
-    const thickness = 18;
+    const baseY = H - 75;
+    const radX = 185;
+    const radY = 38;
+    const thickness = 20;
 
     // Draw bottom cylinder pedestal
     ctx.beginPath();
@@ -149,7 +149,7 @@ function FuturisticSphereCanvas() {
     ctx.fill();
 
     // Draw upward light cone
-    const coneHeight = 310;
+    const coneHeight = 360;
     const coneGrad = ctx.createLinearGradient(baseX, baseY, baseX, baseY - coneHeight);
     coneGrad.addColorStop(0, "rgba(200, 149, 107, 0.18)");
     coneGrad.addColorStop(1, "rgba(200, 149, 107, 0)");
@@ -169,10 +169,10 @@ function FuturisticSphereCanvas() {
     const mappedBubbles = bubbles.current.map((b) => {
       b.y -= b.speed;
       b.phase += 0.015;
-      const wiggleX = b.x + Math.sin(b.phase) * 20;
-      if (b.y < -240) {
-        b.y = 170;
-        b.x = (Math.random() - 0.5) * 200;
+      const wiggleX = b.x + Math.sin(b.phase) * 24;
+      if (b.y < -280) {
+        b.y = 210;
+        b.x = (Math.random() - 0.5) * 260;
       }
       const p3 = { x: wiggleX, y: b.y, z: b.z };
       const rot = rotatePoint(p3, rotX, rotY);
@@ -545,52 +545,52 @@ export default function Hero() {
               {/* Floating tech icons */}
               {/* Next.js Badge */}
               <motion.div
-                className="absolute p-2.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
-                style={{ top: "24%", left: "2%" }}
+                className="absolute p-3.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
+                style={{ top: "20%", left: "-10px" }}
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               >
-                <svg viewBox="0 0 180 180" className="w-5 h-5 fill-current text-white"><path d="M140 135.5L78.2 55H68v70h9V68.2L132.8 135H140z"/><path d="M112 55h9v70h-9z"/><circle cx="90" cy="90" r="85" stroke="currentColor" strokeWidth="8" fill="none"/></svg>
+                <svg viewBox="0 0 180 180" className="w-8 h-8 fill-current text-white"><path d="M140 135.5L78.2 55H68v70h9V68.2L132.8 135H140z"/><path d="M112 55h9v70h-9z"/><circle cx="90" cy="90" r="85" stroke="currentColor" strokeWidth="8" fill="none"/></svg>
               </motion.div>
 
               {/* Node.js Badge */}
               <motion.div
-                className="absolute p-2.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
-                style={{ top: "48%", left: "-8%" }}
+                className="absolute p-3.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
+                style={{ top: "45%", left: "-60px" }}
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-emerald-500"><path d="M12 2L2 7.75v11.5L12 22l10-2.75V7.75L12 2zm8 15.65l-8 2.2-8-2.2V9.1l8-2.2 8 2.2v8.55z"/></svg>
+                <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current text-emerald-500"><path d="M12 2L2 7.75v11.5L12 22l10-2.75V7.75L12 2zm8 15.65l-8 2.2-8-2.2V9.1l8-2.2 8 2.2v8.55z"/></svg>
               </motion.div>
 
               {/* Docker Badge */}
               <motion.div
-                className="absolute p-2.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
-                style={{ bottom: "18%", left: "4%" }}
+                className="absolute p-3.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
+                style={{ bottom: "12%", left: "-25px" }}
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-sky-400"><path d="M13.9 9.3H11v2.9h2.9V9.3zm3.5-3.3H14.5v2.9h2.9V6zm-3.5 0H11v2.9h2.9V6zM7.5 9.3H4.6v2.9h2.9V9.3zm3.5 0H8.1v2.9H11V9.3zM7.5 6H4.6v2.9h2.9V6zm13 3.3h-2.9v2.9h2.9V9.3zm-3.5 0h-2.9v2.9h2.9V9.3zM2.4 13.8c.8.9 2 1.4 3.2 1.4h11.2c.4 0 .7 0 1-.1 2.3-.4 3.8-2.1 3.8-4.2 0-.2 0-.4-.1-.6-.2-.6-.7-1.1-1.3-1.3l-.6-.2-.1.6c-.1.8-.7 1.5-1.5 1.7H2.6c-.1.3-.2.6-.2.8z"/></svg>
+                <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current text-sky-400"><path d="M13.9 9.3H11v2.9h2.9V9.3zm3.5-3.3H14.5v2.9h2.9V6zm-3.5 0H11v2.9h2.9V6zM7.5 9.3H4.6v2.9h2.9V9.3zm3.5 0H8.1v2.9H11V9.3zM7.5 6H4.6v2.9h2.9V6zm13 3.3h-2.9v2.9h2.9V9.3zm-3.5 0h-2.9v2.9h2.9V9.3zM2.4 13.8c.8.9 2 1.4 3.2 1.4h11.2c.4 0 .7 0 1-.1 2.3-.4 3.8-2.1 3.8-4.2 0-.2 0-.4-.1-.6-.2-.6-.7-1.1-1.3-1.3l-.6-.2-.1.6c-.1.8-.7 1.5-1.5 1.7H2.6c-.1.3-.2.6-.2.8z"/></svg>
               </motion.div>
 
               {/* Figma Badge */}
               <motion.div
-                className="absolute p-2.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
-                style={{ top: "20%", right: "2%" }}
+                className="absolute p-3.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
+                style={{ top: "15%", right: "-40px" }}
                 animate={{ y: [0, -12, 0] }}
                 transition={{ duration: 5.2, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-pink-500"><path d="M8 2c-2.21 0-4 1.79-4 4s1.79 4 4 4h4V2H8zm4 8H8c-2.21 0-4 1.79-4 4s1.79 4 4 4c2.21 0 4-1.79 4-4v-4zm0-8v8h4c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4zm0 12v4c0 2.21 1.79 4 4 4s4-1.79 4-4-1.79-4-4-4h-4z"/></svg>
+                <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current text-pink-500"><path d="M8 2c-2.21 0-4 1.79-4 4s1.79 4 4 4h4V2H8zm4 8H8c-2.21 0-4 1.79-4 4s1.79 4 4 4c2.21 0 4-1.79 4-4v-4zm0-8v8h4c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4zm0 12v4c0 2.21 1.79 4 4 4s4-1.79 4-4-1.79-4-4-4h-4z"/></svg>
               </motion.div>
 
               {/* Adobe Badge */}
               <motion.div
-                className="absolute p-2.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
-                style={{ bottom: "24%", right: "-6%" }}
+                className="absolute p-3.5 rounded-full border border-white/10 bg-neutral-900/60 backdrop-blur-md shadow-lg z-20"
+                style={{ bottom: "20%", right: "-50px" }}
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
               >
-                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-red-500"><path d="M14.6 2H22v19.4L14.6 2zm-5.2 0H2v19.4L9.4 2zM12 9.2l5 12.2h-3.4l-1.6-4.2H8l-1.6 4.2H3L12 9.2z"/></svg>
+                <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current text-red-500"><path d="M14.6 2H22v19.4L14.6 2zm-5.2 0H2v19.4L9.4 2zM12 9.2l5 12.2h-3.4l-1.6-4.2H8l-1.6 4.2H3L12 9.2z"/></svg>
               </motion.div>
 
               {/* Chart glass overlay card */}

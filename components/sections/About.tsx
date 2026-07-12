@@ -18,10 +18,10 @@ const traits = [
   { icon: Globe, label: "Global Ready", desc: "i18n & accessibility first" },
 ];
 
-// Cycle between the original profile photos
+// Cycle between the 2 standing cut-out PNG photos
 const photos = [
-  "/images/photo4.jpg",
-  "/images/photo1.jpg",
+  "/images/photo_pose1.png",
+  "/images/photo_pose2.png",
 ];
 
 export default function About() {
@@ -100,7 +100,7 @@ export default function About() {
                     src={src}
                     alt={`Profile photo ${i + 1}`}
                     fill
-                    className="object-cover object-top"
+                    className="object-contain object-bottom p-2"
                   />
                 </motion.div>
               ))}
@@ -163,10 +163,7 @@ export default function About() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.35 }}
           >
-            I'm a full-stack developer and creative technologist passionate about building
-            beautiful, high-performance web experiences. With 2+ years of experience,
-            I bridge design and engineering — creating products that are delightful to use
-            and powerful under the hood.
+            We are a team of expert engineers, designers, and digital strategists dedicated to crafting high-performance digital products. We bridge creative design and cutting-edge engineering — creating products that are beautiful, intuitive, and built to scale.
           </motion.p>
 
           <motion.p
@@ -176,8 +173,7 @@ export default function About() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.45 }}
           >
-            Based in Coimbatore, Tamil Nadu — working with startups, agencies, and enterprises
-            worldwide to build products that matter.
+            Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth.
           </motion.p>
 
           {/* Traits — glass style */}

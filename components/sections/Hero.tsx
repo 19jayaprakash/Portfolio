@@ -10,207 +10,343 @@ const roles = [
   "Digital Product Strategy"
 ];
 
-// ─── Globe config ───────────────────────────────────────────────────────────
-const TECH_NODES = [
-  { label: "React",      lat:  30,  lon:   0,  color: "#61DAFB" },
-  { label: "Node",       lat: -20,  lon:  60,  color: "#68BC00" },
-  { label: "TS",         lat:  50,  lon: 130,  color: "#3178C6" },
-  { label: "Next",       lat: -40,  lon: -60,  color: "#FFFFFF" },
-  { label: "Go",         lat:  20,  lon: -120, color: "#00ADD8" },
-  { label: "Python",     lat:  60,  lon: -30,  color: "#FFD43B" },
-  { label: "AWS",        lat: -55,  lon: 150,  color: "#FF9900" },
-  { label: "Docker",     lat:  10,  lon:  80,  color: "#1EB9F4" },
-  { label: "SQL",        lat: -30,  lon: -150, color: "#E38C00" },
-  { label: "Redis",      lat:  40,  lon: -80,  color: "#FF4438" },
-  { label: "Vue",        lat:  70,  lon:  70,  color: "#42B883" },
-  { label: "K8s",        lat: -10,  lon: -30,  color: "#326CE5" },
-];
+const R = 85;
 
-const SKILL_TAGS = [
-  { label: "React",      bg: "rgba(97,218,251,0.12)",  border: "rgba(97,218,251,0.35)",  text: "#93e4f8" },
-  { label: "Node.js",    bg: "rgba(68,189,50,0.12)",   border: "rgba(68,189,50,0.35)",   text: "#86efac" },
-  { label: "TypeScript", bg: "rgba(49,120,198,0.15)",  border: "rgba(49,120,198,0.4)",   text: "#93c5fd" },
-  { label: "Prisma",     bg: "rgba(200,149,107,0.12)", border: "rgba(200,149,107,0.35)", text: "#d4956a" },
-  { label: "PostgreSQL", bg: "rgba(99,102,241,0.12)",  border: "rgba(99,102,241,0.35)",  text: "#c4b5fd" },
-  { label: "GraphQL",    bg: "rgba(225,0,152,0.10)",   border: "rgba(225,0,152,0.30)",   text: "#f9a8d4" },
-  { label: "Docker",     bg: "rgba(30,160,230,0.12)",  border: "rgba(30,160,230,0.35)",  text: "#7dd3fc" },
-  { label: "Figma",      bg: "rgba(255,120,80,0.12)",  border: "rgba(255,120,80,0.30)",  text: "#fca5a5" },
-];
+// Concentric circle paths for the 3D maze sphere
+const MAZE_PATHS: { p1: { lat: number; lon: number }; p2: { lat: number; lon: number } }[] = [];
 
-const STATS = [
-  { val: "99%",    lbl: "Uptime SLA"   },
-  { val: "<100ms", lbl: "Avg Response" },
-  { val: "4.9★",   lbl: "Client Score" },
-];
+// Let's generate a reproducible maze pattern
+for (let lat = -65; lat <= 65; lat += 13) {
+  const latRad = (lat * Math.PI) / 180;
+  const step = 15; // degrees
+  for (let lon = 0; lon < 360; lon += step) {
+    // Draw horizontal segment
+    if (Math.sin(lat * 3 + lon * 2) > -0.2) {
+      MAZE_PATHS.push({
+        p1: { lat, lon },
+        p2: { lat, lon: lon + step * 0.85 }
+      });
+    }
+    // Draw vertical segment connecting to next latitude
+    if (lat < 65 && Math.sin(lat * 2 + lon * 5) > 0.15) {
+      MAZE_PATHS.push({
+        p1: { lat, lon },
+        p2: { lat: lat + 13, lon }
+      });
+    }
+  }
+}
 
-// ─── Globe helpers ───────────────────────────────────────────────────────────
+// Pre-generate 3D wireframe rings
+const RING_POINTS_1: { x: number; y: number; z: number }[] = [];
+const RING_POINTS_2: { x: number; y: number; z: number }[] = [];
+const ringRadius = R * 1.35;
+for (let theta = 0; theta < 360; theta += 6) {
+  const rad = (theta * Math.PI) / 180;
+  // Ring 1 (tilted on Z)
+  const p1 = { x: ringRadius * Math.cos(rad), y: 0, z: ringRadius * Math.sin(rad) };
+  const tilt1 = (22 * Math.PI) / 180;
+  RING_POINTS_1.push({
+    x: p1.x * Math.cos(tilt1) - p1.y * Math.sin(tilt1),
+    y: p1.x * Math.sin(tilt1) + p1.y * Math.cos(tilt1),
+    z: p1.z
+  });
+  // Ring 2 (tilted other way)
+  const p2 = { x: ringRadius * Math.cos(rad), y: 0, z: ringRadius * Math.sin(rad) };
+  const tilt2 = (-38 * Math.PI) / 180;
+  RING_POINTS_2.push({
+    x: p2.x * Math.cos(tilt2) - p2.y * Math.sin(tilt2),
+    y: p2.x * Math.sin(tilt2) + p2.y * Math.cos(tilt2),
+    z: p2.z
+  });
+}
+
 function latLonTo3D(lat: number, lon: number, r: number) {
-  const phi   = (90 - lat) * (Math.PI / 180);
-  const theta = lon          * (Math.PI / 180);
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = lon * (Math.PI / 180);
   return {
     x: r * Math.sin(phi) * Math.cos(theta),
     y: r * Math.cos(phi),
-    z: r * Math.sin(phi) * Math.sin(theta),
+    z: r * Math.sin(phi) * Math.sin(theta)
   };
 }
 
 function rotatePoint(p: { x: number; y: number; z: number }, rx: number, ry: number) {
   let { x, y, z } = p;
-  const y2 =  y * Math.cos(rx) - z * Math.sin(rx);
-  const z2 =  y * Math.sin(rx) + z * Math.cos(rx);
-  const x2 =  x * Math.cos(ry) + z2 * Math.sin(ry);
+  const y2 = y * Math.cos(rx) - z * Math.sin(rx);
+  const z2 = y * Math.sin(rx) + z * Math.cos(rx);
+  const x2 = x * Math.cos(ry) + z2 * Math.sin(ry);
   const z3 = -x * Math.sin(ry) + z2 * Math.cos(ry);
   return { x: x2, y: y2, z: z3 };
 }
 
-// Pre-build dot grid
-const DOTS: { lat: number; lon: number }[] = [];
-for (let la = -80; la <= 80; la += 18) {
-  const r   = Math.cos((la * Math.PI) / 180);
-  const cnt = Math.max(1, Math.round(r * 20));
-  for (let i = 0; i < cnt; i++) {
-    DOTS.push({ lat: la, lon: (360 / cnt) * i });
+// ─── Interactive 3D Maze Sphere Canvas component ──────────────────────────────
+function FuturisticSphereCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const stateRef  = useRef({ rotY: 0, rotX: 0.15, velX: 0, velY: 0, drag: false, lastX: 0, lastY: 0 });
+  const rafRef    = useRef<number>(0);
+  const W = 360, H = 380;
+  
+  // Bubble particles
+  const bubbles = useRef<Array<{ x: number; y: number; z: number; r: number; speed: number; phase: number }>>([]);
+  if (bubbles.current.length === 0) {
+    for (let i = 0; i < 12; i++) {
+      bubbles.current.push({
+        x: (Math.random() - 0.5) * 120,
+        y: Math.random() * 220 - 110,
+        z: (Math.random() - 0.5) * 120,
+        r: 2.5 + Math.random() * 4.5,
+        speed: 0.4 + Math.random() * 0.7,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
   }
-}
 
-// ─── Interactive Dashboard Mockup component ──────────────────────────────────
-function DashboardMockup() {
-  const [activeTab, setActiveTab] = useState("analytics");
-  const [revenue, setRevenue] = useState(12840);
-  const [chartPeriod, setChartPeriod] = useState("7d");
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const { rotX, rotY } = stateRef.current;
 
-  // Simulate real-time updates
+    ctx.clearRect(0, 0, W, H);
+    
+    const baseX = W / 2;
+    const baseY = H - 45;
+    const radX = 85;
+    const radY = 22;
+    const thickness = 14;
+
+    // Draw bottom cylinder pedestal
+    ctx.beginPath();
+    ctx.ellipse(baseX, baseY + thickness, radX, radY, 0, 0, Math.PI);
+    ctx.lineTo(baseX - radX, baseY);
+    ctx.ellipse(baseX, baseY, radX, radY, 0, Math.PI, 0);
+    ctx.lineTo(baseX + radX, baseY + thickness);
+    ctx.fillStyle = "rgba(220, 220, 220, 0.15)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Draw pedestal top ellipse
+    ctx.beginPath();
+    ctx.ellipse(baseX, baseY, radX, radY, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // Draw glowing emitter core
+    ctx.beginPath();
+    ctx.ellipse(baseX, baseY, radX * 0.7, radY * 0.7, 0, 0, Math.PI * 2);
+    const coreGrad = ctx.createRadialGradient(baseX, baseY, 0, baseX, baseY, radX * 0.7);
+    coreGrad.addColorStop(0, "rgba(200, 149, 107, 0.95)"); // deep orange
+    coreGrad.addColorStop(0.4, "rgba(200, 149, 107, 0.3)");
+    coreGrad.addColorStop(1, "rgba(200, 149, 107, 0)");
+    ctx.fillStyle = coreGrad;
+    ctx.fill();
+
+    // Draw upward light cone
+    const coneHeight = 220;
+    const coneGrad = ctx.createLinearGradient(baseX, baseY, baseX, baseY - coneHeight);
+    coneGrad.addColorStop(0, "rgba(200, 149, 107, 0.2)");
+    coneGrad.addColorStop(1, "rgba(200, 149, 107, 0)");
+    ctx.beginPath();
+    ctx.moveTo(baseX - radX * 0.8, baseY);
+    ctx.lineTo(baseX - radX * 0.4, baseY - coneHeight);
+    ctx.lineTo(baseX + radX * 0.4, baseY - coneHeight);
+    ctx.lineTo(baseX + radX * 0.8, baseY);
+    ctx.closePath();
+    ctx.fillStyle = coneGrad;
+    ctx.fill();
+
+    const sphereX = W / 2;
+    const sphereY = H / 2 - 20;
+
+    // Update and draw floating bubbles (ordered back-to-front by projected Z)
+    const mappedBubbles = bubbles.current.map((b) => {
+      b.y -= b.speed;
+      b.phase += 0.015;
+      const wiggleX = b.x + Math.sin(b.phase) * 12;
+      if (b.y < -160) {
+        b.y = 110;
+        b.x = (Math.random() - 0.5) * 120;
+      }
+      const p3 = { x: wiggleX, y: b.y, z: b.z };
+      const rot = rotatePoint(p3, rotX, rotY);
+      return { rot, r: b.r };
+    }).sort((a, b) => a.rot.z - b.rot.z);
+
+    mappedBubbles.forEach((b) => {
+      const px = sphereX + b.rot.x;
+      const py = sphereY - b.rot.y;
+      const scale = 1.0 + b.rot.z / R;
+      const br = Math.max(1, b.r * scale);
+      
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, br, 0, Math.PI * 2);
+      
+      const bGrad = ctx.createRadialGradient(px - br/3, py - br/3, br/10, px, py, br);
+      bGrad.addColorStop(0, "rgba(255, 255, 255, 0.8)");
+      bGrad.addColorStop(0.3, "rgba(255, 255, 255, 0.2)");
+      bGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+      
+      ctx.fillStyle = bGrad;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // Render 3D Wireframe Rings (draw back segments, z < 0)
+    const drawRingSegments = (points: { x: number; y: number; z: number }[], drawFront: boolean) => {
+      ctx.save();
+      for (let i = 0; i < points.length; i++) {
+        const p1 = points[i];
+        const p2 = points[(i + 1) % points.length];
+        const r1 = rotatePoint(p1, rotX, rotY);
+        const r2 = rotatePoint(p2, rotX, rotY);
+        const avgZ = (r1.z + r2.z) / 2;
+
+        const isFrontSegment = avgZ >= 0;
+        if (isFrontSegment !== drawFront) continue;
+
+        const px1 = sphereX + r1.x;
+        const py1 = sphereY - r1.y;
+        const px2 = sphereX + r2.x;
+        const py2 = sphereY - r2.y;
+
+        const opacity = 0.05 + ((avgZ + ringRadius) / (2 * ringRadius)) * 0.35;
+        ctx.beginPath();
+        ctx.moveTo(px1, py1);
+        ctx.lineTo(px2, py2);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+      ctx.restore();
+    };
+
+    // Draw back of rings
+    drawRingSegments(RING_POINTS_1, false);
+    drawRingSegments(RING_POINTS_2, false);
+
+    // Render 3D Maze Sphere (sort and project paths)
+    const mappedPaths = MAZE_PATHS.map((p) => {
+      const pt1_3d = latLonTo3D(p.p1.lat, p.p1.lon, R);
+      const pt2_3d = latLonTo3D(p.p2.lat, p.p2.lon, R);
+      const r1 = rotatePoint(pt1_3d, rotX, rotY);
+      const r2 = rotatePoint(pt2_3d, rotX, rotY);
+      return { r1, r2, avgZ: (r1.z + r2.z) / 2 };
+    }).sort((a, b) => a.avgZ - b.avgZ);
+
+    mappedPaths.forEach((path) => {
+      const px1 = sphereX + path.r1.x;
+      const py1 = sphereY - path.r1.y;
+      const px2 = sphereX + path.r2.x;
+      const py2 = sphereY - path.r2.y;
+
+      const opacity = 0.03 + ((path.avgZ + R) / (2 * R)) * 0.92;
+      const lw = 0.5 + ((path.avgZ + R) / (2 * R)) * 1.5;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(px1, py1);
+      ctx.lineTo(px2, py2);
+
+      // Highlight colors: pure white for front, soft white for sides
+      ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+      ctx.lineWidth = lw;
+      
+      if (path.avgZ > R * 0.5) {
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = "rgba(255, 255, 255, 0.4)";
+      }
+
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // Draw front of rings (overlaying the sphere)
+    drawRingSegments(RING_POINTS_1, true);
+    drawRingSegments(RING_POINTS_2, true);
+
+  }, [W, H]);
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRevenue(prev => prev + Math.floor(Math.random() * 15) - 5);
-    }, 3000);
-    return () => clearInterval(interval);
+    const loop = () => {
+      const s = stateRef.current;
+      if (!s.drag) {
+        s.rotY += 0.0035 + s.velX * 0.015;
+        s.rotX += s.velY * 0.015;
+        s.velX *= 0.94;
+        s.velY *= 0.94;
+        s.rotX  = Math.max(-0.4, Math.min(0.4, s.rotX));
+      }
+      draw();
+      rafRef.current = requestAnimationFrame(loop);
+    };
+    rafRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [draw]);
+
+  // Handlers
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const s = stateRef.current;
+
+    const onDown = (e: MouseEvent) => { s.drag = true; s.lastX = e.clientX; s.lastY = e.clientY; s.velX = 0; s.velY = 0; };
+    const onMove = (e: MouseEvent) => {
+      if (!s.drag) return;
+      s.velX = (e.clientX - s.lastX) * 0.35;
+      s.velY = (e.clientY - s.lastY) * 0.35;
+      s.rotY += (e.clientX - s.lastX) * 0.005;
+      s.rotX += (e.clientY - s.lastY) * 0.005;
+      s.rotX  = Math.max(-0.4, Math.min(0.4, s.rotX));
+      s.lastX = e.clientX;
+      s.lastY = e.clientY;
+    };
+    const onUp = () => { s.drag = false; };
+
+    const onTouchStart = (e: TouchEvent) => { s.drag = true; s.lastX = e.touches[0].clientX; s.lastY = e.touches[0].clientY; };
+    const onTouchMove  = (e: TouchEvent) => {
+      if (!s.drag) return;
+      s.rotY += (e.touches[0].clientX - s.lastX) * 0.005;
+      s.rotX += (e.touches[0].clientY - s.lastY) * 0.005;
+      s.rotX  = Math.max(-0.4, Math.min(0.4, s.rotX));
+      s.lastX = e.touches[0].clientX;
+      s.lastY = e.touches[0].clientY;
+    };
+
+    canvas.addEventListener("mousedown",   onDown);
+    window.addEventListener("mousemove",   onMove);
+    window.addEventListener("mouseup",     onUp);
+    canvas.addEventListener("touchstart",  onTouchStart, { passive: true });
+    canvas.addEventListener("touchmove",   onTouchMove,  { passive: true });
+    canvas.addEventListener("touchend",    onUp);
+
+    return () => {
+      canvas.removeEventListener("mousedown",   onDown);
+      window.removeEventListener("mousemove",   onMove);
+      window.removeEventListener("mouseup",     onUp);
+      canvas.removeEventListener("touchstart",  onTouchStart);
+      canvas.removeEventListener("touchmove",   onTouchMove);
+      canvas.removeEventListener("touchend",    onUp);
+    };
   }, []);
 
   return (
-    <div className="w-[320px] xs:w-[380px] sm:w-[450px] md:w-[480px] h-[340px] rounded-2xl border border-white/10 bg-neutral-950/70 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col font-sans text-xs text-neutral-300 select-none">
-      {/* Window Header */}
-      <div className="h-10 border-b border-white/5 px-4 flex items-center justify-between bg-neutral-900/40">
-        <div className="flex items-center gap-1.5 flex-shrink-0">
-          <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]" />
-          <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]" />
-          <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]" />
-        </div>
-        <div className="text-[10px] text-neutral-500 font-mono tracking-wider truncate mx-2">Aeropeak Console v1.0.2</div>
-        <div className="flex gap-2 flex-shrink-0">
-          <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] text-[var(--accent)] font-mono">Live</span>
-        </div>
-      </div>
-
-      {/* Main Body */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        <div className="w-14 border-r border-white/5 flex flex-col items-center py-4 gap-4 bg-neutral-950/20">
-          {["home", "analytics", "users", "settings"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                activeTab === tab ? "bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20" : "text-neutral-500 hover:text-neutral-300"
-              }`}
-            >
-              {tab === "home" && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>}
-              {tab === "analytics" && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>}
-              {tab === "users" && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
-              {tab === "settings" && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>}
-            </button>
-          ))}
-        </div>
-
-        {/* Content View */}
-        <div className="flex-1 p-4 sm:p-5 flex flex-col gap-3 sm:gap-4 overflow-y-auto">
-          {/* Header row */}
-          <div className="flex justify-between items-center">
-            <div>
-              <div className="text-neutral-400 font-medium">Performance Console</div>
-              <div className="text-[10px] text-neutral-600">Real-time telemetry and API statistics</div>
-            </div>
-            <div className="flex gap-1 bg-white/5 p-0.5 rounded-lg border border-white/5">
-              {["7d", "30d"].map(p => (
-                <button
-                  key={p}
-                  onClick={() => setChartPeriod(p)}
-                  className={`px-2 py-0.5 rounded-md text-[9px] ${chartPeriod === p ? "bg-[var(--accent)]/20 text-[var(--accent)]" : "text-neutral-500"}`}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Cards row */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            <div className="bg-white/5 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col gap-1">
-              <span className="text-neutral-500 text-[9px] sm:text-[10px]">Monthly Revenue</span>
-              <span className="text-neutral-200 font-bold font-mono text-[11px] sm:text-xs">₹{revenue.toLocaleString()}</span>
-              <span className="text-[9px] text-emerald-500 flex items-center gap-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-                12.4%
-              </span>
-            </div>
-            <div className="bg-white/5 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col gap-1">
-              <span className="text-neutral-500 text-[9px] sm:text-[10px]">Response Speed</span>
-              <span className="text-neutral-200 font-bold font-mono text-[11px] sm:text-xs">92ms</span>
-              <span className="text-[9px] text-emerald-500 flex items-center gap-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-                4.8%
-              </span>
-            </div>
-            <div className="bg-white/5 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col gap-1">
-              <span className="text-neutral-500 text-[9px] sm:text-[10px]">Uptime Rate</span>
-              <span className="text-neutral-200 font-bold font-mono text-[11px] sm:text-xs">99.98%</span>
-              <span className="text-[9px] text-emerald-500 flex items-center gap-0.5">
-                Optimal
-              </span>
-            </div>
-          </div>
-
-          {/* Chart area */}
-          <div className="flex-1 bg-white/[0.02] border border-white/5 rounded-xl p-3 relative overflow-hidden flex flex-col min-h-[90px]">
-            <div className="flex justify-between items-center mb-1.5">
-              <span className="text-neutral-500 text-[9px]">API Requests & Throughput</span>
-              <span className="text-[9px] text-neutral-400 font-mono">Peak: 4.8k req/m</span>
-            </div>
-            
-            {/* SVG Chart */}
-            <div className="flex-1 relative flex items-end">
-              <svg className="w-full h-14 overflow-visible" viewBox="0 0 100 40" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                {/* Fill */}
-                <path
-                  d="M 0,40 L 0,35 Q 10,25 20,28 T 40,15 T 60,18 T 80,10 T 100,5 L 100,40 Z"
-                  fill="url(#chartGlow)"
-                />
-                {/* Stroke */}
-                <motion.path
-                  d="M 0,35 Q 10,25 20,28 T 40,15 T 60,18 T 80,10 T 100,5"
-                  fill="none"
-                  stroke="var(--accent)"
-                  strokeWidth="1.5"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, ease: "easeInOut" }}
-                />
-                {/* Dots on line */}
-                <circle cx="40" cy="15" r="1.5" fill="var(--accent)" />
-                <circle cx="80" cy="10" r="1.5" fill="var(--accent)" />
-                <circle cx="100" cy="5" r="1.5" fill="var(--accent)" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <canvas
+      ref={canvasRef}
+      width={W}
+      height={H}
+      style={{ cursor: "grab" }}
+    />
   );
 }
 
@@ -247,40 +383,30 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", handle);
   }, [mouseX, mouseY]);
 
-  const titleWords = ["Engineering", "Digital", "Excellence"];
+  const titleWords = ["TESTING", "THE", "SOFTWARE", "FOR", "YOUR", "BUSINESS"];
 
   return (
     <section
       ref={ref}
       id="hero"
-      className="relative min-h-screen overflow-hidden flex items-center"
-      style={{ background: "var(--bg)" }}
+      className="relative min-h-screen overflow-hidden flex items-center bg-[#F8F9FA]"
     >
       {/* Grid bg parallax */}
-      <motion.div className="absolute inset-0 grid-bg pointer-events-none" style={{ y: bgY, opacity: 0.6 }} />
+      <motion.div className="absolute inset-0 grid-bg pointer-events-none opacity-40" style={{ y: bgY }} />
 
-      {/* Glowing orbs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <motion.div
-          className="absolute rounded-full"
-          style={{
-            width: 600, height: 600, top: "-10%", left: "-10%",
-            background: "radial-gradient(circle, rgba(200,149,107,0.18) 0%, transparent 65%)",
-            filter: "blur(40px)",
-          }}
-          animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute rounded-full"
-          style={{
-            width: 500, height: 500, bottom: "0%", right: "-5%",
-            background: "radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 65%)",
-            filter: "blur(50px)",
-          }}
-          animate={{ x: [0, -25, 0], y: [0, 20, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        />
+      {/* Split background: dark vertical banner on right */}
+      <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[35%] bg-[#1C1E21] border-l border-white/5 hidden lg:block z-0" />
+
+      {/* Large vertical poster text "PEAK" */}
+      <div 
+        className="absolute right-12 top-1/2 -translate-y-1/2 select-none pointer-events-none font-bold uppercase text-[15vw] leading-none text-white/[0.03] z-0 hidden lg:block"
+        style={{
+          fontFamily: "'Orbitron', sans-serif",
+          writingMode: "vertical-rl",
+          letterSpacing: "0.1em",
+        }}
+      >
+        PEAK
       </div>
 
       <motion.div
@@ -290,59 +416,55 @@ export default function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[85vh]">
 
           {/* ── LEFT: Text ── */}
-          <motion.div style={{ y: textY }} className="flex flex-col justify-center">
+          <motion.div style={{ y: textY }} className="flex flex-col justify-center relative z-10">
+
+            <span className="text-[11px] font-mono text-neutral-400 block mb-4 select-none">01.</span>
 
             {/* Status pill */}
             <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full w-fit mb-8"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(200,149,107,0.4)",
-                backdropFilter: "blur(12px)",
-              }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full w-fit mb-6 border border-neutral-200 bg-neutral-100/50"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.1 }}
             >
-              <span className="w-2 h-2 rounded-full" style={{ background: "#22C55E", boxShadow: "0 0 8px #22C55E" }} />
-              <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>Now Accepting Client Projects</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E67E22] animate-pulse" />
+              <span className="text-[10px] font-mono font-medium text-neutral-600 uppercase tracking-wider">Now Accepting Client Projects</span>
             </motion.div>
 
-            {/* Big title */}
-            <div className="mb-5">
+            {/* Big title stacked vertically */}
+            <div className="mb-6 flex flex-col gap-1">
               {titleWords.map((word, i) => (
                 <div key={word} style={{ overflow: "hidden", display: "block" }}>
-                  <motion.span
-                    className="block font-display font-bold"
+                  <motion.h1
+                    className="block font-bold uppercase"
                     style={{
-                      fontSize: "clamp(3rem, 8vw, 7rem)",
-                      lineHeight: 0.95,
+                      fontSize: "clamp(2.5rem, 6.8vw, 4.8rem)",
+                      lineHeight: 0.9,
                       letterSpacing: "-0.03em",
-                      color: i === 1 ? "transparent" : "var(--text-primary)",
-                      WebkitTextStroke: i === 1 ? "1.5px var(--accent)" : "none",
-                      fontStyle: i === 2 ? "italic" : "normal",
+                      color: word === "BUSINESS" ? "var(--accent)" : "#111111",
+                      fontFamily: "'Space Grotesk', sans-serif",
                     }}
                     initial={{ y: 100 }}
                     animate={{ y: 0 }}
                     transition={{ duration: 0.9, delay: 0.3 + i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
                   >
                     {word}
-                  </motion.span>
+                  </motion.h1>
                 </div>
               ))}
             </div>
 
             {/* Animated role ticker */}
             <motion.div
-              className="flex items-center gap-3 mb-8"
+              className="flex items-center gap-3 mb-6"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             >
-              <div className="w-8 h-px" style={{ background: "var(--accent)" }} />
+              <div className="w-8 h-px bg-neutral-300" />
               <div className="h-7 overflow-hidden relative" style={{ minWidth: "280px" }}>
                 {roles.map((role, i) => (
                   <motion.span
                     key={role}
-                    className="absolute left-0 text-sm font-mono tracking-wide"
+                    className="absolute left-0 text-xs font-mono tracking-wider uppercase"
                     style={{ color: "var(--accent)" }}
                     initial={{ y: 28, opacity: 0 }}
                     animate={{
@@ -359,119 +481,106 @@ export default function Hero() {
 
             {/* Description */}
             <motion.p
-              className="text-base leading-relaxed mb-10 max-w-md"
-              style={{ color: "var(--text-secondary)" }}
+              className="text-sm leading-relaxed mb-8 max-w-md text-neutral-600"
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
               We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design. From SaaS dashboards to enterprise platforms — we build scalable digital systems that businesses trust.
             </motion.p>
 
             {/* CTAs */}
             <motion.div
-              className="flex flex-wrap gap-4 mb-10"
+              className="flex flex-wrap items-center gap-6 mb-10"
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.0 }}
             >
               <a
-                href="#projects"
-                className="group relative flex items-center gap-3 px-7 py-3.5 rounded-full font-medium text-sm overflow-hidden transition-transform duration-300 hover:scale-105"
-                style={{ background: "var(--accent)", color: "#fff" }}
-              >
-                <span>Explore Projects</span>
-                <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>→</motion.span>
-              </a>
-              <a
                 href="#contact"
-                className="flex items-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm transition-all duration-300 hover:scale-105"
+                className="group flex items-center gap-4 pl-6 pr-2.5 py-2.5 rounded-full font-medium text-xs tracking-wider uppercase transition-all duration-300 hover:scale-105 border border-[var(--accent)] shadow-md"
                 style={{
-                  background: "rgba(255,255,255,0.04)",
-                  color: "var(--text-primary)",
-                  border: "1px solid var(--border)",
-                  backdropFilter: "blur(10px)",
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = "var(--border-accent)";
-                  el.style.color = "var(--accent)";
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = "var(--border)";
-                  el.style.color = "var(--text-primary)";
+                  background: "var(--accent)",
+                  color: "#fff",
+                  fontFamily: "'Space Grotesk', sans-serif"
                 }}
               >
-                Request Proposal ↗
+                <span>Get In Touch</span>
+                <span className="w-8 h-8 rounded-full bg-[#111111] flex items-center justify-center text-white transition-transform duration-300 group-hover:rotate-45">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                </span>
               </a>
-            </motion.div>
-
-            {/* Socials */}
-            <motion.div
-              className="flex items-center gap-3"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
-            >
-              <span className="text-xs font-mono uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Follow</span>
-              <div className="w-8 h-px" style={{ background: "var(--border)" }} />
-              {[
-                { icon: Github,   href: "https://github.com/19jayaprakash"   },
-                { icon: Linkedin, href: "https://linkedin.com/in/jayaprakash-r-218968310" },
-              ].map(({ icon: Icon, href }, idx) => (
-                <a
-                  key={idx}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
-                  style={{
-                    background: "rgba(255,255,255,0.05)",
-                    color: "var(--text-muted)",
-                    border: "1px solid var(--border)",
-                    backdropFilter: "blur(8px)",
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLElement;
-                    el.style.color = "var(--accent)";
-                    el.style.borderColor = "var(--border-accent)";
-                    el.style.background = "rgba(200,149,107,0.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLElement;
-                    el.style.color = "var(--text-muted)";
-                    el.style.borderColor = "var(--border)";
-                    el.style.background = "rgba(255,255,255,0.05)";
-                  }}
-                >
-                  <Icon size={15} />
-                </a>
-              ))}
             </motion.div>
           </motion.div>
 
-          {/* ── RIGHT: Interactive Dashboard Mockup Panel ── */}
+          {/* ── RIGHT: Interactive 3D Maze Sphere Panel ── */}
           <motion.div
             style={{ y: imageY }}
-            className="flex items-center justify-center relative w-full lg:w-auto"
+            className="flex items-center justify-center relative w-full lg:w-auto z-10"
           >
             <motion.div
               style={{ rotateX, rotateY, transformPerspective: 1200 }}
               className="relative flex flex-col items-center w-full"
             >
-              {/* Sleek dashboard mockup */}
-              <DashboardMockup />
+              {/* Pedestal & Sphere Canvas */}
+              <FuturisticSphereCanvas />
+
+              {/* Chart glass overlay card */}
+              <motion.div
+                className="absolute top-10 right-4 p-3.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md shadow-lg w-44 pointer-events-none"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.2 }}
+              >
+                <div className="text-[10px] font-mono text-neutral-400 mb-2">Analyzing Signal...</div>
+                <svg className="w-full h-12 overflow-visible" viewBox="0 0 100 40">
+                  <path
+                    d="M0,30 Q15,10 30,25 T60,15 T90,5"
+                    fill="none"
+                    stroke="var(--accent)"
+                    strokeWidth="2"
+                  />
+                  <circle cx="90" cy="5" r="3" fill="var(--accent)" />
+                </svg>
+              </motion.div>
+
+              {/* Telemetry log glass overlay card */}
+              <motion.div
+                className="absolute bottom-10 left-4 p-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md shadow-lg w-48 font-mono text-[9px] text-neutral-400 pointer-events-none"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.4 }}
+              >
+                <div className="flex justify-between border-b border-white/5 pb-1 mb-1 text-[8px] text-amber-500 font-bold">
+                  <span>SYSTEM STATUS</span>
+                  <span>ONLINE</span>
+                </div>
+                <div className="space-y-0.5">
+                  <div>&gt; CORE SPEED: OPTIMAL</div>
+                  <div>&gt; SECURE LAYER: ENABLED</div>
+                  <div>&gt; OPTIMIZATION: 99.9%</div>
+                </div>
+              </motion.div>
+
             </motion.div>
           </motion.div>
         </div>
 
-     
       </motion.div>
+
+      {/* Services down-indicator */}
+      <div className="absolute left-6 md:left-12 bottom-6 z-20 flex items-center gap-2 text-xs font-semibold text-neutral-500 uppercase tracking-widest pointer-events-auto">
+        <a href="#services" className="hover:text-[var(--accent)] transition-colors flex items-center gap-1.5 font-mono">
+          Services <ArrowDown size={12} className="animate-bounce" />
+        </a>
+      </div>
 
       {/* Vertical sidebar label */}
       <div
-        className="absolute right-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-4"
+        className="absolute right-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-4 z-10"
         style={{ writingMode: "vertical-rl" }}
       >
-        <span className="text-xs font-mono tracking-[0.3em] uppercase" style={{ color: "var(--text-muted)", opacity: 0.35 }}>
-          Portfolio · 2026
+        <span className="text-xs font-mono tracking-[0.3em] uppercase text-neutral-500 opacity-60">
+          Aeropeak · 2026
         </span>
-        <div className="w-px h-16" style={{ background: "var(--border)" }} />
+        <div className="w-px h-16 bg-neutral-700" />
       </div>
     </section>
   );

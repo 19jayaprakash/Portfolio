@@ -73,180 +73,144 @@ for (let la = -80; la <= 80; la += 18) {
   }
 }
 
-// ─── Globe canvas component ──────────────────────────────────────────────────
-function GlobeCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const stateRef  = useRef({ rotY: 0, rotX: 0.25, velX: 0, velY: 0, drag: false, lastX: 0, lastY: 0 });
-  const rafRef    = useRef<number>(0);
-  const W = 260, H = 260, R = 108;
+// ─── Interactive Dashboard Mockup component ──────────────────────────────────
+function DashboardMockup() {
+  const [activeTab, setActiveTab] = useState("analytics");
+  const [revenue, setRevenue] = useState(12840);
+  const [chartPeriod, setChartPeriod] = useState("7d");
 
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const { rotX, rotY } = stateRef.current;
-
-    ctx.clearRect(0, 0, W, H);
-
-    // Sphere glow
-    const grd = ctx.createRadialGradient(W / 2 - 25, H / 2 - 25, 10, W / 2, H / 2, R);
-    grd.addColorStop(0,   "rgba(200,149,107,0.07)");
-    grd.addColorStop(0.5, "rgba(99,102,241,0.04)");
-    grd.addColorStop(1,   "rgba(0,0,0,0)");
-    ctx.beginPath();
-    ctx.arc(W / 2, H / 2, R, 0, Math.PI * 2);
-    ctx.fillStyle = grd;
-    ctx.fill();
-    ctx.strokeStyle = "rgba(200,149,107,0.18)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Latitude dots
-    DOTS.forEach((d) => {
-      const p3 = latLonTo3D(d.lat, d.lon, R);
-      const r  = rotatePoint(p3, rotX, rotY);
-      if (r.z < -20) return;
-      const px    = W / 2 + r.x;
-      const py    = H / 2 - r.y;
-      const alpha = 0.12 + ((r.z + R) / (2 * R)) * 0.5;
-      const sz    = 0.7  + ((r.z + R) / (2 * R)) * 1.3;
-      ctx.beginPath();
-      ctx.arc(px, py, sz, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200,149,107,${alpha})`;
-      ctx.fill();
-    });
-
-    // Meridian lines (faint)
-    for (let lon = 0; lon < 360; lon += 60) {
-      ctx.beginPath();
-      let first = true;
-      for (let lat = -80; lat <= 80; lat += 5) {
-        const p3 = latLonTo3D(lat, lon, R);
-        const r  = rotatePoint(p3, rotX, rotY);
-        if (r.z < 0) { first = true; continue; }
-        const px = W / 2 + r.x;
-        const py = H / 2 - r.y;
-        if (first) { ctx.moveTo(px, py); first = false; } else ctx.lineTo(px, py);
-      }
-      ctx.strokeStyle = "rgba(255,255,255,0.04)";
-      ctx.lineWidth   = 0.5;
-      ctx.stroke();
-    }
-
-    // Tech nodes — sort back-to-front
-    const mapped = TECH_NODES.map((t) => {
-      const p3 = latLonTo3D(t.lat, t.lon, R);
-      const rp = rotatePoint(p3, rotX, rotY);
-      return { ...t, rp, px: W / 2 + rp.x, py: H / 2 - rp.y };
-    }).sort((a, b) => a.rp.z - b.rp.z);
-
-    mapped.forEach((t) => {
-      if (t.rp.z < -10) return;
-      const alpha = 0.35 + ((t.rp.z + R) / (2 * R)) * 0.65;
-      const scale = 0.65 + ((t.rp.z + R) / (2 * R)) * 0.5;
-      const nr    = 13 * scale;
-
-      ctx.save();
-      ctx.globalAlpha = alpha;
-
-      // Ring
-      ctx.beginPath();
-      ctx.arc(t.px, t.py, nr, 0, Math.PI * 2);
-      ctx.fillStyle   = t.color + "1A";
-      ctx.fill();
-      ctx.strokeStyle = t.color + "99";
-      ctx.lineWidth   = 0.8;
-      ctx.stroke();
-
-      // Centre dot
-      ctx.beginPath();
-      ctx.arc(t.px, t.py, 2.5 * scale, 0, Math.PI * 2);
-      ctx.fillStyle = t.color;
-      ctx.fill();
-
-      // Label
-      const fs = Math.round(8.5 * scale);
-      ctx.font      = `${fs}px monospace`;
-      ctx.fillStyle = t.color;
-      ctx.textAlign = "center";
-      ctx.fillText(t.label, t.px, t.py + nr + 9 * scale);
-
-      ctx.restore();
-    });
-  }, []);
-
+  // Simulate real-time updates
   useEffect(() => {
-    const loop = () => {
-      const s = stateRef.current;
-      if (!s.drag) {
-        s.rotY += 0.004 + s.velX * 0.018;
-        s.rotX += s.velY * 0.018;
-        s.velX *= 0.93;
-        s.velY *= 0.93;
-        s.rotX  = Math.max(-0.6, Math.min(0.6, s.rotX));
-      }
-      draw();
-      rafRef.current = requestAnimationFrame(loop);
-    };
-    rafRef.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [draw]);
-
-  // Mouse / touch handlers
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const s = stateRef.current;
-
-    const onDown = (e: MouseEvent) => { s.drag = true; s.lastX = e.clientX; s.lastY = e.clientY; s.velX = 0; s.velY = 0; };
-    const onMove = (e: MouseEvent) => {
-      if (!s.drag) return;
-      s.velX = (e.clientX - s.lastX) * 0.45;
-      s.velY = (e.clientY - s.lastY) * 0.45;
-      s.rotY += (e.clientX - s.lastX) * 0.005;
-      s.rotX += (e.clientY - s.lastY) * 0.005;
-      s.rotX  = Math.max(-0.6, Math.min(0.6, s.rotX));
-      s.lastX = e.clientX;
-      s.lastY = e.clientY;
-    };
-    const onUp = () => { s.drag = false; };
-
-    const onTouchStart = (e: TouchEvent) => { s.drag = true; s.lastX = e.touches[0].clientX; s.lastY = e.touches[0].clientY; };
-    const onTouchMove  = (e: TouchEvent) => {
-      if (!s.drag) return;
-      s.rotY += (e.touches[0].clientX - s.lastX) * 0.006;
-      s.rotX += (e.touches[0].clientY - s.lastY) * 0.006;
-      s.rotX  = Math.max(-0.6, Math.min(0.6, s.rotX));
-      s.lastX = e.touches[0].clientX;
-      s.lastY = e.touches[0].clientY;
-    };
-
-    canvas.addEventListener("mousedown",   onDown);
-    window.addEventListener("mousemove",   onMove);
-    window.addEventListener("mouseup",     onUp);
-    canvas.addEventListener("touchstart",  onTouchStart, { passive: true });
-    canvas.addEventListener("touchmove",   onTouchMove,  { passive: true });
-    canvas.addEventListener("touchend",    onUp);
-
-    return () => {
-      canvas.removeEventListener("mousedown",   onDown);
-      window.removeEventListener("mousemove",   onMove);
-      window.removeEventListener("mouseup",     onUp);
-      canvas.removeEventListener("touchstart",  onTouchStart);
-      canvas.removeEventListener("touchmove",   onTouchMove);
-      canvas.removeEventListener("touchend",    onUp);
-    };
+    const interval = setInterval(() => {
+      setRevenue(prev => prev + Math.floor(Math.random() * 15) - 5);
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={W}
-      height={H}
-      className="rounded-full z-10"
-      style={{ cursor: "grab" }}
-    />
+    <div className="w-[320px] xs:w-[380px] sm:w-[450px] md:w-[480px] h-[340px] rounded-2xl border border-white/10 bg-neutral-950/70 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col font-sans text-xs text-neutral-300 select-none">
+      {/* Window Header */}
+      <div className="h-10 border-b border-white/5 px-4 flex items-center justify-between bg-neutral-900/40">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]" />
+          <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]" />
+          <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]" />
+        </div>
+        <div className="text-[10px] text-neutral-500 font-mono tracking-wider truncate mx-2">Aeropeak Console v1.0.2</div>
+        <div className="flex gap-2 flex-shrink-0">
+          <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] text-[var(--accent)] font-mono">Live</span>
+        </div>
+      </div>
+
+      {/* Main Body */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-14 border-r border-white/5 flex flex-col items-center py-4 gap-4 bg-neutral-950/20">
+          {["home", "analytics", "users", "settings"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                activeTab === tab ? "bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20" : "text-neutral-500 hover:text-neutral-300"
+              }`}
+            >
+              {tab === "home" && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>}
+              {tab === "analytics" && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>}
+              {tab === "users" && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+              {tab === "settings" && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>}
+            </button>
+          ))}
+        </div>
+
+        {/* Content View */}
+        <div className="flex-1 p-4 sm:p-5 flex flex-col gap-3 sm:gap-4 overflow-y-auto">
+          {/* Header row */}
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="text-neutral-400 font-medium">Performance Console</div>
+              <div className="text-[10px] text-neutral-600">Real-time telemetry and API statistics</div>
+            </div>
+            <div className="flex gap-1 bg-white/5 p-0.5 rounded-lg border border-white/5">
+              {["7d", "30d"].map(p => (
+                <button
+                  key={p}
+                  onClick={() => setChartPeriod(p)}
+                  className={`px-2 py-0.5 rounded-md text-[9px] ${chartPeriod === p ? "bg-[var(--accent)]/20 text-[var(--accent)]" : "text-neutral-500"}`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Cards row */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="bg-white/5 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col gap-1">
+              <span className="text-neutral-500 text-[9px] sm:text-[10px]">Monthly Revenue</span>
+              <span className="text-neutral-200 font-bold font-mono text-[11px] sm:text-xs">₹{revenue.toLocaleString()}</span>
+              <span className="text-[9px] text-emerald-500 flex items-center gap-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                12.4%
+              </span>
+            </div>
+            <div className="bg-white/5 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col gap-1">
+              <span className="text-neutral-500 text-[9px] sm:text-[10px]">Response Speed</span>
+              <span className="text-neutral-200 font-bold font-mono text-[11px] sm:text-xs">92ms</span>
+              <span className="text-[9px] text-emerald-500 flex items-center gap-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                4.8%
+              </span>
+            </div>
+            <div className="bg-white/5 border border-white/5 rounded-xl p-2.5 sm:p-3 flex flex-col gap-1">
+              <span className="text-neutral-500 text-[9px] sm:text-[10px]">Uptime Rate</span>
+              <span className="text-neutral-200 font-bold font-mono text-[11px] sm:text-xs">99.98%</span>
+              <span className="text-[9px] text-emerald-500 flex items-center gap-0.5">
+                Optimal
+              </span>
+            </div>
+          </div>
+
+          {/* Chart area */}
+          <div className="flex-1 bg-white/[0.02] border border-white/5 rounded-xl p-3 relative overflow-hidden flex flex-col min-h-[90px]">
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-neutral-500 text-[9px]">API Requests & Throughput</span>
+              <span className="text-[9px] text-neutral-400 font-mono">Peak: 4.8k req/m</span>
+            </div>
+            
+            {/* SVG Chart */}
+            <div className="flex-1 relative flex items-end">
+              <svg className="w-full h-14 overflow-visible" viewBox="0 0 100 40" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                {/* Fill */}
+                <path
+                  d="M 0,40 L 0,35 Q 10,25 20,28 T 40,15 T 60,18 T 80,10 T 100,5 L 100,40 Z"
+                  fill="url(#chartGlow)"
+                />
+                {/* Stroke */}
+                <motion.path
+                  d="M 0,35 Q 10,25 20,28 T 40,15 T 60,18 T 80,10 T 100,5"
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeWidth="1.5"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                />
+                {/* Dots on line */}
+                <circle cx="40" cy="15" r="1.5" fill="var(--accent)" />
+                <circle cx="80" cy="10" r="1.5" fill="var(--accent)" />
+                <circle cx="100" cy="5" r="1.5" fill="var(--accent)" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -481,222 +445,17 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* ── RIGHT: 3D Interactive Globe Panel ── */}
+          {/* ── RIGHT: Interactive Dashboard Mockup Panel ── */}
           <motion.div
             style={{ y: imageY }}
-            className="flex items-center justify-center relative"
+            className="flex items-center justify-center relative w-full lg:w-auto"
           >
             <motion.div
               style={{ rotateX, rotateY, transformPerspective: 1200 }}
-              className="relative flex flex-col items-center"
+              className="relative flex flex-col items-center w-full"
             >
-              {/* Globe container with rings */}
-              <div className="relative flex items-center justify-center" style={{ width: 340, height: 340 }}>
-
-                {/* Animated rings */}
-                <motion.div
-                  className="absolute inset-0 rounded-full"
-                  style={{ border: "1px solid rgba(200,149,107,0.22)" }}
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                />
-                <motion.div
-                  className="absolute rounded-full"
-                  style={{ inset: "-14px", border: "1px dashed rgba(99,102,241,0.18)" }}
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                />
-                <motion.div
-                  className="absolute rounded-full"
-                  style={{ inset: "-28px", border: "1px solid rgba(99,102,241,0.09)" }}
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                />
-
-                {/* Outer glow */}
-                <div
-                  className="absolute rounded-full pointer-events-none"
-                  style={{
-                    inset: "-8px",
-                    background: "radial-gradient(circle, rgba(200,149,107,0.10) 0%, transparent 70%)",
-                    filter: "blur(16px)",
-                  }}
-                />
-
-                {/* Canvas globe */}
-                <GlobeCanvas />
-
-                {/* ── Floating chips ── */}
-
-                {/* Top — stack */}
-                <motion.div
-                  className="absolute flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono z-20"
-                  style={{
-                    top: "-20px",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    background: "rgba(99,102,241,0.13)",
-                    border: "1px solid rgba(99,102,241,0.38)",
-                    color: "#a5b4fc",
-                    backdropFilter: "blur(12px)",
-                    boxShadow: "0 4px 20px rgba(99,102,241,0.12)",
-                    whiteSpace: "nowrap",
-                  }}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Code2 size={11} style={{ color: "#a5b4fc", flexShrink: 0 }} />
-                  Web, Mobile & Cloud Systems
-                </motion.div>
-
-                {/* Left — years */}
-                <motion.div
-                  className="absolute flex flex-col items-center rounded-2xl z-20"
-                  style={{
-                    left: "-56px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    padding: "10px 14px",
-                    background: "rgba(200,149,107,0.13)",
-                    border: "1px solid rgba(200,149,107,0.42)",
-                    backdropFilter: "blur(14px)",
-                    boxShadow: "0 4px 24px rgba(200,149,107,0.10)",
-                    textAlign: "center",
-                  }}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.0 }}
-                  whileHover={{ scale: 1.06 }}
-                >
-                  <span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, color: "#c8956b" }}>5+</span>
-                  <span style={{ fontSize: 10, color: "rgba(212,149,106,0.65)", marginTop: 3 }}>Yrs Delivery</span>
-                </motion.div>
-
-                {/* Right — projects */}
-                <motion.div
-                  className="absolute flex flex-col items-center rounded-2xl z-20"
-                  style={{
-                    right: "-56px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    padding: "10px 14px",
-                    background: "rgba(20,184,166,0.10)",
-                    border: "1px solid rgba(20,184,166,0.32)",
-                    backdropFilter: "blur(14px)",
-                    boxShadow: "0 4px 24px rgba(20,184,166,0.08)",
-                    textAlign: "center",
-                  }}
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.2 }}
-                  whileHover={{ scale: 1.06 }}
-                >
-                  <span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, color: "#5eead4" }}>30+</span>
-                  <span style={{ fontSize: 10, color: "rgba(94,234,212,0.65)", marginTop: 3 }}>Deployments</span>
-                </motion.div>
-
-                {/* Bottom — status */}
-                <motion.div
-                  className="absolute flex items-center gap-2 rounded-full text-xs font-mono z-20"
-                  style={{
-                    bottom: "-20px",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    padding: "6px 12px",
-                    background: "rgba(34,197,94,0.10)",
-                    border: "1px solid rgba(34,197,94,0.30)",
-                    color: "#86efac",
-                    backdropFilter: "blur(12px)",
-                    whiteSpace: "nowrap",
-                  }}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.4 }}
-                >
-                  <motion.span
-                    className="rounded-full"
-                    style={{ width: 7, height: 7, background: "#22C55E", boxShadow: "0 0 6px #22C55E", flexShrink: 0, display: "inline-block" }}
-                    animate={{ opacity: [1, 0.4, 1], scale: [1, 0.8, 1] }}
-                    transition={{ duration: 1.8, repeat: Infinity }}
-                  />
-                  Available for Partnerships · 2026
-                </motion.div>
-
-                {/* Animated orbit dots on right edge */}
-                {[...Array(5)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute rounded-full"
-                    style={{
-                      width: 5, height: 5,
-                      background: "var(--accent)",
-                      right: "-2.1rem",
-                      top: `${15 + i * 16}%`,
-                    }}
-                    animate={{ opacity: [0.2, 0.9, 0.2], scale: [0.8, 1.3, 0.8] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.35, ease: "easeInOut" }}
-                  />
-                ))}
-              </div>
-
-              {/* ── Skill tags ── */}
-              <motion.div
-                className="flex flex-wrap justify-center gap-2 mt-12"
-                style={{ maxWidth: 320 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5 }}
-              >
-                {SKILL_TAGS.map((s, i) => (
-                  <motion.span
-                    key={s.label}
-                    className="px-3 py-1 rounded-full text-[11px] font-medium"
-                    style={{
-                      background: s.bg,
-                      border: `1px solid ${s.border}`,
-                      color: s.text,
-                    }}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.6 + i * 0.06 }}
-                    whileHover={{ y: -2, scale: 1.04 }}
-                  >
-                    {s.label}
-                  </motion.span>
-                ))}
-              </motion.div>
-
-              {/* ── Stat cards ── */}
-              <motion.div
-                className="flex gap-3 mt-4 w-full"
-                style={{ maxWidth: 320 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2.1 }}
-              >
-                {STATS.map((s, i) => (
-                  <motion.div
-                    key={s.lbl}
-                    className="flex-1 rounded-xl text-center"
-                    style={{
-                      padding: "10px 8px",
-                      background: "rgba(255,255,255,0.04)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                    }}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 2.2 + i * 0.1 }}
-                    whileHover={{ scale: 1.04 }}
-                  >
-                    <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1, color: "#c8956b" }}>{s.val}</div>
-                    <div style={{ fontSize: 10, marginTop: 4, fontFamily: "monospace", letterSpacing: "0.04em", color: "rgba(255,255,255,0.38)" }}>
-                      {s.lbl}
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
+              {/* Sleek dashboard mockup */}
+              <DashboardMockup />
             </motion.div>
           </motion.div>
         </div>

@@ -10,7 +10,7 @@ const roles = [
   "Digital Product Strategy"
 ];
 
-const R = 85;
+const R = 120;
 
 // Concentric circle paths for the 3D maze sphere
 const MAZE_PATHS: { p1: { lat: number; lon: number }; p2: { lat: number; lon: number } }[] = [];
@@ -85,17 +85,17 @@ function FuturisticSphereCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef  = useRef({ rotY: 0, rotX: 0.15, velX: 0, velY: 0, drag: false, lastX: 0, lastY: 0 });
   const rafRef    = useRef<number>(0);
-  const W = 360, H = 380;
+  const W = 460, H = 480;
   
   // Bubble particles
   const bubbles = useRef<Array<{ x: number; y: number; z: number; r: number; speed: number; phase: number }>>([]);
   if (bubbles.current.length === 0) {
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 15; i++) {
       bubbles.current.push({
-        x: (Math.random() - 0.5) * 120,
-        y: Math.random() * 220 - 110,
-        z: (Math.random() - 0.5) * 120,
-        r: 2.5 + Math.random() * 4.5,
+        x: (Math.random() - 0.5) * 160,
+        y: Math.random() * 260 - 130,
+        z: (Math.random() - 0.5) * 160,
+        r: 2.5 + Math.random() * 5,
         speed: 0.4 + Math.random() * 0.7,
         phase: Math.random() * Math.PI * 2
       });
@@ -112,10 +112,10 @@ function FuturisticSphereCanvas() {
     ctx.clearRect(0, 0, W, H);
     
     const baseX = W / 2;
-    const baseY = H - 45;
-    const radX = 85;
-    const radY = 22;
-    const thickness = 14;
+    const baseY = H - 55;
+    const radX = 120;
+    const radY = 28;
+    const thickness = 16;
 
     // Draw bottom cylinder pedestal
     ctx.beginPath();
@@ -123,18 +123,18 @@ function FuturisticSphereCanvas() {
     ctx.lineTo(baseX - radX, baseY);
     ctx.ellipse(baseX, baseY, radX, radY, 0, Math.PI, 0);
     ctx.lineTo(baseX + radX, baseY + thickness);
-    ctx.fillStyle = "rgba(220, 220, 220, 0.15)";
+    ctx.fillStyle = "rgba(220, 220, 220, 0.12)";
     ctx.fill();
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
     ctx.lineWidth = 1;
     ctx.stroke();
 
     // Draw pedestal top ellipse
     ctx.beginPath();
     ctx.ellipse(baseX, baseY, radX, radY, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
     ctx.fill();
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
     ctx.lineWidth = 1.2;
     ctx.stroke();
 
@@ -149,9 +149,9 @@ function FuturisticSphereCanvas() {
     ctx.fill();
 
     // Draw upward light cone
-    const coneHeight = 220;
+    const coneHeight = 280;
     const coneGrad = ctx.createLinearGradient(baseX, baseY, baseX, baseY - coneHeight);
-    coneGrad.addColorStop(0, "rgba(200, 149, 107, 0.2)");
+    coneGrad.addColorStop(0, "rgba(200, 149, 107, 0.18)");
     coneGrad.addColorStop(1, "rgba(200, 149, 107, 0)");
     ctx.beginPath();
     ctx.moveTo(baseX - radX * 0.8, baseY);
@@ -169,10 +169,10 @@ function FuturisticSphereCanvas() {
     const mappedBubbles = bubbles.current.map((b) => {
       b.y -= b.speed;
       b.phase += 0.015;
-      const wiggleX = b.x + Math.sin(b.phase) * 12;
-      if (b.y < -160) {
-        b.y = 110;
-        b.x = (Math.random() - 0.5) * 120;
+      const wiggleX = b.x + Math.sin(b.phase) * 16;
+      if (b.y < -200) {
+        b.y = 130;
+        b.x = (Math.random() - 0.5) * 160;
       }
       const p3 = { x: wiggleX, y: b.y, z: b.z };
       const rot = rotatePoint(p3, rotX, rotY);
@@ -196,7 +196,7 @@ function FuturisticSphereCanvas() {
       
       ctx.fillStyle = bGrad;
       ctx.fill();
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
       ctx.lineWidth = 0.5;
       ctx.stroke();
       ctx.restore();
@@ -345,7 +345,7 @@ function FuturisticSphereCanvas() {
       ref={canvasRef}
       width={W}
       height={H}
-      style={{ cursor: "grab" }}
+      style={{ cursor: "grab", width: "100%", maxWidth: W, height: "auto" }}
     />
   );
 }
@@ -389,17 +389,17 @@ export default function Hero() {
     <section
       ref={ref}
       id="hero"
-      className="relative min-h-screen overflow-hidden flex items-center bg-[#F8F9FA]"
+      className="relative min-h-screen overflow-hidden flex items-center bg-[#0B0A0A]"
     >
       {/* Grid bg parallax */}
-      <motion.div className="absolute inset-0 grid-bg pointer-events-none opacity-40" style={{ y: bgY }} />
+      <motion.div className="absolute inset-0 grid-bg pointer-events-none opacity-20" style={{ y: bgY }} />
 
       {/* Split background: dark vertical banner on right */}
-      <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[35%] bg-[#1C1E21] border-l border-white/5 hidden lg:block z-0" />
+      <div className="absolute right-0 top-0 bottom-0 w-full lg:w-[35%] bg-[#121212] border-l border-white/5 hidden lg:block z-0" />
 
       {/* Large vertical poster text "PEAK" */}
       <div 
-        className="absolute right-12 top-1/2 -translate-y-1/2 select-none pointer-events-none font-bold uppercase text-[15vw] leading-none text-white/[0.03] z-0 hidden lg:block"
+        className="absolute right-12 top-1/2 -translate-y-1/2 select-none pointer-events-none font-bold uppercase text-[15vw] leading-none text-white/[0.015] z-0 hidden lg:block"
         style={{
           fontFamily: "'Orbitron', sans-serif",
           writingMode: "vertical-rl",
@@ -422,13 +422,13 @@ export default function Hero() {
 
             {/* Status pill */}
             <motion.div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full w-fit mb-6 border border-neutral-200 bg-neutral-100/50"
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full w-fit mb-6 border border-white/10 bg-white/[0.03]"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.1 }}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#E67E22] animate-pulse" />
-              <span className="text-[10px] font-mono font-medium text-neutral-600 uppercase tracking-wider">Now Accepting Client Projects</span>
+              <span className="text-[10px] font-mono font-medium text-neutral-400 uppercase tracking-wider">Now Accepting Client Projects</span>
             </motion.div>
 
             {/* Big title stacked vertically */}
@@ -438,10 +438,10 @@ export default function Hero() {
                   <motion.h1
                     className="block font-bold uppercase"
                     style={{
-                      fontSize: "clamp(2.5rem, 6.8vw, 4.8rem)",
+                      fontSize: "clamp(2rem, 5.2vw, 3.5rem)",
                       lineHeight: 0.9,
                       letterSpacing: "-0.03em",
-                      color: word === "BUSINESS" ? "var(--accent)" : "#111111",
+                      color: word === "BUSINESS" ? "var(--accent)" : "#FFFFFF",
                       fontFamily: "'Space Grotesk', sans-serif",
                     }}
                     initial={{ y: 100 }}
@@ -459,7 +459,7 @@ export default function Hero() {
               className="flex items-center gap-3 mb-6"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             >
-              <div className="w-8 h-px bg-neutral-300" />
+              <div className="w-8 h-px bg-white/10" />
               <div className="h-7 overflow-hidden relative" style={{ minWidth: "280px" }}>
                 {roles.map((role, i) => (
                   <motion.span
@@ -481,7 +481,7 @@ export default function Hero() {
 
             {/* Description */}
             <motion.p
-              className="text-sm leading-relaxed mb-8 max-w-md text-neutral-600"
+              className="text-sm leading-relaxed mb-8 max-w-md text-neutral-400"
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
@@ -566,7 +566,7 @@ export default function Hero() {
       </motion.div>
 
       {/* Services down-indicator */}
-      <div className="absolute left-6 md:left-12 bottom-6 z-20 flex items-center gap-2 text-xs font-semibold text-neutral-500 uppercase tracking-widest pointer-events-auto">
+      <div className="absolute left-6 md:left-12 bottom-6 z-20 flex items-center gap-2 text-xs font-semibold text-neutral-400 uppercase tracking-widest pointer-events-auto">
         <a href="#services" className="hover:text-[var(--accent)] transition-colors flex items-center gap-1.5 font-mono">
           Services <ArrowDown size={12} className="animate-bounce" />
         </a>
@@ -577,7 +577,7 @@ export default function Hero() {
         className="absolute right-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-4 z-10"
         style={{ writingMode: "vertical-rl" }}
       >
-        <span className="text-xs font-mono tracking-[0.3em] uppercase text-neutral-500 opacity-60">
+        <span className="text-xs font-mono tracking-[0.3em] uppercase text-neutral-400 opacity-60">
           Aeropeak · 2026
         </span>
         <div className="w-px h-16 bg-neutral-700" />

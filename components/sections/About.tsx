@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { Code2, Palette, Zap, Globe } from "lucide-react";
 import Image from "next/image";
@@ -18,19 +18,23 @@ const traits = [
   { icon: Globe, label: "Global Ready", desc: "i18n & accessibility first" },
 ];
 
-// 5 photos to cycle through
+// Cycle between the 2 standing cut-out PNG photos
 const photos = [
-  "/images/photo4.jpg",
-  // "/images/photo5.jpg",
-  "/images/photo1.jpg",
-  // "/images/photo2.jpg",
-  // "/images/photo3.jpg",
+  "/images/photo_pose1.png",
+  "/images/photo_pose2.png",
 ];
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: "-100px" });
   const [activePhoto, setActivePhoto] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActivePhoto((prev) => (prev + 1) % photos.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const imageY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
@@ -84,15 +88,19 @@ export default function About() {
                 <motion.div
                   key={src}
                   className="absolute inset-0"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: i === activePhoto ? 1 : 0 }}
-                  transition={{ duration: 0.5 }}
+                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                  animate={{ 
+                    opacity: i === activePhoto ? 1 : 0, 
+                    scale: i === activePhoto ? 1 : 0.95,
+                    y: i === activePhoto ? 0 : 15
+                  }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
                 >
                   <Image
                     src={src}
                     alt={`Profile photo ${i + 1}`}
                     fill
-                    className="object-cover object-top"
+                    className="object-contain object-bottom p-4"
                   />
                 </motion.div>
               ))}

@@ -464,11 +464,11 @@ export default function Hero() {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             >
               <div className="w-8 h-px bg-[var(--accent)]" />
-              <div className="h-7 overflow-hidden relative" style={{ minWidth: "280px" }}>
+              <div className="h-7 overflow-hidden relative" style={{ minWidth: "360px" }}>
                 {roles.map((role, i) => (
                   <motion.span
                     key={role}
-                    className="absolute left-0 text-sm font-mono tracking-wide"
+                    className="absolute left-0 text-sm font-mono tracking-wide whitespace-nowrap"
                     style={{ color: "var(--accent)" }}
                     initial={{ y: 28, opacity: 0 }}
                     animate={{

@@ -30,24 +30,36 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-5 flex items-center justify-between transition-all duration-500"
-      
+        className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 transition-all duration-500 flex items-center justify-between"
+        style={{
+          paddingTop: scrolled ? "12px" : "24px",
+          paddingBottom: scrolled ? "12px" : "24px",
+          background: scrolled ? "color-mix(in srgb, var(--bg) 70%, transparent)" : "transparent",
+          backdropFilter: scrolled ? "blur(16px)" : "none",
+          borderBottom: scrolled ? "1px solid var(--border)" : "none",
+          boxShadow: scrolled ? "0 4px 30px rgba(0, 0, 0, 0.04)" : "none",
+        }}
       >
         {/* Logo */}
         <Link href="/" className="font-display text-3xl font-bold block" style={{ color: "var(--text-primary)" }}>
-            <Image src={logo.src} alt="Logo" width={70} height={70} className="inline-block mr-2" />
-            </Link>
+          <Image src={logo.src} alt="Logo" width={180} height={47} className="inline-block mr-2 object-contain" priority />
+        </Link>
 
         {/* Desktop nav */}
-        <motion.div className="hidden md:flex items-center gap-8 px-4 py-1.5 rounded-full transition-all duration-500"
+        <motion.div className="hidden md:flex items-center gap-8 px-6 py-2 rounded-full transition-all duration-500"
           style={{
-          background: scrolled ? "var(--surface)" : "transparent",
-          borderBottom: scrolled ? "1px solid var(--border)" : "none",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-        }}
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}>
+            background: scrolled 
+              ? "color-mix(in srgb, var(--surface) 20%, transparent)" 
+              : "color-mix(in srgb, var(--surface) 45%, transparent)",
+            border: scrolled
+              ? "1px solid color-mix(in srgb, var(--border) 30%, transparent)"
+              : "1px solid color-mix(in srgb, var(--border) 60%, transparent)",
+            backdropFilter: scrolled ? "none" : "blur(12px)",
+          }}
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
           {navLinks.map((link) => (
             <Link
               key={link.href}

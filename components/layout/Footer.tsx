@@ -62,7 +62,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <a href="#" className="font-display text-3xl font-bold mb-4 block" style={{ color: "var(--text-primary)" }}>
-            <Image src={logo.src} alt="Logo" width={200} height={90} className="inline-block mr-2" />
+            <Image src={logo.src} alt="Logo" width={200} height={52} className="inline-block mr-2 object-contain" />
             </a>
             <p
               className="text-sm leading-relaxed mb-6 max-w-xs"

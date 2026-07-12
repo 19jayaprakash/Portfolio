@@ -3,7 +3,12 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { ArrowDown, Github, Linkedin, Twitter, Code2 } from "lucide-react";
 
-const roles = ["Full-Stack Developer", "UI/UX Designer", "React Specialist", "Creative Technologist"];
+const roles = [
+  "Custom Software Development",
+  "Enterprise Web Applications",
+  "High-Performance Cloud Architecture",
+  "Digital Product Strategy"
+];
 
 // ─── Globe config ───────────────────────────────────────────────────────────
 const TECH_NODES = [
@@ -278,7 +283,7 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", handle);
   }, [mouseX, mouseY]);
 
-  const titleWords = ["Crafting", "Digital", "Experiences"];
+  const titleWords = ["Engineering", "Digital", "Excellence"];
 
   return (
     <section
@@ -336,8 +341,7 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.1 }}
             >
               <span className="w-2 h-2 rounded-full" style={{ background: "#22C55E", boxShadow: "0 0 8px #22C55E" }} />
-              <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>Open to opportunities</span>
-              {/* <span className="text-xs font-mono" style={{ color: "var(--accent)" }}>— 2026</span> */}
+              <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>Now Accepting Client Projects</span>
             </motion.div>
 
             {/* Big title */}
@@ -395,9 +399,7 @@ export default function Hero() {
               style={{ color: "var(--text-secondary)" }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
             >
-              I build fast, beautiful web applications with a sharp eye for design.
-              From SaaS dashboards to e-commerce storefronts — I ship products that
-              users love and businesses rely on.
+              We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design. From SaaS dashboards to enterprise platforms — we build scalable digital systems that businesses trust.
             </motion.p>
 
             {/* CTAs */}
@@ -410,7 +412,7 @@ export default function Hero() {
                 className="group relative flex items-center gap-3 px-7 py-3.5 rounded-full font-medium text-sm overflow-hidden transition-transform duration-300 hover:scale-105"
                 style={{ background: "var(--accent)", color: "#fff" }}
               >
-                <span>View My Work</span>
+                <span>Explore Projects</span>
                 <motion.span animate={{ x: [0, 4, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>→</motion.span>
               </a>
               <a
@@ -433,7 +435,7 @@ export default function Hero() {
                   el.style.color = "var(--text-primary)";
                 }}
               >
-                Let&apos;s Talk ↗
+                Request Proposal ↗
               </a>
             </motion.div>
 
@@ -546,7 +548,7 @@ export default function Hero() {
                   whileHover={{ scale: 1.05 }}
                 >
                   <Code2 size={11} style={{ color: "#a5b4fc", flexShrink: 0 }} />
-                  Next.js · TypeScript · Tailwind
+                  Web, Mobile & Cloud Systems
                 </motion.div>
 
                 {/* Left — years */}
@@ -568,8 +570,8 @@ export default function Hero() {
                   transition={{ delay: 1.0 }}
                   whileHover={{ scale: 1.06 }}
                 >
-                  <span style={{ fontSize: 22, fontWeight: 700, lineHeight: 1, color: "#c8956b" }}>2+</span>
-                  <span style={{ fontSize: 10, color: "rgba(212,149,106,0.65)", marginTop: 3 }}>Yrs</span>
+                  <span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, color: "#c8956b" }}>5+</span>
+                  <span style={{ fontSize: 10, color: "rgba(212,149,106,0.65)", marginTop: 3 }}>Yrs Delivery</span>
                 </motion.div>
 
                 {/* Right — projects */}
@@ -591,8 +593,8 @@ export default function Hero() {
                   transition={{ delay: 1.2 }}
                   whileHover={{ scale: 1.06 }}
                 >
-                  <span style={{ fontSize: 22, fontWeight: 700, lineHeight: 1, color: "#5eead4" }}>10+</span>
-                  <span style={{ fontSize: 10, color: "rgba(94,234,212,0.65)", marginTop: 3 }}>Projects</span>
+                  <span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, color: "#5eead4" }}>30+</span>
+                  <span style={{ fontSize: 10, color: "rgba(94,234,212,0.65)", marginTop: 3 }}>Deployments</span>
                 </motion.div>
 
                 {/* Bottom — status */}
@@ -619,7 +621,7 @@ export default function Hero() {
                     animate={{ opacity: [1, 0.4, 1], scale: [1, 0.8, 1] }}
                     transition={{ duration: 1.8, repeat: Infinity }}
                   />
-                  Open to work · 2026
+                  Available for Partnerships · 2026
                 </motion.div>
 
                 {/* Animated orbit dots on right edge */}

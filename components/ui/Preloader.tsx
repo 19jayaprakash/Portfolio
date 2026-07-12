@@ -96,12 +96,12 @@ export default function Preloader() {
                 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-[0.15em] uppercase select-none filter drop-shadow-[0_0_20px_rgba(200,149,107,0.15)]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Jayaprakash R
+                Aeropeak
               </h2>
               
               <div className="flex items-center justify-center gap-2 text-[10px] font-mono tracking-[0.4em] uppercase text-amber-500/80">
                 <span className="w-1 h-1 rounded-full bg-amber-500 animate-ping" />
-                <span>Crafting Digital Experiences</span>
+                <span>Engineering Digital Excellence</span>
               </div>
             </motion.div>
           </div>

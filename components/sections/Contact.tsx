@@ -18,7 +18,7 @@ export default function Contact() {
     availability: "Mon-Fri, 9AM-6PM IST",
     title1: "Lets build",
     title2: "something great",
-    description: "Have a project in mind or want to discuss opportunities? I am always open to new challenges and interesting work. Lets connect!",
+    description: "Have a project in mind or want to discuss opportunities? We are always open to new challenges and interesting work. Let's connect!",
     services: ["Full-Stack Web App", "UI/UX Design", "Mobile App", "E-Commerce", "Design System"]
   });
 

@@ -11,9 +11,9 @@ export default function Testimonials() {
   const [direction, setDirection] = useState(0);
 
   const defaultTestimonials = [
-    { id: 1, name: "Sarah Chen", role: "CTO", company: "TechStart Inc", project: "SaaS Dashboard", text: "Jayaprakash delivered exceptional work on our dashboard. His attention to detail and problem-solving skills are outstanding.", avatar: "SC", avatarColor: "#EC4899", rating: 5 },
-    { id: 2, name: "Michael Park", role: "Product Manager", company: "InnovateCo", project: "Mobile App", text: "Working with Jayaprakash was a great experience. He understood our vision and brought it to life perfectly.", avatar: "MP", avatarColor: "#6366F1", rating: 5 },
-    { id: 3, name: "Emily Rodriguez", role: "Founder", company: "DesignHub", project: "E-Commerce Platform", text: "Incredible developer with a keen eye for design. Our e-commerce platform exceeded all expectations.", avatar: "ER", avatarColor: "#14B8A6", rating: 5 }
+    { id: 1, name: "Sarah Chen", role: "CTO", company: "TechStart Inc", project: "SaaS Dashboard", text: "Aeropeak delivered exceptional work on our dashboard. Their attention to detail and problem-solving skills are outstanding.", avatar: "SC", avatarColor: "#EC4899", rating: 5 },
+    { id: 2, name: "Michael Park", role: "Product Manager", company: "InnovateCo", project: "Mobile App", text: "Working with the Aeropeak team was a great experience. They understood our vision and brought it to life perfectly.", avatar: "MP", avatarColor: "#6366F1", rating: 5 },
+    { id: 3, name: "Emily Rodriguez", role: "Founder", company: "DesignHub", project: "E-Commerce Platform", text: "Incredible development agency with a keen eye for design. Our e-commerce platform exceeded all expectations.", avatar: "ER", avatarColor: "#14B8A6", rating: 5 }
   ];
 
   const [testimonials, setTestimonials] = useState<any[]>(defaultTestimonials);

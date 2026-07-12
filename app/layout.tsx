@@ -6,10 +6,10 @@ import SmoothScroll from "@/components/ui/SmoothScroll";
 import Preloader from "@/components/ui/Preloader";
 
 export const metadata: Metadata = {
-  title: "Software Developer",
-  description: "Full-stack developer & creative technologist",
+  title: "Aeropeak Technologies | Next-Gen Software Engineering",
+  description: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.",
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='Arial' font-weight='bold' fill='%234F46E5'>JP</text></svg>",
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23C8956B' opacity='0.15'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='60' font-family='sans-serif' font-weight='bold' fill='%23C8956B'>A</text></svg>",
   },
 };
 

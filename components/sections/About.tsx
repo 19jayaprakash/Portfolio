@@ -18,10 +18,10 @@ const traits = [
   { icon: Globe, label: "Global Ready", desc: "i18n & accessibility first" },
 ];
 
-// Cycle between the 2 standing cut-out PNG photos
+// Cycle between the original profile photos
 const photos = [
-  "/images/photo_pose1.png",
-  "/images/photo_pose2.png",
+  "/images/photo4.jpg",
+  "/images/photo1.jpg",
 ];
 
 export default function About() {
@@ -67,7 +67,7 @@ export default function About() {
       </motion.div>
 
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-        {/* LEFT: Photo collage with glass effects */}
+        {/* LEFT: Photo collage */}
         <motion.div style={{ y: imageY }} className="relative">
           <motion.div
             className="relative"
@@ -100,7 +100,7 @@ export default function About() {
                     src={src}
                     alt={`Profile photo ${i + 1}`}
                     fill
-                    className="object-contain object-bottom p-4"
+                    className="object-cover object-top"
                   />
                 </motion.div>
               ))}
@@ -126,40 +126,6 @@ export default function About() {
                 />
               ))}
             </div>
-
-            {/* Floating glass exp badge */}
-            <motion.div
-              className="absolute -bottom-6 -right-4 px-5 py-4 rounded-2xl"
-              style={{
-                background: "rgba(255,255,255,0.07)",
-                backdropFilter: "blur(20px)",
-                border: "1px solid rgba(200,149,107,0.4)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.25)",
-              }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <div className="font-display text-3xl font-bold" style={{ color: "var(--accent)" }}>2+</div>
-              <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Years Experience</div>
-            </motion.div>
-
-            {/* Floating glass stack badge */}
-            <motion.div
-              className="absolute -top-4 -left-4 px-4 py-3 rounded-2xl"
-              style={{
-                background: "rgba(99,102,241,0.1)",
-                backdropFilter: "blur(20px)",
-                border: "1px solid rgba(99,102,241,0.35)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.2)",
-              }}
-              initial={{ opacity: 0, x: -20 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
-              <div className="text-xs font-mono" style={{ color: "#A78BFA" }}>React · Node.js</div>
-              <div className="text-xs font-mono" style={{ color: "rgba(255,255,255,0.4)" }}>Full-Stack</div>
-            </motion.div>
 
             {/* Dot grid decoration */}
             <div

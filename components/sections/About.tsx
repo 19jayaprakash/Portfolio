@@ -77,10 +77,9 @@ export default function About() {
           >
             {/* Main large photo */}
             <div
-              className="relative w-full max-w-sm mx-auto rounded-3xl overflow-hidden"
+              className="relative w-full max-w-[430px] mx-auto rounded-3xl overflow-hidden"
               style={{
                 aspectRatio: "3/4",
-                border: "1px solid rgba(200,149,107,0.25)",
                 boxShadow: "0 40px 80px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)",
               }}
             >
@@ -100,7 +99,7 @@ export default function About() {
                     src={src}
                     alt={`Profile photo ${i + 1}`}
                     fill
-                    className="object-contain object-bottom p-2"
+                    className="object-contain object-bottom"
                   />
                 </motion.div>
               ))}

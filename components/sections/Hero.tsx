@@ -437,12 +437,12 @@ export default function Hero() {
             {/* Big title */}
             <div className="mb-5">
               {titleWords.map((word, i) => (
-                <div key={word} style={{ overflow: "hidden", display: "block" }}>
+                <div key={word} style={{ overflow: "hidden", display: "block", paddingBottom: "0.15em" }}>
                   <motion.span
                     className="block font-display font-bold"
                     style={{
                       fontSize: "clamp(2.8rem, 6.5vw, 5rem)",
-                      lineHeight: 0.95,
+                      lineHeight: 1.08,
                       letterSpacing: "-0.03em",
                       color: i === 1 ? "transparent" : "var(--text-primary)",
                       WebkitTextStroke: i === 1 ? "1.5px var(--accent)" : "none",

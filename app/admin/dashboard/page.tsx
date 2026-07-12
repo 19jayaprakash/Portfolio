@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { 
   LogOut, Save, CheckCircle, Sparkles, DollarSign,
   User, BarChart3, FolderOpen, BookOpen, MessageSquare,
-  Briefcase, Grid, Mail, Plus, Trash2, Image as ImageIcon, Edit2, Check, AlertTriangle
+  Briefcase, Grid, Mail, Plus, Trash2, Image as ImageIcon, Edit2, Check, AlertTriangle, Eye
 } from "lucide-react";
 import { defaultPortfolioData } from "@/lib/portfolio-data";
 
@@ -435,6 +435,7 @@ export default function AdminDashboard() {
     { id: "testimonials", label: "Testimonials", icon: MessageSquare },
     { id: "freelance", label: "Freelance", icon: Briefcase },
     { id: "contact", label: "Contact", icon: Mail },
+    { id: "visibility", label: "Section Status", icon: Eye },
   ];
 
   return (
@@ -973,6 +974,61 @@ export default function AdminDashboard() {
                 <InputField label="Footer Header Part 2" value={data.contact.title2} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title2: v } })} />
                 <InputField label="Call-To-Action Description" value={data.contact.description} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, description: v } })} multiline />
                 <CommaSeparatedInput label="Services items list (comma-separated)" value={data.contact.services} onChange={(v) => setData({ ...data, contact: { ...data.contact, services: v } })} />
+              </div>
+            </div>
+          )}
+
+          {/* Section Visibility Tab */}
+          {activeTab === "visibility" && (
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
+              <div>
+                <h2 className="text-xl font-bold font-display text-white">Landing Page Section Status</h2>
+                <p className="text-xs text-neutral-400 mt-1">Activate or deactivate specific sections of your main landing page dynamically.</p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                {[
+                  { key: "hero", label: "Hero Banner" },
+                  { key: "marquee", label: "Scrolling Ticker Bar" },
+                  { key: "about", label: "About Agency Section" },
+                  { key: "stats", label: "Performance Metrics strip" },
+                  { key: "services", label: "Services Offerings Grid" },
+                  { key: "studies", label: "Case Studies / Education" },
+                  { key: "projects", label: "Featured Projects Showcases" },
+                  { key: "freelance", label: "Freelance Projects Section" },
+                  { key: "pricing", label: "Pricing & Quotation Plans" },
+                  { key: "testimonials", label: "Client Testimonials Slider" },
+                  { key: "contact", label: "Contact & Lead Form Panel" },
+                ].map(({ key, label }) => {
+                  const visibilityState = data.sectionVisibility || {};
+                  const isSectionActive = visibilityState[key] !== false;
+                  
+                  const handleToggle = () => {
+                    const nextVisibility = {
+                      ...visibilityState,
+                      [key]: !isSectionActive
+                    };
+                    setData({
+                      ...data,
+                      sectionVisibility: nextVisibility
+                    });
+                  };
+
+                  return (
+                    <div key={key} className="flex items-center justify-between p-4 rounded-2xl border border-white/5 bg-neutral-900/40">
+                      <span className="text-xs font-mono uppercase tracking-widest text-neutral-300">{label}</span>
+                      <button
+                        onClick={handleToggle}
+                        className={`px-4 py-2 rounded-full text-xs font-bold font-mono transition-all duration-300 hover:scale-105 active:scale-95 ${
+                          isSectionActive 
+                            ? "bg-emerald-500 hover:bg-emerald-400 text-neutral-950" 
+                            : "bg-neutral-800 hover:bg-neutral-700 text-neutral-400"
+                        }`}
+                      >
+                        {isSectionActive ? "ACTIVE" : "INACTIVE"}
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

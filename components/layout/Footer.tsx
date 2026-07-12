@@ -53,7 +53,7 @@ export default function Footer() {
           letterSpacing: "-0.04em",
         }}
       >
-        PORTFOLIO
+        AEROPEAK
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -68,8 +68,7 @@ export default function Footer() {
               className="text-sm leading-relaxed mb-6 max-w-xs"
               style={{ color: "var(--text-secondary)" }}
             >
-              Full-stack developer & creative technologist based in Coimbatore, Tamil Nadu.
-              Building digital experiences that matter.
+              Next-generation software development and digital engineering agency based in Coimbatore, Tamil Nadu. Building digital experiences that scale.
             </p>
             <div className="flex gap-3">
               {socials.map(({ icon: Icon, href, label }) => (

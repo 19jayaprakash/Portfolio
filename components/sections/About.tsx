@@ -163,7 +163,7 @@ export default function About() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.35 }}
           >
-            We are a team of expert engineers, designers, and digital strategists dedicated to crafting high-performance digital products. We bridge creative design and cutting-edge engineering — creating products that are beautiful, intuitive, and built to scale.
+            Led by CEO <span className="font-semibold text-white">Jayaprakash</span>, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.
           </motion.p>
 
           <motion.p

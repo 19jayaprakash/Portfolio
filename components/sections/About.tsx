@@ -71,6 +71,25 @@ export default function About() {
   const imageY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
 
+  const renderTitle = () => {
+    const title = (aboutData.title || "").trim();
+    const keyword = "digital reality";
+    const lowerTitle = title.toLowerCase();
+    const index = lowerTitle.lastIndexOf(keyword);
+
+    if (index !== -1) {
+      const firstPart = title.substring(0, index);
+      const highlightedPart = title.substring(index);
+      return (
+        <>
+          {firstPart}
+          <em style={{ color: "var(--accent)" }}>{highlightedPart}</em>
+        </>
+      );
+    }
+    return title;
+  };
+
   return (
     <section
       id="about"
@@ -182,14 +201,7 @@ export default function About() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            {aboutData.title.endsWith("digital reality") ? (
-              <>
-                {aboutData.title.substring(0, aboutData.title.length - 15)}{" "}
-                <em style={{ color: "var(--accent)" }}>digital reality</em>
-              </>
-            ) : (
-              aboutData.title
-            )}
+            {renderTitle()}
           </motion.h2>
 
           <motion.p

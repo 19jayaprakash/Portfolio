@@ -31,8 +31,8 @@ export default function About() {
   const [activePhoto, setActivePhoto] = useState(0);
   
   const [aboutData, setAboutData] = useState<any>({
-    title: "Turning ideas into digital reality",
-    ceoName: "Jayaprakash R",
+    title: "Turning ideas into",
+    titleEmphasis: "digital reality",
     description1: "Led by CEO Jayaprakash R, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
     description2: "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
   });
@@ -43,8 +43,8 @@ export default function About() {
       .then(result => {
         if (result.data && result.data.about) {
           setAboutData({
-            title: result.data.about.title || "Turning ideas into digital reality",
-            ceoName: result.data.about.ceoName || "Jayaprakash R",
+            title: result.data.about.title || "Turning ideas into",
+            titleEmphasis: result.data.about.titleEmphasis || "digital reality",
             description1: result.data.about.description1 || "Led by CEO Jayaprakash R, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
             description2: result.data.about.description2 || "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
           });
@@ -72,22 +72,14 @@ export default function About() {
   const textY = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
 
   const renderTitle = () => {
-    const title = (aboutData.title || "").trim();
-    const keyword = "digital reality";
-    const lowerTitle = title.toLowerCase();
-    const index = lowerTitle.lastIndexOf(keyword);
-
-    if (index !== -1) {
-      const firstPart = title.substring(0, index);
-      const highlightedPart = title.substring(index);
-      return (
-        <>
-          {firstPart}
-          <em style={{ color: "var(--accent)" }}>{highlightedPart}</em>
-        </>
-      );
-    }
-    return title;
+    return (
+      <>
+        {aboutData.title}{" "}
+        {aboutData.titleEmphasis && (
+          <em style={{ color: "var(--accent)" }}>{aboutData.titleEmphasis}</em>
+        )}
+      </>
+    );
   };
 
   return (

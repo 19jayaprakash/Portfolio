@@ -563,7 +563,7 @@ export default function AdminDashboard() {
               </div>
               <div className="space-y-5">
                 <InputField label="About Title" value={data.about.title} onChange={(v: any) => updateAbout("title", v)} />
-                <InputField label="CEO Name" value={data.about.ceoName} onChange={(v: any) => updateAbout("ceoName", v)} />
+                <InputField label="Title Highlight (e.g. digital reality)" value={data.about.titleEmphasis} onChange={(v: any) => updateAbout("titleEmphasis", v)} />
                 <InputField label="Description Paragraph 1" value={data.about.description1} onChange={(v: any) => updateAbout("description1", v)} multiline />
                 <InputField label="Description Paragraph 2" value={data.about.description2} onChange={(v: any) => updateAbout("description2", v)} multiline />
               </div>

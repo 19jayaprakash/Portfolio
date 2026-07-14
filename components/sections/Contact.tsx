@@ -42,41 +42,29 @@ export default function Contact() {
   // Auto-refresh when admin updates data
   useDataRefresh(fetchData);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    try {
-      const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("email", form.email);
-      formData.append("message", form.message);
-      formData.append("service", selectedService || "Not specified");
+    // Format the WhatsApp message text
+    const formattedMessage = `*New Portfolio Contact Message* 🚀\n\n` +
+      `*Name:* ${form.name}\n` +
+      `*Email:* ${form.email}\n` +
+      `*Service:* ${selectedService || "Not specified"}\n\n` +
+      `*Message:*\n${form.message}`;
 
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        body: formData,
-      });
+    // Target your WhatsApp number 8300074144
+    const whatsappUrl = `https://wa.me/918300074144?text=${encodeURIComponent(formattedMessage)}`;
 
-      const result = await response.json();
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, "_blank");
 
-      if (response.ok && result.success) {
-        setSubmitted(true);
-        // Auto-reset form after 3 seconds
-        setTimeout(() => {
-          setSubmitted(false);
-          setForm({ name: "", email: "", message: "" });
-          setSelectedService("");
-        }, 3000);
-      } else {
-        alert(result.message || "Failed to send message. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error submitting contact form:", error);
-      alert("Failed to send message. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Show success feedback on website
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setForm({ name: "", email: "", message: "" });
+      setSelectedService("");
+    }, 3000);
   };
 
   return (

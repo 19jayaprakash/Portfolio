@@ -307,7 +307,7 @@ export default function Contact() {
                   <input
                     id="phone"
                     type="tel"
-                    placeholder="+91 83000 74144"
+                    placeholder="9876543210"
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}

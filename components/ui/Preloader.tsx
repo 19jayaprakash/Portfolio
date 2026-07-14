@@ -72,7 +72,7 @@ export default function Preloader() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              JP © PORTFOLIO
+              AEROPEAK © 2026
             </motion.span>
             <motion.span 
               className="font-mono text-[10px] tracking-[0.3em] uppercase text-neutral-500"

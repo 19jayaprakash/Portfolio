@@ -42,30 +42,42 @@ export default function Contact() {
   // Auto-refresh when admin updates data
   useDataRefresh(fetchData);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    // Format the WhatsApp message text
-    const formattedMessage = `*New Portfolio Contact Message* 🚀\n\n` +
-      `*Name:* ${form.name}\n` +
-      `*Email:* ${form.email}\n` +
-      `*WhatsApp:* ${form.phone}\n` +
-      `*Service:* ${selectedService || "Not specified"}\n\n` +
-      `*Message:*\n${form.message}`;
+    try {
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("phone", form.phone);
+      formData.append("message", form.message);
+      formData.append("service", selectedService || "Not specified");
 
-    // Target your WhatsApp number 8300074144
-    const whatsappUrl = `https://wa.me/918300074144?text=${encodeURIComponent(formattedMessage)}`;
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        body: formData,
+      });
 
-    // Open WhatsApp in a new tab
-    window.open(whatsappUrl, "_blank");
+      const result = await response.json();
 
-    // Show success feedback on website
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setForm({ name: "", email: "", phone: "", message: "" });
-      setSelectedService("");
-    }, 3000);
+      if (response.ok && result.success) {
+        setSubmitted(true);
+        // Auto-reset form after 3 seconds
+        setTimeout(() => {
+          setSubmitted(false);
+          setForm({ name: "", email: "", phone: "", message: "" });
+          setSelectedService("");
+        }, 3000);
+      } else {
+        alert(result.message || "Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
     
     const name = formData.get('name') as string;
     const email = formData.get('email') as string;
+    const phone = formData.get('phone') as string;
     const message = formData.get('message') as string;
     const service = formData.get('service') as string;
     const file = formData.get('file') as File | null;
@@ -43,6 +44,7 @@ export async function POST(request: NextRequest) {
       <h2>New Contact Form Submission</h2>
       <p><strong>Name:</strong> ${name}</p>
       <p><strong>Email:</strong> ${email}</p>
+      <p><strong>WhatsApp / Phone:</strong> ${phone || 'Not specified'}</p>
       <p><strong>Service:</strong> ${service || 'Not specified'}</p>
       <p><strong>Message:</strong></p>
       <p>${message.replace(/\n/g, '<br>')}</p>

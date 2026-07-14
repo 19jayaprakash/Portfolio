@@ -1,8 +1,9 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { Code2, Palette, Zap, Globe } from "lucide-react";
 import Image from "next/image";
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
 const skills = [
   { category: "Frontend", items: ["React", "Next.js", "TypeScript", "Tailwind", "Framer Motion"] },
@@ -28,6 +29,36 @@ export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: "-100px" });
   const [activePhoto, setActivePhoto] = useState(0);
+  
+  const [aboutData, setAboutData] = useState<any>({
+    title: "Turning ideas into digital reality",
+    ceoName: "Jayaprakash R",
+    description1: "Led by CEO Jayaprakash R, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
+    description2: "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
+  });
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.about) {
+          setAboutData({
+            title: result.data.about.title || "Turning ideas into digital reality",
+            ceoName: result.data.about.ceoName || "Jayaprakash R",
+            description1: result.data.about.description1 || "Led by CEO Jayaprakash R, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
+            description2: result.data.about.description2 || "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
+          });
+        }
+      })
+      .catch(err => console.error("Error fetching about data:", err));
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -151,8 +182,14 @@ export default function About() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Turning ideas into{" "}
-            <em style={{ color: "var(--accent)" }}>digital reality</em>
+            {aboutData.title.endsWith("digital reality") ? (
+              <>
+                {aboutData.title.substring(0, aboutData.title.length - 15)}{" "}
+                <em style={{ color: "var(--accent)" }}>digital reality</em>
+              </>
+            ) : (
+              aboutData.title
+            )}
           </motion.h2>
 
           <motion.p
@@ -162,7 +199,7 @@ export default function About() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.35 }}
           >
-            Led by CEO <span className="font-semibold text-white">Jayaprakash</span>, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.
+            {aboutData.description1}
           </motion.p>
 
           <motion.p
@@ -172,7 +209,7 @@ export default function About() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.45 }}
           >
-            Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth.
+            {aboutData.description2}
           </motion.p>
 
           {/* Traits — glass style */}

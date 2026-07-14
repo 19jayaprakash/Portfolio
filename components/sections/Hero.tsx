@@ -503,7 +503,7 @@ export default function Hero() {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             >
               <div className="w-8 h-px bg-[var(--accent)]" />
-              <div className="h-7 overflow-hidden relative" style={{ minWidth: "360px" }}>
+              <div className="h-7 overflow-hidden relative" style={{ minWidth: "220px" }}>
                 {heroData.roles.map((role: string, i: number) => (
                   <motion.span
                     key={role + i}
@@ -533,12 +533,12 @@ export default function Hero() {
 
             {/* CTAs */}
             <motion.div
-              className="flex flex-wrap gap-4 mb-10"
+              className="flex flex-col sm:flex-row gap-4 mb-10 w-full sm:w-auto"
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.0 }}
             >
               <a
                 href="#projects"
-                className="group relative flex items-center gap-3 px-7 py-3.5 rounded-full font-medium text-sm overflow-hidden transition-transform duration-300 hover:scale-105"
+                className="group relative flex items-center justify-center gap-3 px-7 py-3.5 rounded-full font-medium text-sm overflow-hidden transition-transform duration-300 hover:scale-105 w-full sm:w-auto"
                 style={{ background: "var(--accent)", color: "#fff" }}
               >
                 <span>Explore Projects</span>
@@ -546,7 +546,7 @@ export default function Hero() {
               </a>
               <a
                 href="#contact"
-                className="flex items-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm transition-all duration-300 hover:scale-105"
+                className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-medium text-sm transition-all duration-300 hover:scale-105 w-full sm:w-auto"
                 style={{
                   background: "rgba(255,255,255,0.04)",
                   color: "var(--text-primary)",

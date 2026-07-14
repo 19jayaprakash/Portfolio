@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { 
   LogOut, Save, CheckCircle, Sparkles, DollarSign,
   User, BarChart3, FolderOpen, BookOpen, MessageSquare,
-  Briefcase, Grid, Mail, Plus, Trash2, Image as ImageIcon, Edit2, Check, AlertTriangle, Eye, GripVertical
+  Briefcase, Grid, Mail, Plus, Trash2, Image as ImageIcon, Edit2, Check, AlertTriangle, Eye, GripVertical, Info
 } from "lucide-react";
 import { defaultPortfolioData } from "@/lib/portfolio-data";
 
@@ -89,10 +89,11 @@ export default function AdminDashboard() {
       .then(res => res.json())
       .then(result => {
         if (result.data) {
-          // Robust check to auto-inject pricing default template if missing
+          // Robust check to auto-inject templates if missing
           const mergedData = {
             ...result.data,
-            pricing: result.data.pricing || defaultPortfolioData.pricing
+            pricing: result.data.pricing || defaultPortfolioData.pricing,
+            about: result.data.about || defaultPortfolioData.about
           };
           setData(mergedData);
         }
@@ -134,6 +135,11 @@ export default function AdminDashboard() {
   // Hero handlers
   const updateHero = (field: string, value: any) => {
     setData({ ...data, hero: { ...data.hero, [field]: value } });
+  };
+
+  // About handlers
+  const updateAbout = (field: string, value: any) => {
+    setData({ ...data, about: { ...data.about, [field]: value } });
   };
 
   // Stats handlers
@@ -431,6 +437,7 @@ export default function AdminDashboard() {
 
   const tabs = [
     { id: "hero", label: "Hero", icon: User },
+    { id: "about", label: "About", icon: Info },
     { id: "stats", label: "Stats", icon: BarChart3 },
     { id: "services", label: "Services", icon: Grid },
     { id: "pricing", label: "Pricing & Offers", icon: DollarSign },
@@ -543,6 +550,22 @@ export default function AdminDashboard() {
                 </div>
                 <InputField label="GitHub Portfolio Link" value={data.hero.github} onChange={(v: any) => updateHero("github", v)} />
                 <InputField label="LinkedIn Profile Link" value={data.hero.linkedin} onChange={(v: any) => updateHero("linkedin", v)} />
+              </div>
+            </div>
+          )}
+
+          {/* About Tab */}
+          {activeTab === "about" && data?.about && (
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
+              <div>
+                <h2 className="text-xl font-bold font-display text-white">About Section</h2>
+                <p className="text-xs text-neutral-400 mt-1">Configure your bio, CEO details, and about descriptions.</p>
+              </div>
+              <div className="space-y-5">
+                <InputField label="About Title" value={data.about.title} onChange={(v: any) => updateAbout("title", v)} />
+                <InputField label="CEO Name" value={data.about.ceoName} onChange={(v: any) => updateAbout("ceoName", v)} />
+                <InputField label="Description Paragraph 1" value={data.about.description1} onChange={(v: any) => updateAbout("description1", v)} multiline />
+                <InputField label="Description Paragraph 2" value={data.about.description2} onChange={(v: any) => updateAbout("description2", v)} multiline />
               </div>
             </div>
           )}

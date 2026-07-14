@@ -102,6 +102,12 @@ export interface PortfolioData {
       color: string;
     }>;
   };
+  about: {
+    title: string;
+    ceoName: string;
+    description1: string;
+    description2: string;
+  };
 }
 
 export const defaultPortfolioData: PortfolioData = {
@@ -329,5 +335,11 @@ export const defaultPortfolioData: PortfolioData = {
       { service: "E-commerce Solutions", price: "Starting from ₹39,999", color: "#14B8A6" },
       { service: "Custom Software", price: "Contact Us", color: "#EC4899" }
     ]
+  },
+  about: {
+    title: "Turning ideas into digital reality",
+    ceoName: "Jayaprakash R",
+    description1: "Led by CEO Jayaprakash R, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
+    description2: "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
   }
 };

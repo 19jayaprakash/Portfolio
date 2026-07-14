@@ -374,8 +374,8 @@ export default function Hero() {
     titleWords: ["Engineering", "Digital", "Excellence"],
     roles: fallbackRoles,
     description: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design. From SaaS dashboards to enterprise platforms — we build scalable digital systems that businesses trust.",
-    github: "https://github.com/aeropeak",
-    linkedin: "https://linkedin.com",
+    github: "https://github.com/19jayaprakash",
+    linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/",
   });
 
   const fetchData = useCallback(() => {
@@ -388,8 +388,8 @@ export default function Hero() {
             titleWords: result.data.hero.titleWords || ["Engineering", "Digital", "Excellence"],
             roles: result.data.hero.roles || fallbackRoles,
             description: result.data.hero.description || "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design. From SaaS dashboards to enterprise platforms — we build scalable digital systems that businesses trust.",
-            github: result.data.hero.github || "https://github.com/aeropeak",
-            linkedin: result.data.hero.linkedin || "https://linkedin.com",
+            github: result.data.hero.github || "https://github.com/19jayaprakash",
+            linkedin: result.data.hero.linkedin || "https://www.linkedin.com/in/jayaprakash-r-218968310/",
           });
         }
       })

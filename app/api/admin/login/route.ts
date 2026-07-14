@@ -4,7 +4,7 @@ export async function POST(request: NextRequest) {
   const { password } = await request.json();
 
   // Simple password check (in production, use proper authentication)
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin@Aeropeak2026';
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Jayaprakash@9084';
 
   if (password === ADMIN_PASSWORD) {
     return NextResponse.json({ success: true });

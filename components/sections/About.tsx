@@ -33,7 +33,7 @@ export default function About() {
   const [aboutData, setAboutData] = useState<any>({
     title: "Turning ideas into",
     titleEmphasis: "digital reality",
-    description1: "Led by CEO Jayaprakash R, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
+    description1: "Led by our founders, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
     description2: "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
   });
 
@@ -45,7 +45,7 @@ export default function About() {
           setAboutData({
             title: result.data.about.title || "Turning ideas into",
             titleEmphasis: result.data.about.titleEmphasis || "digital reality",
-            description1: result.data.about.description1 || "Led by CEO Jayaprakash R, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
+            description1: result.data.about.description1 || "Led by our founders, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
             description2: result.data.about.description2 || "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
           });
         }

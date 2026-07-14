@@ -117,8 +117,8 @@ export const defaultPortfolioData: PortfolioData = {
     email: "contact.aeropeak@gmail.com",
     location: "Coimbatore, Tamil Nadu, India",
     availability: "Mon–Fri, 9AM–6PM IST",
-    github: "https://github.com/19jayaprakash",
-    linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/",
+    github: "https://github.com/aeropeak",
+    linkedin: "https://linkedin.com",
     heroTitle: "Engineering Digital Excellence",
     heroSubtitle: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.",
   },
@@ -339,7 +339,7 @@ export const defaultPortfolioData: PortfolioData = {
   about: {
     title: "Turning ideas into",
     titleEmphasis: "digital reality",
-    description1: "Led by CEO Jayaprakash R, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
+    description1: "Led by our founders, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
     description2: "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
   }
 };

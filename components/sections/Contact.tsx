@@ -165,8 +165,8 @@ export default function Contact() {
             {/* Social links */}
             <div className="flex gap-3 mb-10">
               {[
-                { icon: Github, href: "https://github.com/19jayaprakash", label: "GitHub" },
-                { icon: Linkedin, href: "https://www.linkedin.com/in/jayaprakash-r-218968310/", label: "LinkedIn" },
+                { icon: Github, href: "https://github.com/aeropeak", label: "GitHub" },
+                { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
               ].map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}

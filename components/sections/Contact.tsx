@@ -9,7 +9,7 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const [submitted, setSubmitted] = useState(false);
   const [selectedService, setSelectedService] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactData, setContactData] = useState<any>({
     email: "contact.aeropeak@gmail.com",
@@ -49,6 +49,7 @@ export default function Contact() {
     const formattedMessage = `*New Portfolio Contact Message* 🚀\n\n` +
       `*Name:* ${form.name}\n` +
       `*Email:* ${form.email}\n` +
+      `*WhatsApp:* ${form.phone}\n` +
       `*Service:* ${selectedService || "Not specified"}\n\n` +
       `*Message:*\n${form.message}`;
 
@@ -62,7 +63,7 @@ export default function Contact() {
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
-      setForm({ name: "", email: "", message: "" });
+      setForm({ name: "", email: "", phone: "", message: "" });
       setSelectedService("");
     }, 3000);
   };
@@ -280,6 +281,33 @@ export default function Contact() {
                       />
                     </div>
                   ))}
+                </div>
+
+                {/* Contact Number (WhatsApp) */}
+                <div>
+                  <label
+                    htmlFor="phone"
+                    className="block text-xs font-mono uppercase tracking-widest mb-2"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    Contact Number (WhatsApp)
+                  </label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    placeholder="+91 83000 74144"
+                    required
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-300"
+                    style={{
+                      background: "var(--surface)",
+                      color: "var(--text-primary)",
+                      border: "1px solid var(--border)",
+                    }}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = "var(--accent)")}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
+                  />
                 </div>
 
                 {/* Message */}

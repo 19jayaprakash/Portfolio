@@ -2,8 +2,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { ArrowDown, Github, Linkedin, Twitter, Code2 } from "lucide-react";
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
-const roles = [
+const fallbackRoles = [
   "Custom Software Development",
   "Enterprise Web Applications",
   "High-Performance Cloud Architecture",
@@ -368,11 +369,51 @@ export default function Hero() {
   const rotateY = useTransform(springX, [-300, 300], [-6,  6]);
 
   const [roleIndex, setRoleIndex] = useState(0);
+  const [heroData, setHeroData] = useState<any>({
+    status: "Now Accepting Client Projects",
+    titleWords: ["Engineering", "Digital", "Excellence"],
+    roles: fallbackRoles,
+    description: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design. From SaaS dashboards to enterprise platforms — we build scalable digital systems that businesses trust.",
+    github: "https://github.com/19jayaprakash",
+    linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/",
+  });
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(result => {
+        if (result.data && result.data.hero) {
+          setHeroData({
+            status: result.data.hero.status || "Now Accepting Client Projects",
+            titleWords: result.data.hero.titleWords || ["Engineering", "Digital", "Excellence"],
+            roles: result.data.hero.roles || fallbackRoles,
+            description: result.data.hero.description || "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design. From SaaS dashboards to enterprise platforms — we build scalable digital systems that businesses trust.",
+            github: result.data.hero.github || "https://github.com/19jayaprakash",
+            linkedin: result.data.hero.linkedin || "https://www.linkedin.com/in/jayaprakash-r-218968310/",
+          });
+        }
+      })
+      .catch(err => {
+        console.error("Error loading hero data:", err);
+      });
+  }, []);
 
   useEffect(() => {
-    const iv = setInterval(() => setRoleIndex((i) => (i + 1) % roles.length), 2500);
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh when admin updates data
+  useDataRefresh(fetchData);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setRoleIndex((i) => {
+        if (heroData.roles.length === 0) return 0;
+        return (i + 1) % heroData.roles.length;
+      });
+    }, 2500);
     return () => clearInterval(iv);
-  }, []);
+  }, [heroData.roles.length]);
 
   useEffect(() => {
     const handle = (e: MouseEvent) => {
@@ -382,8 +423,6 @@ export default function Hero() {
     window.addEventListener("mousemove", handle);
     return () => window.removeEventListener("mousemove", handle);
   }, [mouseX, mouseY]);
-
-  const titleWords = ["Engineering", "Digital", "Excellence"];
 
   return (
     <section
@@ -431,13 +470,13 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.1 }}
             >
               <span className="w-2 h-2 rounded-full bg-[#22C55E]" style={{ boxShadow: "0 0 8px #22C55E" }} />
-              <span className="text-xs font-mono text-[var(--text-muted)]">Now Accepting Client Projects</span>
+              <span className="text-xs font-mono text-[var(--text-muted)]">{heroData.status}</span>
             </motion.div>
 
             {/* Big title */}
             <div className="mb-5">
-              {titleWords.map((word, i) => (
-                <div key={word} style={{ overflow: "hidden", display: "block", paddingBottom: "0.15em" }}>
+              {heroData.titleWords.map((word: string, i: number) => (
+                <div key={word + i} style={{ overflow: "hidden", display: "block", paddingBottom: "0.15em" }}>
                   <motion.span
                     className="block font-display font-bold"
                     style={{
@@ -465,9 +504,9 @@ export default function Hero() {
             >
               <div className="w-8 h-px bg-[var(--accent)]" />
               <div className="h-7 overflow-hidden relative" style={{ minWidth: "360px" }}>
-                {roles.map((role, i) => (
+                {heroData.roles.map((role: string, i: number) => (
                   <motion.span
-                    key={role}
+                    key={role + i}
                     className="absolute left-0 text-sm font-mono tracking-wide whitespace-nowrap"
                     style={{ color: "var(--accent)" }}
                     initial={{ y: 28, opacity: 0 }}
@@ -489,7 +528,7 @@ export default function Hero() {
               style={{ color: "var(--text-secondary)" }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
             >
-              We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design. From SaaS dashboards to enterprise platforms — we build scalable digital systems that businesses trust.
+              {heroData.description}
             </motion.p>
 
             {/* CTAs */}

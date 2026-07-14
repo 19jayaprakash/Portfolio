@@ -2,7 +2,6 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 import { Mail, MapPin, Clock, Send, CheckCircle, Github, Linkedin } from "lucide-react";
-import emailjs from '@emailjs/browser';
 import { useDataRefresh } from "@/lib/useDataRefresh";
 
 export default function Contact() {
@@ -13,7 +12,7 @@ export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactData, setContactData] = useState<any>({
-    email: "jayaprakash.r024@gmail.com",
+    email: "contact.aeropeak@gmail.com",
     location: "Coimbatore, Tamil Nadu, India",
     availability: "Mon-Fri, 9AM-6PM IST",
     title1: "Lets build",
@@ -48,24 +47,20 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      // Create a form-like object for EmailJS
-      const templateParams = {
-        from_name: form.name,
-        from_email: form.email,
-        message: form.message,
-        service: selectedService || 'Not specified',
-        to_email: 'jayaprakash.r024@gmail.com',
-      };
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("message", form.message);
+      formData.append("service", selectedService || "Not specified");
 
-      // Send email using EmailJS
-      const response = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
-        templateParams,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
-      );
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        body: formData,
+      });
 
-      if (response.status === 200) {
+      const result = await response.json();
+
+      if (response.ok && result.success) {
         setSubmitted(true);
         // Auto-reset form after 3 seconds
         setTimeout(() => {
@@ -74,11 +69,11 @@ export default function Contact() {
           setSelectedService("");
         }, 3000);
       } else {
-        alert('Failed to send message. Please try again.');
+        alert(result.message || "Failed to send message. Please try again.");
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to send message. Please try again.');
+      console.error("Error submitting contact form:", error);
+      alert("Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

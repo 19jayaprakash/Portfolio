@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
-import { ArrowUpRight, Clock, DollarSign, Star, CheckCircle } from "lucide-react";
+import { ArrowUpRight, Clock, DollarSign, Star, CheckCircle, ExternalLink, Github } from "lucide-react";
 import { useDataRefresh } from "@/lib/useDataRefresh";
 
 export default function FreelanceProjects() {
@@ -84,7 +84,7 @@ export default function FreelanceProjects() {
               >
                 {stats.clients}
               </div>
-              <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Clients Served</div>
+              <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Companies Served</div>
             </div>
             <div
               className="w-px h-12 self-center"
@@ -195,6 +195,41 @@ export default function FreelanceProjects() {
                       </span>
                     ))}
                   </div>
+
+                  {(project.live || project.github) && (
+                    <div className="flex items-center gap-4 mt-4 relative z-20">
+                      {project.live && (
+                        <a
+                          href={project.live}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-medium transition-colors duration-200"
+                          style={{ color: "var(--text-muted)" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = project.color)}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ExternalLink size={13} />
+                          <span>Live Site</span>
+                        </a>
+                      )}
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-medium transition-colors duration-200"
+                          style={{ color: "var(--text-muted)" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = project.color)}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Github size={13} />
+                          <span>GitHub</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Meta */}

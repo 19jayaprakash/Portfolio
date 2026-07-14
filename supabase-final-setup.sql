@@ -343,7 +343,7 @@ INSERT INTO portfolio_data (data) VALUES (
       ]
     },
     "contact": {
-      "email": "jayaprakash.r024@gmail.com",
+      "email": "contact.aeropeak@gmail.com",
       "location": "Coimbatore, Tamil Nadu, India",
       "availability": "Mon-Fri, 9AM-6PM IST",
       "title1": "Lets build",

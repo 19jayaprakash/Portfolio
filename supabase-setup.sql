@@ -35,7 +35,7 @@ INSERT INTO portfolio_data (data) VALUES (
     "personal": {
       "name": "Jayaprakash R",
       "title": "Full-Stack Developer and Creative Technologist",
-      "email": "jayaprakash.r024@gmail.com",
+      "email": "contact.aeropeak@gmail.com",
       "location": "Coimbatore, Tamil Nadu, India",
       "availability": "Mon-Fri, 9AM-6PM IST",
       "github": "https://github.com/19jayaprakash",

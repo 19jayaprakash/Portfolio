@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { 
   LogOut, Save, CheckCircle, Sparkles, DollarSign,
   User, BarChart3, FolderOpen, BookOpen, MessageSquare,
-  Briefcase, Grid, Mail, Plus, Trash2, Image as ImageIcon, Edit2, Check, AlertTriangle, Eye
+  Briefcase, Grid, Mail, Plus, Trash2, Image as ImageIcon, Edit2, Check, AlertTriangle, Eye, GripVertical
 } from "lucide-react";
 import { defaultPortfolioData } from "@/lib/portfolio-data";
 
@@ -75,6 +75,8 @@ export default function AdminDashboard() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [draggedProjectIndex, setDraggedProjectIndex] = useState<number | null>(null);
+  const [draggedFreelanceIndex, setDraggedFreelanceIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const isAuthenticated = sessionStorage.getItem("adminAuthenticated");
@@ -311,7 +313,7 @@ export default function AdminDashboard() {
   const addFreelance = () => {
     const newFreelance = {
       id: Date.now(),
-      client: "Client Name",
+      client: "Company Name",
       title: "Project Title",
       desc: "Project description",
       tags: ["React"],
@@ -320,7 +322,9 @@ export default function AdminDashboard() {
       rating: 5,
       status: "Completed",
       color: "#22C55E",
-      category: "Web App"
+      category: "Web App",
+      live: "",
+      github: ""
     };
     setData({
       ...data,
@@ -715,14 +719,40 @@ export default function AdminDashboard() {
                 </button>
               </div>
               <div className="space-y-4">
-                {data.projects.map((project: any) => (
+                {data.projects.map((project: any, index: number) => (
                   <div
                     key={project.id}
-                    className="p-6 rounded-2xl border transition-all duration-300 bg-white/[0.01] space-y-4"
-                    style={{ borderColor: editingId === project.id ? "var(--accent)" : "rgba(255,255,255,0.05)" }}
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedProjectIndex(index);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (draggedProjectIndex === null || draggedProjectIndex === index) return;
+                      const updatedProjects = [...data.projects];
+                      const [removed] = updatedProjects.splice(draggedProjectIndex, 1);
+                      updatedProjects.splice(index, 0, removed);
+                      setData({ ...data, projects: updatedProjects });
+                      setDraggedProjectIndex(null);
+                    }}
+                    onDragEnd={() => setDraggedProjectIndex(null)}
+                    className="p-6 rounded-2xl border transition-all duration-300 bg-white/[0.01] space-y-4 cursor-move"
+                    style={{ 
+                      borderColor: editingId === project.id ? "var(--accent)" : "rgba(255,255,255,0.05)",
+                      opacity: draggedProjectIndex === index ? 0.4 : 1
+                    }}
                   >
                     <div className="flex items-start justify-between">
-                      <h3 className="text-sm font-semibold text-white font-mono">{project.title}</h3>
+                      <div className="flex items-center gap-3">
+                        <div className="text-neutral-500 cursor-grab active:cursor-grabbing hover:text-white transition-colors">
+                          <GripVertical className="w-4 h-4" />
+                        </div>
+                        <h3 className="text-sm font-semibold text-white font-mono">{project.title}</h3>
+                      </div>
                       <div className="flex gap-2">
                         <button
                           onClick={() => setEditingId(editingId === project.id ? null : project.id)}
@@ -916,7 +946,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold font-display text-white">Freelance Works ({data.freelance.projects.length})</h2>
-                  <p className="text-xs text-neutral-400 mt-1">Manage completed contract works and client invoices records.</p>
+                  <p className="text-xs text-neutral-400 mt-1">Manage completed contract works and company records.</p>
                 </div>
                 <button
                   onClick={addFreelance}
@@ -927,10 +957,45 @@ export default function AdminDashboard() {
                 </button>
               </div>
               <div className="space-y-4">
-                {data.freelance.projects.map((project: any) => (
-                  <div key={project.id} className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] space-y-4">
+                {data.freelance.projects.map((project: any, index: number) => (
+                  <div 
+                    key={project.id} 
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedFreelanceIndex(index);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (draggedFreelanceIndex === null || draggedFreelanceIndex === index) return;
+                      const updatedFreelance = [...data.freelance.projects];
+                      const [removed] = updatedFreelance.splice(draggedFreelanceIndex, 1);
+                      updatedFreelance.splice(index, 0, removed);
+                      setData({
+                        ...data,
+                        freelance: {
+                          ...data.freelance,
+                          projects: updatedFreelance
+                        }
+                      });
+                      setDraggedFreelanceIndex(null);
+                    }}
+                    onDragEnd={() => setDraggedFreelanceIndex(null)}
+                    className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] space-y-4 cursor-move"
+                    style={{
+                      opacity: draggedFreelanceIndex === index ? 0.4 : 1
+                    }}
+                  >
                     <div className="flex items-start justify-between">
-                      <div className="text-xs font-mono text-amber-500 font-bold uppercase">{project.client} - {project.title}</div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-neutral-500 cursor-grab active:cursor-grabbing hover:text-white transition-colors">
+                          <GripVertical className="w-4 h-4" />
+                        </div>
+                        <div className="text-xs font-mono text-amber-500 font-bold uppercase">{project.client} - {project.title}</div>
+                      </div>
                       <button
                         onClick={() => deleteFreelance(project.id)}
                         className="p-2 rounded-full border border-red-500/10 hover:border-red-500/20 text-neutral-400 hover:text-red-400 transition-colors bg-red-500/5 hover:bg-red-500/10"
@@ -939,7 +1004,7 @@ export default function AdminDashboard() {
                       </button>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <InputField label="Client Name" value={project.client} onChange={(v: any) => updateFreelance(project.id, "client", v)} />
+                      <InputField label="Company Name" value={project.client} onChange={(v: any) => updateFreelance(project.id, "client", v)} />
                       <InputField label="Project Title" value={project.title} onChange={(v: any) => updateFreelance(project.id, "title", v)} />
                       <div className="md:col-span-2">
                         <InputField label="Description" value={project.desc} onChange={(v: any) => updateFreelance(project.id, "desc", v)} multiline />
@@ -949,6 +1014,8 @@ export default function AdminDashboard() {
                       <InputField label="Project Status" value={project.status} onChange={(v: any) => updateFreelance(project.id, "status", v)} />
                       <InputField label="Accent Color Hex" value={project.color} onChange={(v: any) => updateFreelance(project.id, "color", v)} />
                       <InputField label="Project Category" value={project.category} onChange={(v: any) => updateFreelance(project.id, "category", v)} />
+                      <InputField label="GitHub Repo URL" value={project.github || ""} onChange={(v: any) => updateFreelance(project.id, "github", v)} />
+                      <InputField label="Live Site URL" value={project.live || ""} onChange={(v: any) => updateFreelance(project.id, "live", v)} />
                       <div className="md:col-span-2">
                         <CommaSeparatedInput label="Tags (comma-separated)" value={project.tags} onChange={(v) => updateFreelance(project.id, "tags", v)} />
                       </div>

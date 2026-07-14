@@ -42,6 +42,7 @@ export default function ProjectsPage() {
       github: p.github || "",
       live: p.live || "",
       duration: p.duration || "",
+      featured: !!p.featured,
       type: "Featured"
     }));
 
@@ -59,6 +60,7 @@ export default function ProjectsPage() {
       live: p.live || "",
       duration: p.duration || "",
       client: p.client || "",
+      featured: false,
       type: "Freelance"
     }));
 
@@ -78,7 +80,7 @@ export default function ProjectsPage() {
       p.tags.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
 
     if (activeCategory === "All") return matchesSearch;
-    if (activeCategory === "Featured") return p.type === "Featured" && matchesSearch;
+    if (activeCategory === "Featured") return p.featured && matchesSearch;
     if (activeCategory === "Freelance") return p.type === "Freelance" && matchesSearch;
     return p.category.toLowerCase() === activeCategory.toLowerCase() && matchesSearch;
   });

@@ -108,7 +108,7 @@ export const defaultPortfolioData: PortfolioData = {
   personal: {
     name: "Aeropeak",
     title: "Next-Gen Software & Digital Engineering Agency",
-    email: "jayaprakash.r024@gmail.com",
+    email: "contact.aeropeak@gmail.com",
     location: "Coimbatore, Tamil Nadu, India",
     availability: "Mon–Fri, 9AM–6PM IST",
     github: "https://github.com/19jayaprakash",

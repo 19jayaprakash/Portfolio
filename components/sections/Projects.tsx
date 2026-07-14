@@ -163,7 +163,8 @@ export default function Projects() {
   // Auto-refresh when admin updates data
   useDataRefresh(fetchData);
 
-  const filtered = activeCategory === "All" ? projects : projects.filter((p: any) => p.category === activeCategory);
+  const featuredProjects = projects.filter((p: any) => p.featured);
+  const filtered = activeCategory === "All" ? featuredProjects : featuredProjects.filter((p: any) => p.category === activeCategory);
 
   return (
     <section

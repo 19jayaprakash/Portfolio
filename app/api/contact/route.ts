@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,6 +11,23 @@ export async function POST(request: NextRequest) {
     const message = formData.get('message') as string;
     const service = formData.get('service') as string;
     const file = formData.get('file') as File | null;
+
+    // Fetch recipient email dynamically from Supabase
+    let recipientEmail = 'contact.aeropeak@gmail.com';
+    try {
+      const { data: portfolioData, error: dbError } = await supabaseAdmin
+        .from('portfolio_data')
+        .select('data')
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!dbError && portfolioData?.data?.contact?.email) {
+        recipientEmail = portfolioData.data.contact.email;
+      }
+    } catch (dbErr) {
+      console.error('Failed to fetch contact email from Supabase, using default fallback:', dbErr);
+    }
 
     // Create transporter
     const transporter = nodemailer.createTransport({
@@ -43,7 +61,7 @@ export async function POST(request: NextRequest) {
     // Send email
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: 'jayaprakash.r024@gmail.com',
+      to: recipientEmail,
       subject: `New Contact Form Message from ${name}`,
       html: htmlContent,
       attachments: attachments,

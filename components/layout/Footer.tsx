@@ -26,7 +26,7 @@ const footerLinks = {
 const socials = [
   { icon: Github, href: "https://github.com/19jayaprakash", label: "GitHub" },
   { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:jayaprakash.r024@gmail.com", label: "Email" },
+  { icon: Mail, href: "mailto:contact.aeropeak@gmail.com", label: "Email" },
 ];
 
 export default function Footer() {

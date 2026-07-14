@@ -4,6 +4,7 @@ import "../styles/globals.css";
 import CustomCursor from "@/components/ui/CustomCursor";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import Preloader from "@/components/ui/Preloader";
+import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 
 export const metadata: Metadata = {
   title: "Aeropeak Technologies | Next-Gen Software Engineering",
@@ -35,6 +36,7 @@ export default function RootLayout({
           <SmoothScroll>
             {children}
           </SmoothScroll>
+          <WhatsAppFloat />
         </ThemeProvider>
       </body>
     </html>

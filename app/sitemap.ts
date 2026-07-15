@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { getPortfolioData } from "@/lib/portfolio-data-server";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in";
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech";
 
   // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [

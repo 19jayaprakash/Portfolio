@@ -74,7 +74,7 @@ export default async function Page({ params }: Props) {
     "creator": {
       "@type": "Organization",
       "name": "Aeropeak Technologies",
-      "url": "https://aeropeak.in"
+      "url": "https://aeropeak.tech"
     },
     "genre": project.category || "Software Development",
     "keywords": project.tags?.join(", ") || ""

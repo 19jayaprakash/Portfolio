@@ -34,9 +34,9 @@ export default async function Page() {
     "@type": "ProfessionalService",
     "name": `${data.personal?.name || "Aeropeak"} Technologies`,
     "description": data.personal?.heroSubtitle || "Next-Gen Software & Digital Engineering Agency",
-    "url": process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in",
-    "logo": `${process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in"}/Logo.png`,
-    "image": `${process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in"}/Logo.png`,
+    "url": process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech",
+    "logo": `${process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech"}/Logo.png`,
+    "image": `${process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech"}/Logo.png`,
     "email": data.personal?.email || "contact.aeropeak@gmail.com",
     "address": {
       "@type": "PostalAddress",

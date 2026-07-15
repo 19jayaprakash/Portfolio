@@ -6,7 +6,7 @@ import SmoothScroll from "@/components/ui/SmoothScroll";
 import Preloader from "@/components/ui/Preloader";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in";
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

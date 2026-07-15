@@ -6,11 +6,69 @@ import SmoothScroll from "@/components/ui/SmoothScroll";
 import Preloader from "@/components/ui/Preloader";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in";
+
 export const metadata: Metadata = {
-  title: "Aeropeak Technologies | Next-Gen Software Engineering",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Aeropeak Technologies | Next-Gen Software Engineering",
+    template: "%s | Aeropeak Technologies",
+  },
   description: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.",
+  keywords: [
+    "Aeropeak Technologies",
+    "Aeropeak",
+    "Software Engineering",
+    "Digital Agency Coimbatore",
+    "Web Application Development",
+    "Custom API Systems",
+    "Mobile Solutions",
+    "React Native Developers",
+    "Next.js Development",
+    "UI/UX Design",
+    "Full-Stack Development",
+    "E-Commerce Solutions",
+    "Coimbatore Software Company"
+  ],
+  authors: [{ name: "Aeropeak Technologies", url: siteUrl }],
+  creator: "Aeropeak Technologies",
+  publisher: "Aeropeak Technologies",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23C8956B' opacity='0.15'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='60' font-family='sans-serif' font-weight='bold' fill='%23C8956B'>A</text></svg>",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    title: "Aeropeak Technologies | Next-Gen Software Engineering",
+    description: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.",
+    siteName: "Aeropeak Technologies",
+    images: [
+      {
+        url: "/Logo.png",
+        width: 800,
+        height: 800,
+        alt: "Aeropeak Technologies Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Aeropeak Technologies | Next-Gen Software Engineering",
+    description: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.",
+    images: ["/Logo.png"],
+    creator: "@aeropeak",
   },
 };
 

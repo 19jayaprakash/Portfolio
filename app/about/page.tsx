@@ -1,23 +1,23 @@
-"use client";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import About from "@/components/sections/About";
-import Studies from "@/components/sections/Studies";
+import AboutClient from "./page.client";
+import { Metadata } from "next";
 
-export default function AboutPage() {
-  return (
-    <div className="min-h-screen" style={{ background: "var(--bg)" }}>
-      <Navbar />
-      
-      <main className="pt-24">
-        {/* Render standalone profile section */}
-        <About />
-        
-        {/* Render standalone timeline (education & certs) */}
-        <Studies />
-      </main>
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn about Aeropeak Technologies, our next-gen digital engineering agency in Coimbatore, Tamil Nadu, and our mission to create high-performance web and mobile products.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About Us | Aeropeak Technologies",
+    description: "Learn about Aeropeak Technologies, our next-gen digital engineering agency in Coimbatore, Tamil Nadu, and our mission to create high-performance web and mobile products.",
+    url: "/about",
+  },
+  twitter: {
+    title: "About Us | Aeropeak Technologies",
+    description: "Learn about Aeropeak Technologies, our next-gen digital engineering agency in Coimbatore, Tamil Nadu, and our mission to create high-performance web and mobile products.",
+  },
+};
 
-      <Footer />
-    </div>
-  );
+export default function Page() {
+  return <AboutClient />;
 }

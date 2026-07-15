@@ -1,83 +1,70 @@
-"use client";
+import Home from "./page.client";
+import { getPortfolioData } from "@/lib/portfolio-data-server";
+import { Metadata } from "next";
 
-import { useEffect, useState } from "react";
-import Navbar from "@/components/layout/Navbar";
-import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
-import Services from "@/components/sections/Services";
-import Studies from "@/components/sections/Studies";
-import Projects from "@/components/sections/Projects";
-import FreelanceProjects from "@/components/sections/FreelanceProjects";
-import Pricing from "@/components/sections/Pricing";
-import Testimonials from "@/components/sections/Testimonials";
-import Contact from "@/components/sections/Contact";
-import Footer from "@/components/layout/Footer";
-import MarqueeBar from "@/components/ui/MarqueeBar";
-import StatsBar from "@/components/sections/StatsBar";
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getPortfolioData();
+  const name = data.personal?.name || "Aeropeak";
+  const title = data.personal?.title || "Next-Gen Software & Digital Engineering Agency";
+  const description = data.personal?.heroSubtitle || "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.";
 
-export default function Home() {
-  const [visibility, setVisibility] = useState<Record<string, boolean>>({
-    hero: true,
-    marquee: true,
-    about: true,
-    stats: true,
-    services: true,
-    studies: true,
-    projects: true,
-    freelance: true,
-    pricing: true,
-    testimonials: true,
-    contact: true,
-  });
+  return {
+    title: `${name} | ${title}`,
+    description,
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      title: `${name} | ${title}`,
+      description,
+      url: "/",
+    },
+    twitter: {
+      title: `${name} | ${title}`,
+      description,
+    },
+  };
+}
 
-  useEffect(() => {
-    fetch(`/api/portfolio?t=${Date.now()}`)
-      .then((res) => res.json())
-      .then((resData) => {
-        if (resData?.data?.sectionVisibility) {
-          setVisibility(resData.data.sectionVisibility);
-        }
-      })
-      .catch((err) => {
-        console.error("Error loading visibility:", err);
-      });
+export default async function Page() {
+  const data = await getPortfolioData();
 
-    // Listen for storage events (updates from admin dashboard)
-    const handleStorageChange = () => {
-      fetch(`/api/portfolio?t=${Date.now()}`)
-        .then((res) => res.json())
-        .then((resData) => {
-          if (resData?.data?.sectionVisibility) {
-            setVisibility(resData.data.sectionVisibility);
-          }
-        });
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    // Add custom event listener for immediate same-window updates
-    window.addEventListener("portfolio-updated", handleStorageChange);
-    
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("portfolio-updated", handleStorageChange);
-    };
-  }, []);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": `${data.personal?.name || "Aeropeak"} Technologies`,
+    "description": data.personal?.heroSubtitle || "Next-Gen Software & Digital Engineering Agency",
+    "url": process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in",
+    "logo": `${process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in"}/Logo.png`,
+    "image": `${process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.in"}/Logo.png`,
+    "email": data.personal?.email || "contact.aeropeak@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Coimbatore",
+      "addressRegion": "Tamil Nadu",
+      "addressCountry": "IN"
+    },
+    "sameAs": [
+      data.personal?.github,
+      data.personal?.linkedin
+    ].filter(Boolean),
+    "priceRange": "$$",
+    "knowsAbout": [
+      "Software Engineering",
+      "Full-Stack Development",
+      "UI/UX Design",
+      "Mobile App Development",
+      "E-Commerce Solutions"
+    ]
+  };
 
   return (
-    <main>
-      <Navbar />
-      {visibility.hero !== false && <Hero />}
-      {visibility.marquee !== false && <MarqueeBar />}
-      {visibility.about !== false && <About />}
-      {visibility.stats !== false && <StatsBar />}
-      {visibility.services !== false && <Services />}
-      {visibility.studies !== false && <Studies />}
-      {visibility.projects !== false && <Projects />}
-      {visibility.freelance !== false && <FreelanceProjects />}
-      {visibility.pricing !== false && <Pricing />}
-      {visibility.testimonials !== false && <Testimonials />}
-      {visibility.contact !== false && <Contact />}
-      <Footer />
-    </main>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Home />
+    </>
   );
 }

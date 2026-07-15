@@ -119,7 +119,7 @@ export default function About() {
           >
             {/* Main large photo */}
             <div
-              className="relative w-full max-w-[430px] mx-auto rounded-3xl overflow-hidden"
+              className="relative w-full max-w-[480px] mx-auto rounded-3xl overflow-hidden border-2 border-[var(--accent)]/30"
               style={{
                 aspectRatio: "3/4",
                 boxShadow: "0 40px 80px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)",
@@ -132,7 +132,7 @@ export default function About() {
                   initial={{ opacity: 0, scale: 0.95, y: 15 }}
                   animate={{ 
                     opacity: i === activePhoto ? 1 : 0, 
-                    scale: i === activePhoto ? 1 : 0.95,
+                    scale: i === activePhoto ? 1.15 : 0.95,
                     y: i === activePhoto ? 0 : 15
                   }}
                   transition={{ duration: 0.8, ease: "easeInOut" }}

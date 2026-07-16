@@ -29,6 +29,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = project.title || "Case Study";
   const desc = project.description || `Case study and implementation details for ${title} project built by Aeropeak Technologies.`;
 
+  const imageUrl = project.image || "/Logo.png";
+
   return {
     title: `${title} | Case Study`,
     description: desc,
@@ -40,12 +42,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: desc,
       url: `/project/${params.id}`,
       type: "article",
-      images: project.image ? [{ url: project.image }] : [],
+      siteName: "Aeropeak Technologies",
+      images: [
+        {
+          url: imageUrl,
+          alt: `${title} Case Study`,
+        },
+      ],
     },
     twitter: {
+      card: "summary_large_image",
       title: `${title} | Aeropeak Technologies Case Study`,
       description: desc,
-      images: project.image ? [project.image] : [],
+      images: [imageUrl],
     },
   };
 }

@@ -18,10 +18,21 @@ export async function generateMetadata(): Promise<Metadata> {
       title: `${name} | ${title}`,
       description,
       url: "/",
+      siteName: `${name} Technologies`,
+      images: [
+        {
+          url: "/Logo.png",
+          width: 800,
+          height: 800,
+          alt: `${name} Technologies Logo`,
+        },
+      ],
     },
     twitter: {
+      card: "summary_large_image",
       title: `${name} | ${title}`,
       description,
+      images: ["/Logo.png"],
     },
   };
 }

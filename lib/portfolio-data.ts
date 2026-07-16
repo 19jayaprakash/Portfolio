@@ -112,15 +112,15 @@ export interface PortfolioData {
 
 export const defaultPortfolioData: PortfolioData = {
   personal: {
-    name: "Aeropeak",
-    title: "Next-Gen Software & Digital Engineering Agency",
+    name: "AeroPeak",
+    title: "Website & Mobile App Development Company",
     email: "contact.aeropeak@gmail.com",
     location: "Coimbatore, Tamil Nadu, India",
     availability: "Mon–Fri, 9AM–6PM IST",
     github: "https://github.com/19jayaprakash",
     linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/",
     heroTitle: "Engineering Digital Excellence",
-    heroSubtitle: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.",
+    heroSubtitle: "AeroPeak is a website and mobile app development company in Coimbatore specializing in Next.js, React, Laravel, UI/UX design, SEO, and custom software solutions.",
   },
   stats: {
     yearsExperience: 3,

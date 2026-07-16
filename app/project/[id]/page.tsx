@@ -21,13 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   if (!project) {
     return {
-      title: "Project Not Found | Aeropeak Technologies",
+      title: "Project Not Found | AeroPeak",
       description: "The requested project case study could not be found.",
     };
   }
 
   const title = project.title || "Case Study";
-  const desc = project.description || `Case study and implementation details for ${title} project built by Aeropeak Technologies.`;
+  const desc = project.description || `Case study and implementation details for ${title} project built by AeroPeak.`;
 
   const imageUrl = project.image || "/og-image.png";
 
@@ -38,11 +38,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `/project/${params.id}`,
     },
     openGraph: {
-      title: `${title} | Aeropeak Technologies Case Study`,
+      title: `${title} | AeroPeak Case Study`,
       description: desc,
       url: `/project/${params.id}`,
       type: "article",
-      siteName: "Aeropeak Technologies",
+      siteName: "AeroPeak",
       images: [
         {
           url: imageUrl,
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | Aeropeak Technologies Case Study`,
+      title: `${title} | AeroPeak Case Study`,
       description: desc,
       images: [imageUrl],
     },
@@ -82,7 +82,7 @@ export default async function Page({ params }: Props) {
     "description": project.description || "",
     "creator": {
       "@type": "Organization",
-      "name": "Aeropeak Technologies",
+      "name": "AeroPeak",
       "url": "https://aeropeak.tech"
     },
     "genre": project.category || "Software Development",

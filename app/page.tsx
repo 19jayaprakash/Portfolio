@@ -4,9 +4,9 @@ import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getPortfolioData();
-  const name = data.personal?.name || "Aeropeak";
-  const title = data.personal?.title || "Next-Gen Software & Digital Engineering Agency";
-  const description = data.personal?.heroSubtitle || "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.";
+  const name = data.personal?.name || "AeroPeak";
+  const title = data.personal?.title || "Website & Mobile App Development Company";
+  const description = data.personal?.heroSubtitle || "AeroPeak is a website and mobile app development company in Coimbatore specializing in Next.js, React, Laravel, UI/UX design, SEO, and custom software solutions.";
 
   return {
     title: `${name} | ${title}`,
@@ -18,13 +18,13 @@ export async function generateMetadata(): Promise<Metadata> {
       title: `${name} | ${title}`,
       description,
       url: "/",
-      siteName: `${name} Technologies`,
+      siteName: name,
       images: [
         {
           url: "/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${name} Technologies Logo`,
+          alt: `${name} Logo`,
         },
       ],
     },
@@ -43,8 +43,8 @@ export default async function Page() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    "name": `${data.personal?.name || "Aeropeak"} Technologies`,
-    "description": data.personal?.heroSubtitle || "Next-Gen Software & Digital Engineering Agency",
+    "name": data.personal?.name || "AeroPeak",
+    "description": data.personal?.heroSubtitle || "AeroPeak is a website and mobile app development company in Coimbatore specializing in Next.js, React, Laravel, UI/UX design, SEO, and custom software solutions.",
     "url": process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech",
     "logo": `${process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech"}/Logo.png`,
     "image": `${process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech"}/Logo.png`,

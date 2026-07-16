@@ -3,28 +3,28 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Our Projects & Case Studies",
-  description: "Explore our portfolio of high-performance web applications, custom API integrations, and mobile solutions engineered by Aeropeak.",
+  description: "Explore our portfolio of high-performance web applications, custom API integrations, Laravel solutions, and mobile apps engineered by AeroPeak.",
   alternates: {
     canonical: "/projects",
   },
   openGraph: {
-    title: "Our Projects & Case Studies | Aeropeak Technologies",
-    description: "Explore our portfolio of high-performance web applications, custom API integrations, and mobile solutions engineered by Aeropeak.",
+    title: "Our Projects & Case Studies | AeroPeak",
+    description: "Explore our portfolio of high-performance web applications, custom API integrations, Laravel solutions, and mobile apps engineered by AeroPeak.",
     url: "/projects",
-    siteName: "Aeropeak Technologies",
+    siteName: "AeroPeak",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Aeropeak Technologies Logo",
+        alt: "AeroPeak Logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Our Projects & Case Studies | Aeropeak Technologies",
-    description: "Explore our portfolio of high-performance web applications, custom API integrations, and mobile solutions engineered by Aeropeak.",
+    title: "Our Projects & Case Studies | AeroPeak",
+    description: "Explore our portfolio of high-performance web applications, custom API integrations, Laravel solutions, and mobile apps engineered by AeroPeak.",
     images: ["/og-image.png"],
   },
 };

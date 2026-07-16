@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     siteName: "Aeropeak Technologies",
     images: [
       {
-        url: "/Logo.png",
-        width: 800,
-        height: 800,
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
         alt: "Aeropeak Technologies Logo",
       },
     ],
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Contact Us | Aeropeak Technologies",
     description: "Get in touch with Aeropeak Technologies. Let's discuss your next project, custom software engineering, mobile app development, or website design.",
-    images: ["/Logo.png"],
+    images: ["/og-image.png"],
   },
 };
 

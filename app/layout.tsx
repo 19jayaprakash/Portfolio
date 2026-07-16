@@ -58,9 +58,9 @@ export const metadata: Metadata = {
     siteName: "Aeropeak Technologies",
     images: [
       {
-        url: "/Logo.png",
-        width: 800,
-        height: 800,
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
         alt: "Aeropeak Technologies Logo",
       },
     ],
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Aeropeak Technologies | Next-Gen Software Engineering",
     description: "We engineer high-performance web applications, custom API systems, and mobile solutions with a sharp eye for design.",
-    images: ["/Logo.png"],
+    images: ["/og-image.png"],
     creator: "@aeropeak",
   },
 };

@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     siteName: "Aeropeak Technologies",
     images: [
       {
-        url: "/Logo.png",
-        width: 800,
-        height: 800,
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
         alt: "Aeropeak Technologies Logo",
       },
     ],
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "About Us | Aeropeak Technologies",
     description: "Learn about Aeropeak Technologies, our next-gen digital engineering agency in Coimbatore, Tamil Nadu, and our mission to create high-performance web and mobile products.",
-    images: ["/Logo.png"],
+    images: ["/og-image.png"],
   },
 };
 

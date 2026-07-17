@@ -38,6 +38,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: [`${siteUrl}/Logo2.png`],
     },
+    other: {
+      "build-commit": "3e82c72",
+    },
   };
 }
 

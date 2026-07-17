@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     siteName: "AeroPeak",
     images: [
       {
-        url: "/og-image.png",
+        url: "/Logo2.png",
         width: 1200,
         height: 630,
         alt: "AeroPeak Logo",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Our Projects & Case Studies | AeroPeak",
     description: "Explore our portfolio of high-performance web applications, custom API integrations, Laravel solutions, and mobile apps engineered by AeroPeak.",
-    images: ["/og-image.png"],
+    images: ["/Logo2.png"],
   },
 };
 

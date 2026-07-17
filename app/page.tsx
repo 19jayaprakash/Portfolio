@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: name,
       images: [
         {
-          url: "/og-image.png",
+          url: "/Logo2.png",
           width: 1200,
           height: 630,
           alt: `${name} Logo`,
@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: `${name} | ${title}`,
       description,
-      images: ["/og-image.png"],
+      images: ["/Logo2.png"],
     },
   };
 }

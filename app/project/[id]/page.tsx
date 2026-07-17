@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = project.title || "Case Study";
   const desc = project.description || `Case study and implementation details for ${title} project built by AeroPeak.`;
 
-  const imageUrl = project.image || "/og-image.png";
+  const imageUrl = project.image || "/Logo2.png";
 
   return {
     title: `${title} | Case Study`,

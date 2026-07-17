@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = project.title || "Case Study";
   const desc = project.description || `Case study and implementation details for ${title} project built by AeroPeak.`;
 
-  let imageUrl = project.image || "/Logo2.png";
+  let imageUrl = project.image || "/Logo2.jpg";
   if (imageUrl.startsWith("/")) {
     imageUrl = `${siteUrl}${imageUrl}`;
   }

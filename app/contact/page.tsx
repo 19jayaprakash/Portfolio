@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     canonical: "/contact",
   },
   openGraph: {
+    type: "website",
     title: "Contact Us | AeroPeak",
     description: "Get in touch with AeroPeak. Let's discuss your next project, custom software engineering, mobile app development, website design, or Laravel applications.",
     url: "/contact",

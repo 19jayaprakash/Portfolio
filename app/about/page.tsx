@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     canonical: "/about",
   },
   openGraph: {
+    type: "website",
     title: "About Us | AeroPeak",
     description: "Learn about AeroPeak, our website and mobile app development company in Coimbatore, Tamil Nadu, and our mission to create high-performance web and mobile products.",
     url: "/about",

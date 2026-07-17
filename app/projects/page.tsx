@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     canonical: "/projects",
   },
   openGraph: {
+    type: "website",
     title: "Our Projects & Case Studies | AeroPeak",
     description: "Explore our portfolio of high-performance web applications, custom API integrations, Laravel solutions, and mobile apps engineered by AeroPeak.",
     url: "/projects",

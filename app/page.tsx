@@ -14,9 +14,6 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(siteUrl),
     title: `${name} | ${title}`,
     description,
-    alternates: {
-      canonical: "/",
-    },
     openGraph: {
       type: "website",
       title: `${name} | ${title}`,

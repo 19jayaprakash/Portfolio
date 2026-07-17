@@ -3,6 +3,8 @@ import { getPortfolioData } from "@/lib/portfolio-data-server";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech";
+
 type Props = {
   params: { id: string };
 };
@@ -29,9 +31,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = project.title || "Case Study";
   const desc = project.description || `Case study and implementation details for ${title} project built by AeroPeak.`;
 
-  const imageUrl = project.image || "/Logo2.png";
+  let imageUrl = project.image || "/Logo2.png";
+  if (imageUrl.startsWith("/")) {
+    imageUrl = `${siteUrl}${imageUrl}`;
+  }
 
   return {
+    metadataBase: new URL(siteUrl),
     title: `${title} | Case Study`,
     description: desc,
     alternates: {

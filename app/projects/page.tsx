@@ -1,7 +1,10 @@
 import ProjectsClient from "./page.client";
 import { Metadata } from "next";
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Our Projects & Case Studies",
   description: "Explore our portfolio of high-performance web applications, custom API integrations, Laravel solutions, and mobile apps engineered by AeroPeak.",
   alternates: {
@@ -14,7 +17,7 @@ export const metadata: Metadata = {
     siteName: "AeroPeak",
     images: [
       {
-        url: "/Logo2.png",
+        url: `${siteUrl}/Logo2.png`,
         width: 1200,
         height: 630,
         alt: "AeroPeak Logo",
@@ -25,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Our Projects & Case Studies | AeroPeak",
     description: "Explore our portfolio of high-performance web applications, custom API integrations, Laravel solutions, and mobile apps engineered by AeroPeak.",
-    images: ["/Logo2.png"],
+    images: [`${siteUrl}/Logo2.png`],
   },
 };
 

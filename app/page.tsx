@@ -2,6 +2,8 @@ import Home from "./page.client";
 import { getPortfolioData } from "@/lib/portfolio-data-server";
 import { Metadata } from "next";
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech";
+
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getPortfolioData();
   const name = data.personal?.name || "AeroPeak";
@@ -9,6 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = data.personal?.heroSubtitle || "AeroPeak is a website and mobile app development company in Coimbatore specializing in Next.js, React, Laravel, UI/UX design, SEO, and custom software solutions.";
 
   return {
+    metadataBase: new URL(siteUrl),
     title: `${name} | ${title}`,
     description,
     alternates: {
@@ -21,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: name,
       images: [
         {
-          url: "/Logo2.png",
+          url: `${siteUrl}/Logo2.png`,
           width: 1200,
           height: 630,
           alt: `${name} Logo`,
@@ -32,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: `${name} | ${title}`,
       description,
-      images: ["/Logo2.png"],
+      images: [`${siteUrl}/Logo2.png`],
     },
   };
 }

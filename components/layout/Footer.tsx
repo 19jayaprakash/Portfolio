@@ -1,9 +1,11 @@
 "use client";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Github, Linkedin, Twitter, Mail, ArrowUpRight, Heart } from "lucide-react";
+import { Github, Linkedin, Twitter, Mail, ArrowUpRight, Heart, Phone, MessageSquare } from "lucide-react";
 import Image from "next/image";
 import logo from "../../public/Logo.png";
 import Link from "next/link";
+import { useDataRefresh } from "@/lib/useDataRefresh";
 
 const footerLinks = {
   Sections: [
@@ -23,14 +25,53 @@ const footerLinks = {
   ],
 };
 
-const socials = [
-  { icon: Github, href: "https://github.com/19jayaprakash", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:contact.aeropeak@gmail.com", label: "Email" },
-];
-
 export default function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const [socialData, setSocialData] = useState<any>({
+    github: "https://github.com/19jayaprakash",
+    linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/",
+    email: "contact.aeropeak@gmail.com",
+    phone: "+91 98765 43210",
+    twitter: "",
+    whatsapp: "",
+  });
+
+  const fetchData = useCallback(() => {
+    fetch(`/api/portfolio?t=${Date.now()}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.data) {
+          const contact = result.data.contact || {};
+          const hero = result.data.hero || {};
+          const personal = result.data.personal || {};
+          setSocialData({
+            github: contact.github || hero.github || personal.github || "https://github.com/19jayaprakash",
+            linkedin: contact.linkedin || hero.linkedin || personal.linkedin || "https://www.linkedin.com/in/jayaprakash-r-218968310/",
+            email: contact.email || personal.email || "contact.aeropeak@gmail.com",
+            phone: contact.phone || "",
+            twitter: contact.twitter || "",
+            whatsapp: contact.whatsapp || "",
+          });
+        }
+      })
+      .catch((err) => console.error("Footer load error:", err));
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useDataRefresh(fetchData);
+
+  const socials = [
+    socialData.github ? { icon: Github, href: socialData.github, label: "GitHub" } : null,
+    socialData.linkedin ? { icon: Linkedin, href: socialData.linkedin, label: "LinkedIn" } : null,
+    socialData.email ? { icon: Mail, href: `mailto:${socialData.email}`, label: "Email" } : null,
+    socialData.phone ? { icon: Phone, href: `tel:${socialData.phone.replace(/[^+\d]/g, '')}`, label: "Phone" } : null,
+    socialData.twitter ? { icon: Twitter, href: socialData.twitter, label: "Twitter" } : null,
+    socialData.whatsapp ? { icon: MessageSquare, href: socialData.whatsapp, label: "WhatsApp" } : null,
+  ].filter(Boolean);
 
   return (
     <footer

@@ -76,6 +76,14 @@ export interface PortfolioData {
     title: string;
     subtitle: string;
     description: string;
+    email: string;
+    phone: string;
+    location: string;
+    availability: string;
+    github: string;
+    linkedin: string;
+    twitter?: string;
+    whatsapp?: string;
     services: string[];
   };
   pricing: {
@@ -252,6 +260,14 @@ export const defaultPortfolioData: PortfolioData = {
     title: "Let's build",
     subtitle: "something great",
     description: "Have a project in mind or want to discuss opportunities? I'm always open to new challenges and interesting work. Let's connect!",
+    email: "contact.aeropeak@gmail.com",
+    phone: "+91 98765 43210",
+    location: "Coimbatore, Tamil Nadu, India",
+    availability: "Mon–Fri, 9AM–6PM IST",
+    github: "https://github.com/19jayaprakash",
+    linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/",
+    twitter: "",
+    whatsapp: "",
     services: ["Full-Stack Web App", "UI/UX Design", "Mobile App", "E-Commerce", "Design System"],
   },
   pricing: {

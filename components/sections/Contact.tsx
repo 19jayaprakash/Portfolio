@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
-import { Mail, MapPin, Clock, Send, CheckCircle, Github, Linkedin } from "lucide-react";
+import { Mail, MapPin, Clock, Send, CheckCircle, Github, Linkedin, Phone, Twitter, MessageSquare } from "lucide-react";
 import { useDataRefresh } from "@/lib/useDataRefresh";
 
 export default function Contact() {
@@ -13,8 +13,13 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactData, setContactData] = useState<any>({
     email: "contact.aeropeak@gmail.com",
+    phone: "+91 98765 43210",
     location: "Coimbatore, Tamil Nadu, India",
     availability: "Mon-Fri, 9AM-6PM IST",
+    github: "https://github.com/19jayaprakash",
+    linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/",
+    twitter: "",
+    whatsapp: "",
     title1: "Lets build",
     title2: "something great",
     description: "Have a project in mind or want to discuss opportunities? We are always open to new challenges and interesting work. Let's connect!",
@@ -129,10 +134,11 @@ export default function Contact() {
             {/* Contact info */}
             <div className="space-y-4 mb-10">
               {[
-                { icon: Mail, label: "Email", value: contactData.email, href: `mailto:${contactData.email}` },
+                { icon: Mail, label: "Email", value: contactData.email, href: contactData.email ? `mailto:${contactData.email}` : null },
+                { icon: Phone, label: "Phone / Contact", value: contactData.phone, href: contactData.phone ? `tel:${contactData.phone.replace(/[^+\d]/g, '')}` : null },
                 { icon: MapPin, label: "Location", value: contactData.location, href: null },
                 { icon: Clock, label: "Availability", value: contactData.availability, href: null },
-              ].map(({ icon: Icon, label, value, href }) => (
+              ].filter(item => item.value).map(({ icon: Icon, label, value, href }) => (
                 <div key={label} className="flex items-center gap-4 group">
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -163,35 +169,40 @@ export default function Contact() {
             </div>
 
             {/* Social links */}
-            <div className="flex gap-3 mb-10">
+            <div className="flex flex-wrap gap-3 mb-10">
               {[
-                { icon: Github, href: "https://github.com/19jayaprakash", label: "GitHub" },
-                { icon: Linkedin, href: "https://www.linkedin.com/in/jayaprakash-r-218968310/", label: "LinkedIn" },
-              ].map(({ icon: Icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: "var(--surface)",
-                    color: "var(--text-secondary)",
-                    border: "1px solid var(--border)",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.color = "var(--accent)";
-                    (e.currentTarget as HTMLElement).style.borderColor = "var(--border-accent)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
-                    (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                  }}
-                >
-                  <Icon size={14} />
-                  {label}
-                </a>
-              ))}
+                contactData.github ? { icon: Github, href: contactData.github, label: "GitHub" } : null,
+                contactData.linkedin ? { icon: Linkedin, href: contactData.linkedin, label: "LinkedIn" } : null,
+                contactData.twitter ? { icon: Twitter, href: contactData.twitter, label: "Twitter" } : null,
+                contactData.whatsapp ? { icon: MessageSquare, href: contactData.whatsapp, label: "WhatsApp" } : null,
+              ].filter(Boolean).map((social: any) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 hover:scale-105"
+                    style={{
+                      background: "var(--surface)",
+                      color: "var(--text-secondary)",
+                      border: "1px solid var(--border)",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.color = "var(--accent)";
+                      (e.currentTarget as HTMLElement).style.borderColor = "var(--border-accent)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                      (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                    }}
+                  >
+                    <Icon size={14} />
+                    {social.label}
+                  </a>
+                );
+              })}
             </div>
 
             {/* Quick availability card */}

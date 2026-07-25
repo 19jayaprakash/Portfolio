@@ -92,6 +92,10 @@ export default function AdminDashboard() {
           // Robust check to auto-inject templates if missing
           const mergedData = {
             ...result.data,
+            contact: {
+              ...defaultPortfolioData.contact,
+              ...(result.data.contact || {}),
+            },
             pricing: result.data.pricing || defaultPortfolioData.pricing,
             about: result.data.about || defaultPortfolioData.about
           };
@@ -1049,21 +1053,91 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* Contact Tab */}
+          {/* Contact & Social Links Tab */}
           {activeTab === "contact" && (
-            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
-              <div>
-                <h2 className="text-xl font-bold font-display text-white">Contact & Connect Options</h2>
-                <p className="text-xs text-neutral-400 mt-1">Configure email inbox destinations, location and service items checklist.</p>
+            <div className="space-y-6">
+              {/* Contact Information & Channels */}
+              <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold font-display text-white">Contact & Details</h2>
+                  <p className="text-xs text-neutral-400 mt-1">Configure email destinations, contact phone number, base location, and working hours.</p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <InputField 
+                    label="Primary Contact Email" 
+                    value={data.contact.email || ""} 
+                    onChange={(v: any) => setData({ ...data, contact: { ...data.contact, email: v } })} 
+                  />
+                  <InputField 
+                    label="Contact Phone Number (e.g. +91 98765 43210)" 
+                    value={data.contact.phone || ""} 
+                    onChange={(v: any) => setData({ ...data, contact: { ...data.contact, phone: v } })} 
+                  />
+                  <InputField 
+                    label="Office / Base Location" 
+                    value={data.contact.location || ""} 
+                    onChange={(v: any) => setData({ ...data, contact: { ...data.contact, location: v } })} 
+                  />
+                  <InputField 
+                    label="Weekly Availability Status" 
+                    value={data.contact.availability || ""} 
+                    onChange={(v: any) => setData({ ...data, contact: { ...data.contact, availability: v } })} 
+                  />
+                </div>
               </div>
-              <div className="space-y-4">
-                <InputField label="Primary Contact Email" value={data.contact.email} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, email: v } })} />
-                <InputField label="Office / Base Location" value={data.contact.location} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, location: v } })} />
-                <InputField label="Weekly Availability Status" value={data.contact.availability} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, availability: v } })} />
-                <InputField label="Footer Header Part 1" value={data.contact.title1} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title1: v } })} />
-                <InputField label="Footer Header Part 2" value={data.contact.title2} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title2: v } })} />
-                <InputField label="Call-To-Action Description" value={data.contact.description} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, description: v } })} multiline />
-                <CommaSeparatedInput label="Services items list (comma-separated)" value={data.contact.services} onChange={(v) => setData({ ...data, contact: { ...data.contact, services: v } })} />
+
+              {/* Social Profile Links */}
+              <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold font-display text-white">Social Profile Links & Handles</h2>
+                  <p className="text-xs text-neutral-400 mt-1">Manage editable social links for GitHub, LinkedIn, Twitter/X, and WhatsApp across the website.</p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <InputField 
+                    label="GitHub Profile Link URL" 
+                    value={data.contact.github || data.hero?.github || ""} 
+                    onChange={(v: any) => setData({ 
+                      ...data, 
+                      contact: { ...data.contact, github: v },
+                      hero: { ...(data.hero || {}), github: v }
+                    })} 
+                  />
+                  <InputField 
+                    label="LinkedIn Profile Link URL" 
+                    value={data.contact.linkedin || data.hero?.linkedin || ""} 
+                    onChange={(v: any) => setData({ 
+                      ...data, 
+                      contact: { ...data.contact, linkedin: v },
+                      hero: { ...(data.hero || {}), linkedin: v }
+                    })} 
+                  />
+                  <InputField 
+                    label="Twitter / X Profile Link URL (Optional)" 
+                    value={data.contact.twitter || ""} 
+                    onChange={(v: any) => setData({ ...data, contact: { ...data.contact, twitter: v } })} 
+                  />
+                  <InputField 
+                    label="WhatsApp Chat Link / Number (Optional)" 
+                    value={data.contact.whatsapp || ""} 
+                    onChange={(v: any) => setData({ ...data, contact: { ...data.contact, whatsapp: v } })} 
+                  />
+                </div>
+              </div>
+
+              {/* Contact Headings & Services */}
+              <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
+                <div>
+                  <h2 className="text-xl font-bold font-display text-white">Contact Section Copywriting</h2>
+                  <p className="text-xs text-neutral-400 mt-1">Configure section titles, subtitles, call-to-action text, and service choices.</p>
+                </div>
+                <div className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <InputField label="Section Title Part 1" value={data.contact.title1 || data.contact.title || "Let's build"} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title1: v, title: v } })} />
+                    <InputField label="Section Title Part 2 (Highlighted)" value={data.contact.title2 || data.contact.subtitle || "something great"} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, title2: v, subtitle: v } })} />
+                  </div>
+                  <InputField label="Call-To-Action Description" value={data.contact.description || ""} onChange={(v: any) => setData({ ...data, contact: { ...data.contact, description: v } })} multiline />
+                  <CommaSeparatedInput label="Services items list (comma-separated)" value={data.contact.services || []} onChange={(v) => setData({ ...data, contact: { ...data.contact, services: v } })} />
+                </div>
               </div>
             </div>
           )}

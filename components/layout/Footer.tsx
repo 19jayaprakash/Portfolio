@@ -64,14 +64,16 @@ export default function Footer() {
 
   useDataRefresh(fetchData);
 
-  const socials = [
-    socialData.github ? { icon: Github, href: socialData.github, label: "GitHub" } : null,
-    socialData.linkedin ? { icon: Linkedin, href: socialData.linkedin, label: "LinkedIn" } : null,
-    socialData.email ? { icon: Mail, href: `mailto:${socialData.email}`, label: "Email" } : null,
-    socialData.phone ? { icon: Phone, href: `tel:${socialData.phone.replace(/[^+\d]/g, '')}`, label: "Phone" } : null,
-    socialData.twitter ? { icon: Twitter, href: socialData.twitter, label: "Twitter" } : null,
-    socialData.whatsapp ? { icon: MessageSquare, href: socialData.whatsapp, label: "WhatsApp" } : null,
-  ].filter(Boolean);
+  const socials = (
+    [
+      socialData.github ? { icon: Github, href: socialData.github, label: "GitHub" } : null,
+      socialData.linkedin ? { icon: Linkedin, href: socialData.linkedin, label: "LinkedIn" } : null,
+      socialData.email ? { icon: Mail, href: `mailto:${socialData.email}`, label: "Email" } : null,
+      socialData.phone ? { icon: Phone, href: `tel:${socialData.phone.replace(/[^+\d]/g, '')}`, label: "Phone" } : null,
+      socialData.twitter ? { icon: Twitter, href: socialData.twitter, label: "Twitter" } : null,
+      socialData.whatsapp ? { icon: MessageSquare, href: socialData.whatsapp, label: "WhatsApp" } : null,
+    ] as Array<{ icon: any; href: string; label: string } | null>
+  ).filter((item): item is { icon: any; href: string; label: string } => item !== null);
 
   return (
     <footer

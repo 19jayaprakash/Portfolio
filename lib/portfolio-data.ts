@@ -115,6 +115,42 @@ export interface PortfolioData {
     titleEmphasis: string;
     description1: string;
     description2: string;
+    teamEvolutionNote?: string;
+    companyHighlights?: Array<{
+      label: string;
+      value: string;
+      desc: string;
+    }>;
+    page?: {
+      heroBadge?: string;
+      heroTitle?: string;
+      heroSubtitle?: string;
+      storyTitle?: string;
+      storyParagraph1?: string;
+      storyParagraph2?: string;
+      team?: Array<{
+        id: string;
+        name: string;
+        role: string;
+        bio: string;
+        image: string;
+        skills: string[];
+        github?: string;
+        linkedin?: string;
+      }>;
+      values?: Array<{
+        id: string;
+        title: string;
+        desc: string;
+        icon: string;
+      }>;
+      milestones?: Array<{
+        id: string;
+        year: string;
+        title: string;
+        desc: string;
+      }>;
+    };
   };
 }
 
@@ -355,7 +391,105 @@ export const defaultPortfolioData: PortfolioData = {
   about: {
     title: "Turning ideas into",
     titleEmphasis: "digital reality",
-    description1: "Led by our founders, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
-    description2: "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
+    description1: "Led by our core team of engineers, designers, and system architects, AeroPeak has transformed from an ambitious dev initiative into a full-scale digital agency. We bridge creative design with production-grade engineering — delivering web apps, mobile solutions, and enterprise systems that scale.",
+    description2: "Based in Coimbatore, Tamil Nadu — we partner with ambitious founders, growing startups, and enterprises worldwide to design, build, and optimize software that drives measurable business growth.",
+    teamEvolutionNote: "Engineered by a specialized team of full-stack developers, mobile engineers, UI/UX designers, and DevOps specialists focused on crafting world-class digital experiences.",
+    companyHighlights: [
+      { label: "Engineering Team", value: "Multi-disciplinary", desc: "Full-stack devs, UI/UX designers & cloud architects" },
+      { label: "Client Satisfaction", value: "99.4%", desc: "On-time delivery & transparent communication" },
+      { label: "Global Reach", value: "25+ Apps", desc: "Deployed across web, iOS, Android & cloud" }
+    ],
+    page: {
+      heroBadge: "About AeroPeak Digital Agency",
+      heroTitle: "Architecting Next-Generation",
+      heroSubtitle: "We are a collective of passionate software engineers, product designers, and technology consultants dedicated to building exceptional digital products.",
+      storyTitle: "Our Company Evolution",
+      storyParagraph1: "AeroPeak began with a singular vision: to eliminate the gap between complex enterprise software engineering and modern visual elegance. Over time, our core team expanded to bring together top talent in Next.js, React Native, Laravel, Cloud Infrastructure, and UI/UX Strategy.",
+      storyParagraph2: "Today, operating from Coimbatore, Tamil Nadu, AeroPeak delivers end-to-end web platforms, mobile applications, and custom cloud software for clients across India and globally. We build with longevity, security, and extreme performance in mind.",
+      team: [
+        {
+          id: "1",
+          name: "R. Jayaprakash",
+          role: "Founder & Lead Full-Stack Architect",
+          bio: "Specializing in Next.js, React Native, cloud infrastructure, and scalable system design with a passion for clean UI/UX.",
+          image: "/images/photo_pose1.png",
+          skills: ["Next.js", "React Native", "TypeScript", "Node.js", "System Architecture"],
+          github: "https://github.com/19jayaprakash",
+          linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/"
+        },
+        {
+          id: "2",
+          name: "Design & UX Engineering Team",
+          role: "UI/UX & Frontend Specialists",
+          bio: "Focused on creating fluid animations, interactive micro-interactions, responsive design systems, and modern glassmorphic aesthetics.",
+          image: "/images/photo_pose2.png",
+          skills: ["Figma", "Tailwind CSS", "Framer Motion", "UI Design", "User Research"],
+          github: "https://github.com",
+          linkedin: "https://linkedin.com"
+        },
+        {
+          id: "3",
+          name: "Backend & Cloud Operations",
+          role: "Backend & Database Infrastructure",
+          bio: "Dedicated to database optimization, security policies, API integrations, real-time sync systems, and cloud deployment pipelines.",
+          image: "/images/photo1.jpg",
+          skills: ["PostgreSQL", "Supabase", "REST & GraphQL", "Docker", "AWS/Vercel"],
+          github: "https://github.com",
+          linkedin: "https://linkedin.com"
+        }
+      ],
+      values: [
+        {
+          id: "1",
+          title: "Engineering Excellence",
+          desc: "We write clean, modular, and maintainable code built to handle high traffic and seamless updates.",
+          icon: "Code2"
+        },
+        {
+          id: "2",
+          title: "Pixel Precision UI/UX",
+          desc: "Every interaction, animation, and color token is crafted for maximum user engagement and clarity.",
+          icon: "Palette"
+        },
+        {
+          id: "3",
+          title: "High Performance & SEO",
+          desc: "Optimized asset delivery, core web vitals, server-side rendering, and rapid response times.",
+          icon: "Zap"
+        },
+        {
+          id: "4",
+          title: "Transparent Partnership",
+          desc: "Direct developer communication, regular project updates, clear milestones, and zero hidden costs.",
+          icon: "Users"
+        }
+      ],
+      milestones: [
+        {
+          id: "1",
+          year: "2023",
+          title: "Founding & Initial Launch",
+          desc: "Started with core freelance web development and client consultations."
+        },
+        {
+          id: "2",
+          year: "2024",
+          title: "Team & Tech Stack Expansion",
+          desc: "Expanded team capabilities into full-stack Next.js, React Native mobile apps, and Supabase cloud solutions."
+        },
+        {
+          id: "3",
+          year: "2025",
+          title: "25+ Client Deliveries",
+          desc: "Successfully launched over 25 custom applications for startups, retail stores, and digital agencies."
+        },
+        {
+          id: "4",
+          year: "2026",
+          title: "AeroPeak Digital Enterprise",
+          desc: "Established full-service agency framework offering web development, mobile applications, and admin control solutions."
+        }
+      ]
+    }
   }
 };

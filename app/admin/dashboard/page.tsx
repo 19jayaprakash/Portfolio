@@ -97,7 +97,14 @@ export default function AdminDashboard() {
               ...(result.data.contact || {}),
             },
             pricing: result.data.pricing || defaultPortfolioData.pricing,
-            about: result.data.about || defaultPortfolioData.about
+            about: {
+              ...defaultPortfolioData.about,
+              ...(result.data.about || {}),
+              page: {
+                ...defaultPortfolioData.about.page,
+                ...((result.data.about && result.data.about.page) || {})
+              }
+            }
           };
           setData(mergedData);
         }
@@ -108,6 +115,8 @@ export default function AdminDashboard() {
         setLoading(false);
       });
   }, [router]);
+
+  const [aboutSubTab, setAboutSubTab] = useState("homepage");
 
   const handleLogout = () => {
     sessionStorage.removeItem("adminAuthenticated");
@@ -144,6 +153,173 @@ export default function AdminDashboard() {
   // About handlers
   const updateAbout = (field: string, value: any) => {
     setData({ ...data, about: { ...data.about, [field]: value } });
+  };
+
+  const updateAboutPageField = (field: string, value: any) => {
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          [field]: value
+        }
+      }
+    });
+  };
+
+  const addTeamMember = () => {
+    const newMember = {
+      id: Date.now().toString(),
+      name: "New Team Member",
+      role: "Software Engineer",
+      bio: "Member bio and expertise...",
+      image: "/images/photo_pose1.png",
+      skills: ["React", "TypeScript"],
+      github: "",
+      linkedin: ""
+    };
+    const currentTeam = data.about?.page?.team || defaultPortfolioData.about.page!.team!;
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          team: [...currentTeam, newMember]
+        }
+      }
+    });
+  };
+
+  const updateTeamMember = (id: string, field: string, value: any) => {
+    const currentTeam = data.about?.page?.team || defaultPortfolioData.about.page!.team!;
+    const updatedTeam = currentTeam.map((m: any) => m.id === id ? { ...m, [field]: value } : m);
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          team: updatedTeam
+        }
+      }
+    });
+  };
+
+  const deleteTeamMember = (id: string) => {
+    const currentTeam = data.about?.page?.team || defaultPortfolioData.about.page!.team!;
+    const updatedTeam = currentTeam.filter((m: any) => m.id !== id);
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          team: updatedTeam
+        }
+      }
+    });
+  };
+
+  const addCompanyValue = () => {
+    const newValue = {
+      id: Date.now().toString(),
+      title: "New Value",
+      desc: "Value description...",
+      icon: "Sparkles"
+    };
+    const currentValues = data.about?.page?.values || defaultPortfolioData.about.page!.values!;
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          values: [...currentValues, newValue]
+        }
+      }
+    });
+  };
+
+  const updateCompanyValue = (id: string, field: string, value: any) => {
+    const currentValues = data.about?.page?.values || defaultPortfolioData.about.page!.values!;
+    const updatedValues = currentValues.map((v: any) => v.id === id ? { ...v, [field]: value } : v);
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          values: updatedValues
+        }
+      }
+    });
+  };
+
+  const deleteCompanyValue = (id: string) => {
+    const currentValues = data.about?.page?.values || defaultPortfolioData.about.page!.values!;
+    const updatedValues = currentValues.filter((v: any) => v.id !== id);
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          values: updatedValues
+        }
+      }
+    });
+  };
+
+  const addMilestone = () => {
+    const newMs = {
+      id: Date.now().toString(),
+      year: new Date().getFullYear().toString(),
+      title: "New Milestone",
+      desc: "Milestone details..."
+    };
+    const currentMs = data.about?.page?.milestones || defaultPortfolioData.about.page!.milestones!;
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          milestones: [...currentMs, newMs]
+        }
+      }
+    });
+  };
+
+  const updateMilestone = (id: string, field: string, value: any) => {
+    const currentMs = data.about?.page?.milestones || defaultPortfolioData.about.page!.milestones!;
+    const updatedMs = currentMs.map((m: any) => m.id === id ? { ...m, [field]: value } : m);
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          milestones: updatedMs
+        }
+      }
+    });
+  };
+
+  const deleteMilestone = (id: string) => {
+    const currentMs = data.about?.page?.milestones || defaultPortfolioData.about.page!.milestones!;
+    const updatedMs = currentMs.filter((m: any) => m.id !== id);
+    setData({
+      ...data,
+      about: {
+        ...data.about,
+        page: {
+          ...(data.about?.page || defaultPortfolioData.about.page),
+          milestones: updatedMs
+        }
+      }
+    });
   };
 
   // Stats handlers
@@ -562,15 +738,202 @@ export default function AdminDashboard() {
           {activeTab === "about" && data?.about && (
             <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-6">
               <div>
-                <h2 className="text-xl font-bold font-display text-white">About Section</h2>
-                <p className="text-xs text-neutral-400 mt-1">Configure your bio, CEO details, and about descriptions.</p>
+                <h2 className="text-xl font-bold font-display text-white">About &amp; Team Management</h2>
+                <p className="text-xs text-neutral-400 mt-1">Configure both Homepage About Section and Dedicated Standalone About Page (/about).</p>
               </div>
-              <div className="space-y-5">
-                <InputField label="About Title" value={data.about.title} onChange={(v: any) => updateAbout("title", v)} />
-                <InputField label="Title Highlight (e.g. digital reality)" value={data.about.titleEmphasis} onChange={(v: any) => updateAbout("titleEmphasis", v)} />
-                <InputField label="Description Paragraph 1" value={data.about.description1} onChange={(v: any) => updateAbout("description1", v)} multiline />
-                <InputField label="Description Paragraph 2" value={data.about.description2} onChange={(v: any) => updateAbout("description2", v)} multiline />
+
+              {/* Sub-tabs nav */}
+              <div className="flex flex-wrap gap-2 border-b border-white/10 pb-3">
+                {[
+                  { id: "homepage", label: "Homepage About Section" },
+                  { id: "pageHeader", label: "About Page Story" },
+                  { id: "team", label: `Team Members (${(data.about.page?.team || []).length})` },
+                  { id: "values", label: `Core Values (${(data.about.page?.values || []).length})` },
+                  { id: "milestones", label: `Growth Milestones (${(data.about.page?.milestones || []).length})` },
+                ].map((st) => (
+                  <button
+                    key={st.id}
+                    onClick={() => setAboutSubTab(st.id)}
+                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 ${
+                      aboutSubTab === st.id
+                        ? "bg-amber-500 text-neutral-950 font-bold shadow-md"
+                        : "text-neutral-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {st.label}
+                  </button>
+                ))}
               </div>
+
+              {/* Subtab 1: Homepage About Section */}
+              {aboutSubTab === "homepage" && (
+                <div className="space-y-5">
+                  <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                    Homepage About Section Settings
+                  </div>
+                  <InputField label="About Section Title" value={data.about.title} onChange={(v: any) => updateAbout("title", v)} />
+                  <InputField label="Title Highlight (Emphasis Text)" value={data.about.titleEmphasis} onChange={(v: any) => updateAbout("titleEmphasis", v)} />
+                  <InputField label="Description Paragraph 1" value={data.about.description1} onChange={(v: any) => updateAbout("description1", v)} multiline />
+                  <InputField label="Description Paragraph 2" value={data.about.description2} onChange={(v: any) => updateAbout("description2", v)} multiline />
+                  <InputField label="Team Evolution Note (Highlighted Card)" value={data.about.teamEvolutionNote} onChange={(v: any) => updateAbout("teamEvolutionNote", v)} multiline />
+                </div>
+              )}
+
+              {/* Subtab 2: About Page Header & Story */}
+              {aboutSubTab === "pageHeader" && (
+                <div className="space-y-5">
+                  <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                    Dedicated Standalone About Page (/about) Header &amp; Story
+                  </div>
+                  <InputField label="Hero Badge Text" value={data.about.page?.heroBadge} onChange={(v: any) => updateAboutPageField("heroBadge", v)} />
+                  <InputField label="Hero Title" value={data.about.page?.heroTitle} onChange={(v: any) => updateAboutPageField("heroTitle", v)} />
+                  <InputField label="Hero Subtitle / Tagline" value={data.about.page?.heroSubtitle} onChange={(v: any) => updateAboutPageField("heroSubtitle", v)} multiline />
+                  <InputField label="Company Evolution Story Title" value={data.about.page?.storyTitle} onChange={(v: any) => updateAboutPageField("storyTitle", v)} />
+                  <InputField label="Story Paragraph 1" value={data.about.page?.storyParagraph1} onChange={(v: any) => updateAboutPageField("storyParagraph1", v)} multiline />
+                  <InputField label="Story Paragraph 2" value={data.about.page?.storyParagraph2} onChange={(v: any) => updateAboutPageField("storyParagraph2", v)} multiline />
+                </div>
+              )}
+
+              {/* Subtab 3: Team Members Editor */}
+              {aboutSubTab === "team" && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                        Company &amp; Engineering Team Showcase
+                      </div>
+                      <p className="text-xs text-neutral-400 mt-0.5">Manage team members displayed on the standalone /about page.</p>
+                    </div>
+                    <button
+                      onClick={addTeamMember}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-mono font-bold bg-amber-500 text-neutral-950 hover:bg-amber-400 transition-all"
+                    >
+                      <Plus size={14} />
+                      <span>ADD MEMBER</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {(data.about.page?.team || []).map((member: any, index: number) => (
+                      <div key={member.id || index} className="p-6 rounded-2xl border border-white/5 bg-neutral-900/40 space-y-4">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                          <span className="text-xs font-mono text-amber-400 font-bold">
+                            Member #{index + 1}: {member.name}
+                          </span>
+                          <button
+                            onClick={() => deleteTeamMember(member.id)}
+                            className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-all"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <InputField label="Name" value={member.name} onChange={(v: any) => updateTeamMember(member.id, "name", v)} />
+                          <InputField label="Role / Title" value={member.role} onChange={(v: any) => updateTeamMember(member.id, "role", v)} />
+                        </div>
+                        
+                        <InputField label="Bio / Summary" value={member.bio} onChange={(v: any) => updateTeamMember(member.id, "bio", v)} multiline />
+                        
+                        <div className="grid md:grid-cols-3 gap-4">
+                          <InputField label="Photo URL / Asset Path" value={member.image} onChange={(v: any) => updateTeamMember(member.id, "image", v)} />
+                          <InputField label="GitHub URL" value={member.github} onChange={(v: any) => updateTeamMember(member.id, "github", v)} />
+                          <InputField label="LinkedIn URL" value={member.linkedin} onChange={(v: any) => updateTeamMember(member.id, "linkedin", v)} />
+                        </div>
+
+                        <CommaSeparatedInput 
+                          label="Skills / Specializations (comma-separated)" 
+                          value={member.skills || []} 
+                          onChange={(v) => updateTeamMember(member.id, "skills", v)} 
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Subtab 4: Company Core Values Editor */}
+              {aboutSubTab === "values" && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                        Company Philosophy &amp; Core Values
+                      </div>
+                      <p className="text-xs text-neutral-400 mt-0.5">Edit value cards displayed on /about page.</p>
+                    </div>
+                    <button
+                      onClick={addCompanyValue}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-mono font-bold bg-amber-500 text-neutral-950 hover:bg-amber-400 transition-all"
+                    >
+                      <Plus size={14} />
+                      <span>ADD VALUE</span>
+                    </button>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {(data.about.page?.values || []).map((val: any, index: number) => (
+                      <div key={val.id || index} className="p-5 rounded-2xl border border-white/5 bg-neutral-900/40 space-y-4">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                          <span className="text-xs font-mono text-amber-400 font-bold">Value #{index + 1}</span>
+                          <button
+                            onClick={() => deleteCompanyValue(val.id)}
+                            className="p-1 rounded-lg text-red-400 hover:bg-red-500/10 transition-all"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                        <InputField label="Title" value={val.title} onChange={(v: any) => updateCompanyValue(val.id, "title", v)} />
+                        <InputField label="Description" value={val.desc} onChange={(v: any) => updateCompanyValue(val.id, "desc", v)} multiline />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Subtab 5: Growth Milestones Editor */}
+              {aboutSubTab === "milestones" && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                        Company Growth Milestones
+                      </div>
+                      <p className="text-xs text-neutral-400 mt-0.5">Manage chronological achievements timeline on /about page.</p>
+                    </div>
+                    <button
+                      onClick={addMilestone}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-mono font-bold bg-amber-500 text-neutral-950 hover:bg-amber-400 transition-all"
+                    >
+                      <Plus size={14} />
+                      <span>ADD MILESTONE</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {(data.about.page?.milestones || []).map((ms: any, index: number) => (
+                      <div key={ms.id || index} className="p-5 rounded-2xl border border-white/5 bg-neutral-900/40 space-y-4">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                          <span className="text-xs font-mono text-amber-400 font-bold">Milestone #{index + 1}</span>
+                          <button
+                            onClick={() => deleteMilestone(ms.id)}
+                            className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-all"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-4">
+                          <InputField label="Year (e.g. 2026)" value={ms.year} onChange={(v: any) => updateMilestone(ms.id, "year", v)} />
+                          <div className="md:col-span-2">
+                            <InputField label="Milestone Title" value={ms.title} onChange={(v: any) => updateMilestone(ms.id, "title", v)} />
+                          </div>
+                        </div>
+                        <InputField label="Description" value={ms.desc} onChange={(v: any) => updateMilestone(ms.id, "desc", v)} multiline />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

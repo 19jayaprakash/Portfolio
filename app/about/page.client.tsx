@@ -1,8 +1,7 @@
 "use client";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import About from "@/components/sections/About";
-import Studies from "@/components/sections/Studies";
+import AboutPageContent from "@/components/sections/AboutPageContent";
 
 export default function AboutPage() {
   return (
@@ -10,11 +9,8 @@ export default function AboutPage() {
       <Navbar />
       
       <main className="pt-24">
-        {/* Render standalone profile section */}
-        <About />
-        
-        {/* Render standalone timeline (education & certs) */}
-        <Studies />
+        {/* Render dedicated standalone About Page content */}
+        <AboutPageContent />
       </main>
 
       <Footer />

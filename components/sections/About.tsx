@@ -1,25 +1,25 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { Code2, Palette, Zap, Globe } from "lucide-react";
+import { Code2, Palette, Zap, Globe, Users, ArrowRight, ShieldCheck, Cpu } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useDataRefresh } from "@/lib/useDataRefresh";
 
-const skills = [
-  { category: "Frontend", items: ["React", "Next.js", "TypeScript", "Tailwind", "Framer Motion"] },
-  { category: "Backend", items: ["Node.js", "Express", "PostgreSQL", "MongoDB", "GraphQL"] },
-  { category: "Design", items: ["Figma", "Adobe XD", "Illustrator", "Photoshop", "UI/UX"] },
-  { category: "DevOps", items: ["Docker", "AWS", "Vercel", "CI/CD", "Linux"] },
+const defaultSkills = [
+  { category: "Frontend & Web", items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"] },
+  { category: "Mobile Apps", items: ["React Native", "iOS / Android", "Expo", "Push Notifications"] },
+  { category: "Backend & Cloud", items: ["Node.js", "Express", "PostgreSQL", "Supabase", "REST & GraphQL"] },
+  { category: "Design & UX", items: ["Figma", "UI/UX Strategy", "Prototyping", "Design Systems"] },
 ];
 
-const traits = [
-  { icon: Code2, label: "Clean Code", desc: "Scalable, maintainable architecture" },
-  { icon: Palette, label: "Design Eye", desc: "Pixel-perfect attention to detail" },
-  { icon: Zap, label: "Performance", desc: "Optimized for speed & UX" },
-  { icon: Globe, label: "Global Ready", desc: "i18n & accessibility first" },
+const defaultTraits = [
+  { icon: Users, label: "Specialized Team", desc: "Engineers, designers & product strategists" },
+  { icon: Code2, label: "Scalable Architecture", desc: "Production-ready, maintainable codebases" },
+  { icon: Palette, label: "Pixel Precision UI", desc: "Modern visual aesthetics & smooth UX" },
+  { icon: ShieldCheck, label: "Enterprise Security", desc: "Data protection & cloud best practices" },
 ];
 
-// Cycle between the 2 standing cut-out PNG photos
 const photos = [
   "/images/photo_pose1.png",
   "/images/photo_pose2.png",
@@ -29,12 +29,19 @@ export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: "-100px" });
   const [activePhoto, setActivePhoto] = useState(0);
+  const [activeTab, setActiveTab] = useState<"vision" | "team" | "capabilities">("vision");
   
   const [aboutData, setAboutData] = useState<any>({
     title: "Turning ideas into",
     titleEmphasis: "digital reality",
-    description1: "Led by our founders, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
-    description2: "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
+    description1: "Led by our core team of engineers, designers, and system architects, AeroPeak has transformed from an ambitious dev initiative into a full-scale digital agency. We bridge creative design with production-grade engineering — delivering web apps, mobile solutions, and enterprise systems that scale.",
+    description2: "Based in Coimbatore, Tamil Nadu — we partner with ambitious founders, growing startups, and enterprises worldwide to design, build, and optimize software that drives measurable business growth.",
+    teamEvolutionNote: "Engineered by a specialized team of full-stack developers, mobile engineers, UI/UX designers, and DevOps specialists focused on crafting world-class digital experiences.",
+    companyHighlights: [
+      { label: "Engineering Team", value: "Multi-disciplinary", desc: "Full-stack devs, UI/UX designers & cloud architects" },
+      { label: "Client Satisfaction", value: "99.4%", desc: "On-time delivery & transparent communication" },
+      { label: "Global Reach", value: "25+ Apps", desc: "Deployed across web, iOS, Android & cloud" }
+    ]
   });
 
   const fetchData = useCallback(() => {
@@ -45,8 +52,14 @@ export default function About() {
           setAboutData({
             title: result.data.about.title || "Turning ideas into",
             titleEmphasis: result.data.about.titleEmphasis || "digital reality",
-            description1: result.data.about.description1 || "Led by our founders, we are a digital agency of expert engineers, designers, and strategists. We bridge creative design and cutting-edge engineering — creating high-performance digital products that are beautiful, intuitive, and built to scale.",
-            description2: result.data.about.description2 || "Based in Coimbatore, Tamil Nadu — we partner with startups, agencies, and enterprises worldwide to design, build, and optimize software that drives growth."
+            description1: result.data.about.description1 || "Led by our core team of engineers, designers, and system architects, AeroPeak has transformed from an ambitious dev initiative into a full-scale digital agency.",
+            description2: result.data.about.description2 || "Based in Coimbatore, Tamil Nadu — we partner with ambitious founders, growing startups, and enterprises worldwide to design, build, and optimize software.",
+            teamEvolutionNote: result.data.about.teamEvolutionNote || "Engineered by a specialized team of full-stack developers, mobile engineers, UI/UX designers, and DevOps specialists.",
+            companyHighlights: result.data.about.companyHighlights || [
+              { label: "Engineering Team", value: "Multi-disciplinary", desc: "Full-stack devs, UI/UX designers & cloud architects" },
+              { label: "Client Satisfaction", value: "99.4%", desc: "On-time delivery & transparent communication" },
+              { label: "Global Reach", value: "25+ Apps", desc: "Deployed across web, iOS, Android & cloud" }
+            ]
           });
         }
       })
@@ -57,7 +70,6 @@ export default function About() {
     fetchData();
   }, [fetchData]);
 
-  // Auto-refresh when admin updates data
   useDataRefresh(fetchData);
 
   useEffect(() => {
@@ -68,212 +80,293 @@ export default function About() {
   }, []);
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
-
-  const renderTitle = () => {
-    return (
-      <>
-        {aboutData.title}{" "}
-        {aboutData.titleEmphasis && (
-          <em style={{ color: "var(--accent)" }}>{aboutData.titleEmphasis}</em>
-        )}
-      </>
-    );
-  };
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["3%", "-3%"]);
 
   return (
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-32 md:py-48 px-6 md:px-12 overflow-hidden"
+      className="relative py-28 md:py-40 px-6 md:px-12 overflow-hidden"
       style={{ background: "var(--bg)" }}
     >
-      {/* Subtle bg glow */}
+      {/* Background glow effects */}
       <div
-        className="absolute left-0 top-1/2 -translate-y-1/2 w-96 h-96 pointer-events-none opacity-10"
-        style={{ background: "radial-gradient(circle, var(--accent) 0%, transparent 70%)", filter: "blur(60px)" }}
+        className="absolute left-0 top-1/3 -translate-y-1/2 w-96 h-96 pointer-events-none opacity-15"
+        style={{ background: "radial-gradient(circle, var(--accent) 0%, transparent 70%)", filter: "blur(80px)" }}
+      />
+      <div
+        className="absolute right-0 bottom-1/4 w-[500px] h-[500px] pointer-events-none opacity-10"
+        style={{ background: "radial-gradient(circle, #6366F1 0%, transparent 70%)", filter: "blur(100px)" }}
       />
 
       {/* Section label */}
       <motion.div
-        className="flex items-center gap-4 mb-20"
+        className="flex items-center gap-4 mb-16 max-w-7xl mx-auto"
         initial={{ opacity: 0, x: -30 }}
         animate={inView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.6 }}
       >
         <span className="font-mono text-xs tracking-[0.3em] uppercase" style={{ color: "var(--accent)" }}>
-          01 — About
+          01 — About AeroPeak & Team
         </span>
         <div className="flex-1 max-w-xs h-px" style={{ background: "var(--border-accent)" }} />
       </motion.div>
 
-      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-        {/* LEFT: Photo collage */}
-        <motion.div style={{ y: imageY }} className="relative">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        
+        {/* LEFT COLUMN: Image Frame & Interactive Floating Badges (5 cols) */}
+        <motion.div style={{ y: imageY }} className="lg:col-span-5 relative">
           <motion.div
             className="relative"
-            initial={{ opacity: 0, scale: 0.92 }}
+            initial={{ opacity: 0, scale: 0.94 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            {/* Main large photo */}
+            {/* Main photo container with glowing border */}
             <div
-              className="relative w-full max-w-[380px] mx-auto rounded-3xl overflow-hidden border-2 border-[var(--accent)]/30"
+              className="relative w-full max-w-[360px] mx-auto rounded-3xl overflow-hidden border-2 border-[var(--accent)]/30"
               style={{
-                aspectRatio: "9/16",
-                boxShadow: "0 40px 80px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)",
+                aspectRatio: "4/5",
+                boxShadow: "0 30px 70px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1)",
               }}
             >
               {photos.map((src, i) => (
                 <motion.div
                   key={src}
                   className="absolute inset-0"
-                  initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ 
                     opacity: i === activePhoto ? 1 : 0, 
-                    scale: i === activePhoto ? 1.05 : 0.95,
-                    y: i === activePhoto ? 0 : 15
+                    scale: i === activePhoto ? 1.03 : 0.95,
                   }}
                   transition={{ duration: 0.8, ease: "easeInOut" }}
                 >
                   <Image
                     src={src}
-                    alt={`Profile photo ${i + 1}`}
+                    alt={`AeroPeak Team Lead ${i + 1}`}
                     fill
-                    className="object-cover object-bottom"
+                    className="object-cover object-top"
                   />
                 </motion.div>
               ))}
-              {/* Bottom overlay */}
+              
+              {/* Dark gradient overlay */}
               <div
                 className="absolute inset-0 pointer-events-none"
-                style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%)" }}
+                style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)" }}
               />
+
+              {/* Photo Indicator Dots */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {photos.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActivePhoto(i)}
+                    className="transition-all duration-300 rounded-full"
+                    style={{
+                      width: i === activePhoto ? "32px" : "8px",
+                      height: "8px",
+                      background: i === activePhoto ? "var(--accent)" : "rgba(255,255,255,0.4)",
+                    }}
+                  />
+                ))}
+              </div>
             </div>
 
-            {/* Photo selector thumbnails */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-              {photos.map((src, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActivePhoto(i)}
-                  className="transition-all duration-300 rounded-full overflow-hidden"
-                  style={{
-                    width: i === activePhoto ? "40px" : "8px",
-                    height: "8px",
-                    background: i === activePhoto ? "var(--accent)" : "rgba(255,255,255,0.4)",
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* Dot grid decoration */}
-            <div
-              className="absolute -bottom-10 -left-10 w-28 h-28 opacity-20"
-              style={{
-                backgroundImage: `radial-gradient(circle, var(--accent) 1.5px, transparent 1.5px)`,
-                backgroundSize: "12px 12px",
-              }}
-            />
+            {/* Floating Team Evolution Badge */}
+            <motion.div
+              className="absolute -bottom-6 -right-2 md:right-4 p-4 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl max-w-[260px] hidden sm:flex items-center gap-3"
+              style={{ background: "rgba(15, 13, 10, 0.85)" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.5, duration: 0.6 }}
+            >
+              <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400">
+                <Users size={20} />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-white">Expanded Team</div>
+                <div className="text-[11px] text-neutral-400 leading-tight">Engineers, UI/UX & Cloud Strategists</div>
+              </div>
+            </motion.div>
           </motion.div>
         </motion.div>
 
-        {/* RIGHT: Text content */}
-        <motion.div style={{ y: textY }}>
-          <motion.h2
-            className="font-display mb-6"
-            style={{
-              fontSize: "clamp(2.5rem, 5vw, 5rem)",
-              fontWeight: 700,
-              lineHeight: 1,
-              color: "var(--text-primary)",
-            }}
-            initial={{ opacity: 0, y: 40 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            {renderTitle()}
-          </motion.h2>
+        {/* RIGHT COLUMN: Text & Interactive Content Tabs (7 cols) */}
+        <motion.div style={{ y: textY }} className="lg:col-span-7 space-y-8">
+          
+          {/* Header Title */}
+          <div>
+            <motion.h2
+              className="font-display mb-4"
+              style={{
+                fontSize: "clamp(2.2rem, 4vw, 4rem)",
+                fontWeight: 700,
+                lineHeight: 1.1,
+                color: "var(--text-primary)",
+              }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8 }}
+            >
+              {aboutData.title}{" "}
+              {aboutData.titleEmphasis && (
+                <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent italic">
+                  {aboutData.titleEmphasis}
+                </span>
+              )}
+            </motion.h2>
 
-          <motion.p
-            className="text-base leading-relaxed mb-5"
-            style={{ color: "var(--text-secondary)" }}
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.35 }}
-          >
-            {aboutData.description1}
-          </motion.p>
+            <motion.p
+              className="text-base leading-relaxed text-neutral-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.2 }}
+            >
+              {aboutData.description1}
+            </motion.p>
+          </div>
 
-          <motion.p
-            className="text-base leading-relaxed mb-10"
-            style={{ color: "var(--text-secondary)" }}
-            initial={{ opacity: 0, y: 30 }}
+          {/* Company & Team Transition Highlight Box */}
+          <motion.div
+            className="p-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-md relative overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.45 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
           >
-            {aboutData.description2}
-          </motion.p>
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-amber-500/20 text-amber-400 mt-0.5 flex-shrink-0">
+                <Cpu size={18} />
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+                  Company & Engineering Team
+                </div>
+                <p className="text-xs text-neutral-300 leading-relaxed">
+                  {aboutData.teamEvolutionNote}
+                </p>
+              </div>
+            </div>
+          </motion.div>
 
-          {/* Traits — glass style */}
-          <div className="grid grid-cols-2 gap-3 mb-10">
-            {traits.map(({ icon: Icon, label, desc }, i) => (
-              <motion.div
-                key={label}
-                className="flex items-start gap-3 p-4 rounded-xl transition-all duration-300 group cursor-default"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  backdropFilter: "blur(10px)",
-                }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
-                whileHover={{ background: "rgba(200,149,107,0.06)", borderColor: "rgba(200,149,107,0.25)" }}
+          {/* Interactive Navigation Tabs */}
+          <div className="flex gap-2 border-b border-white/10 pb-3">
+            {[
+              { id: "vision", label: "Company Vision" },
+              { id: "team", label: "Team Pillars" },
+              { id: "capabilities", label: "Tech Stack" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 ${
+                  activeTab === tab.id
+                    ? "bg-amber-500 text-neutral-950 shadow-md font-bold"
+                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                }`}
               >
-                <div className="p-2 rounded-lg mt-0.5" style={{ background: "var(--accent)", color: "#fff" }}>
-                  <Icon size={13} />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold mb-0.5" style={{ color: "var(--text-primary)" }}>{label}</div>
-                  <div className="text-xs" style={{ color: "var(--text-muted)" }}>{desc}</div>
-                </div>
-              </motion.div>
+                {tab.label}
+              </button>
             ))}
           </div>
 
-          {/* Skills — glass tags */}
-          <div className="grid grid-cols-2 gap-5">
-            {skills.map((group, gi) => (
+          {/* Tab Content Display */}
+          <div className="min-h-[160px]">
+            {activeTab === "vision" && (
               <motion.div
-                key={group.category}
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.7 + gi * 0.08 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="space-y-4"
               >
-                <div className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>
-                  {group.category}
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {group.items.map((skill) => (
-                    <span
-                      key={skill}
-                      className="text-xs px-2 py-0.5 rounded-full transition-all duration-200 cursor-default"
-                      style={{
-                        background: "rgba(255,255,255,0.04)",
-                        color: "var(--text-secondary)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        backdropFilter: "blur(8px)",
-                      }}
-                    >
-                      {skill}
-                    </span>
+                <p className="text-sm text-neutral-300 leading-relaxed">
+                  {aboutData.description2}
+                </p>
+
+                {/* Company Highlights metrics */}
+                <div className="grid grid-cols-3 gap-3 pt-2">
+                  {aboutData.companyHighlights?.map((item: any, idx: number) => (
+                    <div key={idx} className="p-3 rounded-xl border border-white/5 bg-white/[0.02]">
+                      <div className="text-xs font-bold text-amber-400 font-display">{item.value}</div>
+                      <div className="text-[11px] font-semibold text-white mt-0.5">{item.label}</div>
+                      <div className="text-[10px] text-neutral-400 leading-tight mt-0.5 truncate">{item.desc}</div>
+                    </div>
                   ))}
                 </div>
               </motion.div>
-            ))}
+            )}
+
+            {activeTab === "team" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="grid grid-cols-2 gap-3"
+              >
+                {defaultTraits.map(({ icon: Icon, label, desc }) => (
+                  <div
+                    key={label}
+                    className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] flex items-start gap-3 hover:border-amber-500/30 transition-all duration-300"
+                  >
+                    <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+                      <Icon size={16} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white">{label}</div>
+                      <div className="text-[11px] text-neutral-400 leading-tight mt-0.5">{desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+
+            {activeTab === "capabilities" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="grid grid-cols-2 gap-4"
+              >
+                {defaultSkills.map((group) => (
+                  <div key={group.category} className="space-y-1.5">
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">
+                      {group.category}
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {group.items.map((skill) => (
+                        <span
+                          key={skill}
+                          className="text-[11px] px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 text-neutral-200"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
           </div>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-4 pt-4 border-t border-white/5">
+            <Link
+              href="/about"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold font-mono transition-all duration-300 bg-amber-500 text-neutral-950 hover:bg-amber-400 hover:scale-105 active:scale-95 shadow-lg shadow-amber-500/10"
+            >
+              <span>EXPLORE FULL COMPANY PROFILE</span>
+              <ArrowRight size={14} />
+            </Link>
+
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-semibold transition-all duration-300 border border-white/10 text-white hover:bg-white/5 hover:border-white/20"
+            >
+              <span>PARTNER WITH US</span>
+            </Link>
+          </div>
+
         </motion.div>
       </div>
     </section>

@@ -142,6 +142,7 @@ export interface PortfolioData {
         role: string;
         bio: string;
         image: string;
+        icon?: string;
         skills: string[];
         github?: string;
         linkedin?: string;
@@ -431,20 +432,22 @@ export const defaultPortfolioData: PortfolioData = {
       team: [
         {
           id: "1",
-          name: "R. Jayaprakash",
-          role: "Founder & Lead Full-Stack Architect",
-          bio: "Specializing in Next.js, React Native, cloud infrastructure, and scalable system design with a passion for clean UI/UX.",
-          image: "/images/photo_pose1.png",
+          name: "Full-Stack Architecture Team",
+          role: "Lead Systems & Cloud Architect",
+          bio: "Engineered by R. Jayaprakash & core architects specializing in Next.js, React Native, cloud infrastructure, and production-grade API systems.",
+          icon: "Code2",
+          image: "",
           skills: ["Next.js", "React Native", "TypeScript", "Node.js", "System Architecture"],
           github: "https://github.com/19jayaprakash",
           linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/"
         },
         {
           id: "2",
-          name: "Design & UX Engineering Team",
+          name: "UI/UX & Design Engineering",
           role: "UI/UX & Frontend Specialists",
-          bio: "Focused on creating fluid animations, interactive micro-interactions, responsive design systems, and modern glassmorphic aesthetics.",
-          image: "/images/photo_pose2.png",
+          bio: "Focused on crafting fluid motion animations, interactive micro-interactions, responsive design systems, and modern glassmorphic aesthetics.",
+          icon: "Palette",
+          image: "",
           skills: ["Figma", "Tailwind CSS", "Framer Motion", "UI Design", "User Research"],
           github: "https://github.com",
           linkedin: "https://linkedin.com"
@@ -453,8 +456,9 @@ export const defaultPortfolioData: PortfolioData = {
           id: "3",
           name: "Backend & Cloud Operations",
           role: "Backend & Database Infrastructure",
-          bio: "Dedicated to database optimization, security policies, API integrations, real-time sync systems, and cloud deployment pipelines.",
-          image: "/images/photo1.jpg",
+          bio: "Dedicated to PostgreSQL database optimization, Supabase security, API integrations, real-time sync systems, and Vercel cloud pipelines.",
+          icon: "Cpu",
+          image: "",
           skills: ["PostgreSQL", "Supabase", "REST & GraphQL", "Docker", "AWS/Vercel"],
           github: "https://github.com",
           linkedin: "https://linkedin.com"

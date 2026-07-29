@@ -48,9 +48,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/Logo.png",
-    shortcut: "/Logo.png",
-    apple: "/Logo.png",
+    icon: "/Logo2.png",
+    shortcut: "/Logo2.png",
+    apple: "/Logo2.png",
   },
   openGraph: {
     type: "website",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     siteName: "AeroPeak",
     images: [
       {
-        url: `${siteUrl}/Logo2.jpg`,
+        url: `${siteUrl}/Logo2.png`,
         width: 1200,
         height: 630,
         alt: "AeroPeak Logo",
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AeroPeak | Website & Mobile App Development Company",
     description: "AeroPeak is a website and mobile app development company in Coimbatore specializing in Next.js, React, Laravel, UI/UX design, SEO, and custom software solutions.",
-    images: [`${siteUrl}/Logo2.jpg`],
+    images: [`${siteUrl}/Logo2.png`],
     creator: "@aeropeak",
   },
 };

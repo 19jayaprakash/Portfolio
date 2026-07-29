@@ -769,13 +769,38 @@ export default function AdminDashboard() {
               {aboutSubTab === "homepage" && (
                 <div className="space-y-5">
                   <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
-                    Homepage About Section Settings
+                    Homepage Minimal Editorial Section Settings
                   </div>
-                  <InputField label="About Section Title" value={data.about.title} onChange={(v: any) => updateAbout("title", v)} />
-                  <InputField label="Title Highlight (Emphasis Text)" value={data.about.titleEmphasis} onChange={(v: any) => updateAbout("titleEmphasis", v)} />
-                  <InputField label="Description Paragraph 1" value={data.about.description1} onChange={(v: any) => updateAbout("description1", v)} multiline />
-                  <InputField label="Description Paragraph 2" value={data.about.description2} onChange={(v: any) => updateAbout("description2", v)} multiline />
-                  <InputField label="Team Evolution Note (Highlighted Card)" value={data.about.teamEvolutionNote} onChange={(v: any) => updateAbout("teamEvolutionNote", v)} multiline />
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <InputField label="Section Pill Badge (e.g. OUR APPROACH)" value={data.about.badgeText || "OUR APPROACH"} onChange={(v: any) => updateAbout("badgeText", v)} />
+                    <InputField label="Focus Areas Sub-Header" value={data.about.focusAreasLabel || "PERFORMANCE FOCUS AREAS"} onChange={(v: any) => updateAbout("focusAreasLabel", v)} />
+                  </div>
+                  <InputField label="Main Title Top Line (e.g. We engineer your)" value={data.about.title} onChange={(v: any) => updateAbout("title", v)} />
+                  <InputField label="Main Title Italic Emphasis (e.g. digital growth engine.)" value={data.about.titleEmphasis} onChange={(v: any) => updateAbout("titleEmphasis", v)} />
+                  <InputField label="Description Paragraph (Approach Story)" value={data.about.description1} onChange={(v: any) => updateAbout("description1", v)} multiline />
+                  
+                  <CommaSeparatedInput 
+                    label="Focus Areas List Items (comma-separated)" 
+                    value={data.about.focusAreas || ["Conversions & Custom Web Apps", "Cross-Platform Mobile Apps", "UI/UX Design Systems", "Scalable Cloud Architecture", "KPI-Aligned Performance & SEO"]} 
+                    onChange={(v) => updateAbout("focusAreas", v)} 
+                  />
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <InputField label="Author Name (e.g. R. Jayaprakash & Engineering Team)" value={data.about.authorName || "R. Jayaprakash & Engineering Team"} onChange={(v: any) => updateAbout("authorName", v)} />
+                    <InputField label="Author Role / Tagline" value={data.about.authorRole || "Founder & Core Team, AeroPeak"} onChange={(v: any) => updateAbout("authorRole", v)} />
+                  </div>
+
+                  <div className="border-t border-white/10 pt-4 space-y-4">
+                    <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                      Vision Sub-Section Settings
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <InputField label="Vision Badge (e.g. OUR VISION)" value={data.about.visionBadge || "OUR VISION"} onChange={(v: any) => updateAbout("visionBadge", v)} />
+                      <InputField label="Vision Headline (e.g. Driving measurable, sustainable growth)" value={data.about.visionTitle || "Driving measurable, sustainable growth"} onChange={(v: any) => updateAbout("visionTitle", v)} />
+                    </div>
+                    <InputField label="Vision Description Paragraph" value={data.about.description2} onChange={(v: any) => updateAbout("description2", v)} multiline />
+                    <InputField label="Vision Italic Quote Box Text" value={data.about.visionQuote || "Ambitious, regional, and outcome-driven — establishing AeroPeak as a serious, long-term growth partner."} onChange={(v: any) => updateAbout("visionQuote", v)} multiline />
+                  </div>
                 </div>
               )}
 

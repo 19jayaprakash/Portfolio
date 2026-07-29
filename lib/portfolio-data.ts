@@ -111,10 +111,18 @@ export interface PortfolioData {
     }>;
   };
   about: {
+    badgeText?: string;
     title: string;
     titleEmphasis: string;
     description1: string;
     description2: string;
+    focusAreasLabel?: string;
+    focusAreas?: string[];
+    authorName?: string;
+    authorRole?: string;
+    visionBadge?: string;
+    visionTitle?: string;
+    visionQuote?: string;
     teamEvolutionNote?: string;
     companyHighlights?: Array<{
       label: string;
@@ -389,10 +397,24 @@ export const defaultPortfolioData: PortfolioData = {
     ]
   },
   about: {
-    title: "Turning ideas into",
-    titleEmphasis: "digital reality",
-    description1: "Led by our core team of engineers, designers, and system architects, AeroPeak has transformed from an ambitious dev initiative into a full-scale digital agency. We bridge creative design with production-grade engineering — delivering web apps, mobile solutions, and enterprise systems that scale.",
-    description2: "Based in Coimbatore, Tamil Nadu — we partner with ambitious founders, growing startups, and enterprises worldwide to design, build, and optimize software that drives measurable business growth.",
+    badgeText: "OUR APPROACH",
+    title: "We engineer your",
+    titleEmphasis: "digital growth engine.",
+    description1: "At AeroPeak, we see software engineering not as a simple project, but as a calculated digital investment. Led by our core team of full-stack developers, UI/UX strategists, and cloud architects based in Coimbatore, our agile team specializes in blending creative design with production-grade technical rigor.",
+    description2: "Rooted in South India, built to global standards — we partner with ambitious founders, startups, and enterprise teams to transform potential into measurable market leadership.",
+    focusAreasLabel: "PERFORMANCE FOCUS AREAS",
+    focusAreas: [
+      "Custom Web Applications (Next.js/React)",
+      "Cross-Platform Mobile Apps (React Native)",
+      "UI/UX Design Systems & Micro-Interactions",
+      "Scalable Cloud Infrastructure & Supabase APIs",
+      "Core Web Vitals & SEO Performance"
+    ],
+    authorName: "R. Jayaprakash & Engineering Team",
+    authorRole: "Founder & Core Engineers, AeroPeak",
+    visionBadge: "OUR VISION",
+    visionTitle: "Driving measurable, sustainable growth",
+    visionQuote: "Ambitious, regional, and outcome-driven — establishing AeroPeak as your serious, long-term digital growth partner.",
     teamEvolutionNote: "Engineered by a specialized team of full-stack developers, mobile engineers, UI/UX designers, and DevOps specialists focused on crafting world-class digital experiences.",
     companyHighlights: [
       { label: "Engineering Team", value: "Multi-disciplinary", desc: "Full-stack devs, UI/UX designers & cloud architects" },

@@ -38,8 +38,69 @@ export async function GET() {
     console.log('Last updated:', data.updated_at);
     console.log('Data preview:', JSON.stringify(data.data).substring(0, 200) + '...');
     
+    const mergedData = {
+      ...data.data,
+      about: {
+        ...data.data?.about,
+        badgeText: data.data?.about?.badgeText || "OUR APPROACH",
+        focusAreasLabel: data.data?.about?.focusAreasLabel || "PERFORMANCE FOCUS AREAS",
+        focusAreas: data.data?.about?.focusAreas || [
+          "Conversions & Custom Web Apps",
+          "Cross-Platform Mobile Apps",
+          "UI/UX Design Systems & Interfaces",
+          "Scalable Cloud Architecture & APIs",
+          "KPI-Aligned Performance & SEO"
+        ],
+        authorName: data.data?.about?.authorName || "R. Jayaprakash & Engineering Team",
+        authorRole: data.data?.about?.authorRole || "Founder & Core Team, AeroPeak",
+        visionBadge: data.data?.about?.visionBadge || "OUR VISION",
+        visionTitle: data.data?.about?.visionTitle || "Driving measurable, sustainable growth",
+        visionQuote: data.data?.about?.visionQuote || "Ambitious, regional, and outcome-driven — establishing AeroPeak as a serious, long-term growth partner.",
+        page: {
+          ...(data.data?.about?.page || {}),
+          team: (data.data?.about?.page?.team && data.data.about.page.team.length > 0 && !data.data.about.page.team[0].image)
+            ? data.data.about.page.team
+            : [
+                {
+                  id: "1",
+                  name: "Full-Stack Architecture Team",
+                  role: "Lead Systems & Cloud Architect",
+                  bio: "Engineered by R. Jayaprakash & core architects specializing in Next.js, React Native, cloud infrastructure, and production-grade API systems.",
+                  icon: "Code2",
+                  image: "",
+                  skills: ["Next.js", "React Native", "TypeScript", "Node.js", "System Architecture"],
+                  github: "https://github.com/19jayaprakash",
+                  linkedin: "https://www.linkedin.com/in/jayaprakash-r-218968310/"
+                },
+                {
+                  id: "2",
+                  name: "UI/UX & Design Engineering",
+                  role: "UI/UX & Frontend Specialists",
+                  bio: "Focused on crafting fluid motion animations, interactive micro-interactions, responsive design systems, and modern glassmorphic aesthetics.",
+                  icon: "Palette",
+                  image: "",
+                  skills: ["Figma", "Tailwind CSS", "Framer Motion", "UI Design", "User Research"],
+                  github: "https://github.com",
+                  linkedin: "https://linkedin.com"
+                },
+                {
+                  id: "3",
+                  name: "Backend & Cloud Operations",
+                  role: "Backend & Database Infrastructure",
+                  bio: "Dedicated to PostgreSQL database optimization, Supabase security, API integrations, real-time sync systems, and Vercel cloud pipelines.",
+                  icon: "Cpu",
+                  image: "",
+                  skills: ["PostgreSQL", "Supabase", "REST & GraphQL", "Docker", "AWS/Vercel"],
+                  github: "https://github.com",
+                  linkedin: "https://linkedin.com"
+                }
+              ]
+        }
+      }
+    };
+    
     return NextResponse.json({ 
-      data: data.data,
+      data: mergedData,
       _meta: {
         updated_at: data.updated_at,
         fetched_at: new Date().toISOString()

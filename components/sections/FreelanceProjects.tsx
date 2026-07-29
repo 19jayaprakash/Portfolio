@@ -56,7 +56,7 @@ export default function FreelanceProjects() {
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
             >
-              06 — Freelance
+              Freelance
             </motion.span>
             <motion.h2
               className="font-display font-bold"

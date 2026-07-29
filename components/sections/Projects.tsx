@@ -183,7 +183,7 @@ export default function Projects() {
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
             >
-              05 — Projects
+              Projects
             </motion.span>
             <motion.h2
               className="font-display font-bold"

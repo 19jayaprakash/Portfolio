@@ -209,7 +209,7 @@ export default function Services() {
               style={{ color: "var(--accent)" }}
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
             >
-              02 — Services
+              Services
             </motion.span>
             <motion.h2
               className="font-display font-bold"

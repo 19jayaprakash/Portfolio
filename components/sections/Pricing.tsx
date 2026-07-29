@@ -164,7 +164,7 @@ export default function Pricing() {
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
             >
-              08 — Investment
+              Investment
             </motion.span>
             <motion.h2
               className="font-display font-bold"

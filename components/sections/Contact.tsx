@@ -106,7 +106,7 @@ export default function Contact() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
         >
           <span className="font-mono text-xs tracking-[0.3em] uppercase block mb-4" style={{ color: "var(--accent)" }}>
-            08 — Contact
+            Contact
           </span>
           <h2
             className="font-display font-bold"

@@ -7,6 +7,7 @@ import {
   Sparkles, CheckCircle2, Award, Calendar, ChevronRight, ArrowUpRight, Cpu, Layers, Terminal, Server, ShieldCheck, Activity
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useDataRefresh } from "@/lib/useDataRefresh";
 import { defaultPortfolioData } from "@/lib/portfolio-data";
 
@@ -155,31 +156,24 @@ export default function AboutPageContent() {
           </div>
 
           <div className="lg:col-span-6">
-            <div className="relative p-8 rounded-3xl border border-stone-800 bg-stone-950/80 backdrop-blur-xl space-y-6 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-stone-800 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full bg-[#C8956B]/80" />
-                  <div className="w-3 h-3 rounded-full bg-[#d97706]/80" />
-                  <div className="w-3 h-3 rounded-full bg-amber-400/80" />
-                  <span className="text-xs font-mono text-stone-400 ml-2">aeropeak-agency-spec.ts</span>
+            <div className="relative rounded-3xl border border-stone-800 bg-stone-950/80 p-2.5 backdrop-blur-xl shadow-2xl overflow-hidden group hover:border-[rgba(200,149,107,0.5)] transition-all duration-500">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+                <Image
+                  src="/images/agency_evolution.png"
+                  alt="AeroPeak Software Engineering Studio Workspace"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-3 rounded-xl border border-stone-800/80 bg-stone-950/90 backdrop-blur-md">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-xs font-mono text-stone-300">AeroPeak Engineering Studio</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-[#C8956B] px-2.5 py-0.5 rounded-full border border-[rgba(200,149,107,0.3)] bg-[rgba(200,149,107,0.1)] font-semibold">
+                    Coimbatore HQ
+                  </span>
                 </div>
-                <span className="text-[10px] font-mono text-[#C8956B] bg-[rgba(200,149,107,0.1)] px-2.5 py-0.5 rounded-md border border-[rgba(200,149,107,0.25)]">
-                  v2.5 PRODUCTION
-                </span>
-              </div>
-
-              <div className="space-y-4 font-mono text-xs text-stone-300">
-                <div>
-                  <span className="text-[#C8956B]">const</span> agency = &#123;
-                </div>
-                <div className="pl-4 space-y-1 text-stone-400">
-                  <div>name: <span className="text-[#C8956B]">&quot;AeroPeak Digital Agency&quot;</span>,</div>
-                  <div>team: <span className="text-[#C8956B]">&quot;Engineers, Designers &amp; Architects&quot;</span>,</div>
-                  <div>location: <span className="text-[#C8956B]">&quot;Coimbatore, Tamil Nadu&quot;</span>,</div>
-                  <div>stack: [<span className="text-amber-400">&quot;Next.js&quot;</span>, <span className="text-amber-400">&quot;React Native&quot;</span>, <span className="text-amber-400">&quot;Supabase&quot;</span>],</div>
-                  <div>mission: <span className="text-[#C8956B]">&quot;Empower businesses with production-grade software.&quot;</span></div>
-                </div>
-                <div>&#125;;</div>
               </div>
             </div>
           </div>
@@ -205,22 +199,23 @@ export default function AboutPageContent() {
             <motion.div
               whileHover={{ y: -8 }}
               transition={{ duration: 0.3 }}
-              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
+              className="p-6 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
             >
               <div className="space-y-5">
-                {/* Visual Graphic Header Banner */}
-                <div className="p-7 rounded-2xl border border-stone-800/80 bg-gradient-to-b from-[rgba(200,149,107,0.12)] via-stone-900/90 to-stone-950 flex flex-col items-center justify-center text-center space-y-4 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
+                {/* Visual Graphic Header Banner with Generated Graphic Image */}
+                <div className="relative h-44 rounded-2xl border border-stone-800/80 overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
+                  <Image
+                    src="/images/fullstack_division.png"
+                    alt="Full-Stack Architecture Division"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent" />
                   
-                  {/* Subtle Background Icon Glow */}
-                  <div className="absolute inset-0 bg-radial-gradient from-[rgba(200,149,107,0.2)] to-transparent pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity" />
-
-                  {/* 3D Glowing Icon Token */}
-                  <div className="w-16 h-16 rounded-2xl bg-[rgba(200,149,107,0.15)] border border-[rgba(200,149,107,0.4)] text-[#C8956B] flex items-center justify-center shadow-lg shadow-[rgba(200,149,107,0.2)] group-hover:scale-110 transition-transform duration-300 relative z-10">
-                    <Code2 size={30} />
-                  </div>
-
-                  <div className="text-[11px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3.5 py-1 rounded-full border border-[rgba(200,149,107,0.25)] relative z-10">
-                    Lead Systems &amp; Cloud Architect
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                    <div className="text-[10px] font-mono text-[#C8956B] font-bold bg-stone-950/90 px-3 py-1 rounded-full border border-[rgba(200,149,107,0.3)] backdrop-blur-md">
+                      Lead Systems &amp; Cloud Architect
+                    </div>
                   </div>
                 </div>
 
@@ -246,25 +241,6 @@ export default function AboutPageContent() {
                     </span>
                   ))}
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <a
-                    href="https://github.com/19jayaprakash"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
-                  >
-                    <Github size={14} />
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/jayaprakash-r-218968310/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
-                  >
-                    <Linkedin size={14} />
-                  </a>
-                </div>
               </div>
             </motion.div>
 
@@ -272,22 +248,23 @@ export default function AboutPageContent() {
             <motion.div
               whileHover={{ y: -8 }}
               transition={{ duration: 0.3 }}
-              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
+              className="p-6 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
             >
               <div className="space-y-5">
-                {/* Visual Graphic Header Banner */}
-                <div className="p-7 rounded-2xl border border-stone-800/80 bg-gradient-to-b from-[rgba(200,149,107,0.12)] via-stone-900/90 to-stone-950 flex flex-col items-center justify-center text-center space-y-4 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
+                {/* Visual Graphic Header Banner with Generated Graphic Image */}
+                <div className="relative h-44 rounded-2xl border border-stone-800/80 overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
+                  <Image
+                    src="/images/design_division.png"
+                    alt="UI/UX & Design Engineering Division"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent" />
                   
-                  {/* Subtle Background Icon Glow */}
-                  <div className="absolute inset-0 bg-radial-gradient from-[rgba(200,149,107,0.2)] to-transparent pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity" />
-
-                  {/* 3D Glowing Icon Token */}
-                  <div className="w-16 h-16 rounded-2xl bg-[rgba(200,149,107,0.15)] border border-[rgba(200,149,107,0.4)] text-[#C8956B] flex items-center justify-center shadow-lg shadow-[rgba(200,149,107,0.2)] group-hover:scale-110 transition-transform duration-300 relative z-10">
-                    <Palette size={30} />
-                  </div>
-
-                  <div className="text-[11px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3.5 py-1 rounded-full border border-[rgba(200,149,107,0.25)] relative z-10">
-                    UI/UX &amp; Frontend Specialists
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                    <div className="text-[10px] font-mono text-[#C8956B] font-bold bg-stone-950/90 px-3 py-1 rounded-full border border-[rgba(200,149,107,0.3)] backdrop-blur-md">
+                      UI/UX &amp; Frontend Specialists
+                    </div>
                   </div>
                 </div>
 
@@ -313,25 +290,6 @@ export default function AboutPageContent() {
                     </span>
                   ))}
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <a
-                    href="https://github.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
-                  >
-                    <Github size={14} />
-                  </a>
-                  <a
-                    href="https://linkedin.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
-                  >
-                    <Linkedin size={14} />
-                  </a>
-                </div>
               </div>
             </motion.div>
 
@@ -339,22 +297,23 @@ export default function AboutPageContent() {
             <motion.div
               whileHover={{ y: -8 }}
               transition={{ duration: 0.3 }}
-              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
+              className="p-6 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
             >
               <div className="space-y-5">
-                {/* Visual Graphic Header Banner */}
-                <div className="p-7 rounded-2xl border border-stone-800/80 bg-gradient-to-b from-[rgba(200,149,107,0.12)] via-stone-900/90 to-stone-950 flex flex-col items-center justify-center text-center space-y-4 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
+                {/* Visual Graphic Header Banner with Generated Graphic Image */}
+                <div className="relative h-44 rounded-2xl border border-stone-800/80 overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
+                  <Image
+                    src="/images/cloud_division.png"
+                    alt="Backend & Cloud Operations Division"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent" />
                   
-                  {/* Subtle Background Icon Glow */}
-                  <div className="absolute inset-0 bg-radial-gradient from-[rgba(200,149,107,0.2)] to-transparent pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity" />
-
-                  {/* 3D Glowing Icon Token */}
-                  <div className="w-16 h-16 rounded-2xl bg-[rgba(200,149,107,0.15)] border border-[rgba(200,149,107,0.4)] text-[#C8956B] flex items-center justify-center shadow-lg shadow-[rgba(200,149,107,0.2)] group-hover:scale-110 transition-transform duration-300 relative z-10">
-                    <Server size={30} />
-                  </div>
-
-                  <div className="text-[11px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3.5 py-1 rounded-full border border-[rgba(200,149,107,0.25)] relative z-10">
-                    Backend &amp; Database Infrastructure
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                    <div className="text-[10px] font-mono text-[#C8956B] font-bold bg-stone-950/90 px-3 py-1 rounded-full border border-[rgba(200,149,107,0.3)] backdrop-blur-md">
+                      Backend &amp; Database Infrastructure
+                    </div>
                   </div>
                 </div>
 
@@ -379,25 +338,6 @@ export default function AboutPageContent() {
                       {skill}
                     </span>
                   ))}
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <a
-                    href="https://github.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
-                  >
-                    <Github size={14} />
-                  </a>
-                  <a
-                    href="https://linkedin.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
-                  >
-                    <Linkedin size={14} />
-                  </a>
                 </div>
               </div>
             </motion.div>

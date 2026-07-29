@@ -203,31 +203,24 @@ export default function AboutPageContent() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* CARD 1: Full-Stack Architecture Team */}
             <motion.div
-              whileHover={{ y: -6 }}
+              whileHover={{ y: -8 }}
               transition={{ duration: 0.3 }}
-              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-xl"
+              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
             >
               <div className="space-y-5">
-                {/* Visual Graphic Header — Terminal Code Widget */}
-                <div className="p-5 rounded-2xl border border-stone-800 bg-gradient-to-b from-stone-900 via-stone-950 to-black space-y-3 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
-                  <div className="flex items-center justify-between border-b border-stone-800/80 pb-2">
-                    <div className="flex items-center gap-2">
-                      <Terminal size={14} className="text-[#C8956B]" />
-                      <span className="text-[10px] font-mono text-stone-400">fullstack-core.ts</span>
-                    </div>
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  </div>
+                {/* Visual Graphic Header Banner */}
+                <div className="p-7 rounded-2xl border border-stone-800/80 bg-gradient-to-b from-[rgba(200,149,107,0.12)] via-stone-900/90 to-stone-950 flex flex-col items-center justify-center text-center space-y-4 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
                   
-                  <div className="font-mono text-[10px] leading-relaxed text-stone-400 space-y-0.5">
-                    <div><span className="text-[#C8956B]">const</span> stack = [<span className="text-amber-300">&quot;Next.js&quot;</span>, <span className="text-amber-300">&quot;React Native&quot;</span>];</div>
-                    <div><span className="text-[#C8956B]">const</span> build = <span className="text-amber-300">&quot;Production Ready&quot;</span>;</div>
-                    <div className="text-stone-500">// Scalable Cloud Architecture</div>
+                  {/* Subtle Background Icon Glow */}
+                  <div className="absolute inset-0 bg-radial-gradient from-[rgba(200,149,107,0.2)] to-transparent pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity" />
+
+                  {/* 3D Glowing Icon Token */}
+                  <div className="w-16 h-16 rounded-2xl bg-[rgba(200,149,107,0.15)] border border-[rgba(200,149,107,0.4)] text-[#C8956B] flex items-center justify-center shadow-lg shadow-[rgba(200,149,107,0.2)] group-hover:scale-110 transition-transform duration-300 relative z-10">
+                    <Code2 size={30} />
                   </div>
 
-                  <div className="pt-1 flex justify-center">
-                    <div className="text-[10px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3 py-1 rounded-full border border-[rgba(200,149,107,0.25)]">
-                      Lead Systems &amp; Cloud Architect
-                    </div>
+                  <div className="text-[11px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3.5 py-1 rounded-full border border-[rgba(200,149,107,0.25)] relative z-10">
+                    Lead Systems &amp; Cloud Architect
                   </div>
                 </div>
 
@@ -259,7 +252,7 @@ export default function AboutPageContent() {
                     href="https://github.com/19jayaprakash"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
+                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
                   >
                     <Github size={14} />
                   </a>
@@ -267,7 +260,7 @@ export default function AboutPageContent() {
                     href="https://www.linkedin.com/in/jayaprakash-r-218968310/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
+                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
                   >
                     <Linkedin size={14} />
                   </a>
@@ -277,37 +270,24 @@ export default function AboutPageContent() {
 
             {/* CARD 2: UI/UX & Design Engineering */}
             <motion.div
-              whileHover={{ y: -6 }}
+              whileHover={{ y: -8 }}
               transition={{ duration: 0.3 }}
-              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-xl"
+              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
             >
               <div className="space-y-5">
-                {/* Visual Graphic Header — Design Tokens & UI Layout Widget */}
-                <div className="p-5 rounded-2xl border border-stone-800 bg-gradient-to-b from-stone-900 via-stone-950 to-black space-y-3 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
-                  <div className="flex items-center justify-between border-b border-stone-800/80 pb-2">
-                    <div className="flex items-center gap-2">
-                      <Palette size={14} className="text-[#C8956B]" />
-                      <span className="text-[10px] font-mono text-stone-400">ui-design-tokens.fig</span>
-                    </div>
-                    <span className="text-[9px] font-mono text-[#C8956B]">FIGMA • UI/UX</span>
-                  </div>
+                {/* Visual Graphic Header Banner */}
+                <div className="p-7 rounded-2xl border border-stone-800/80 bg-gradient-to-b from-[rgba(200,149,107,0.12)] via-stone-900/90 to-stone-950 flex flex-col items-center justify-center text-center space-y-4 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
                   
-                  {/* Swatch & Grid layout preview */}
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="flex gap-1.5">
-                      <div className="w-5 h-5 rounded-full bg-[#0c0a09] border border-stone-700" />
-                      <div className="w-5 h-5 rounded-full bg-[#C8956B]" />
-                      <div className="w-5 h-5 rounded-full bg-[#d97706]" />
-                    </div>
-                    <div className="text-[10px] font-serif italic text-amber-200">
-                      Playfair + Inter
-                    </div>
+                  {/* Subtle Background Icon Glow */}
+                  <div className="absolute inset-0 bg-radial-gradient from-[rgba(200,149,107,0.2)] to-transparent pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity" />
+
+                  {/* 3D Glowing Icon Token */}
+                  <div className="w-16 h-16 rounded-2xl bg-[rgba(200,149,107,0.15)] border border-[rgba(200,149,107,0.4)] text-[#C8956B] flex items-center justify-center shadow-lg shadow-[rgba(200,149,107,0.2)] group-hover:scale-110 transition-transform duration-300 relative z-10">
+                    <Palette size={30} />
                   </div>
 
-                  <div className="pt-1 flex justify-center">
-                    <div className="text-[10px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3 py-1 rounded-full border border-[rgba(200,149,107,0.25)]">
-                      UI/UX &amp; Frontend Specialists
-                    </div>
+                  <div className="text-[11px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3.5 py-1 rounded-full border border-[rgba(200,149,107,0.25)] relative z-10">
+                    UI/UX &amp; Frontend Specialists
                   </div>
                 </div>
 
@@ -339,7 +319,7 @@ export default function AboutPageContent() {
                     href="https://github.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
+                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
                   >
                     <Github size={14} />
                   </a>
@@ -347,7 +327,7 @@ export default function AboutPageContent() {
                     href="https://linkedin.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
+                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
                   >
                     <Linkedin size={14} />
                   </a>
@@ -357,39 +337,24 @@ export default function AboutPageContent() {
 
             {/* CARD 3: Backend & Cloud Operations */}
             <motion.div
-              whileHover={{ y: -6 }}
+              whileHover={{ y: -8 }}
               transition={{ duration: 0.3 }}
-              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-xl"
+              className="p-7 rounded-3xl border border-stone-800 bg-stone-950/60 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[rgba(200,149,107,0.5)] transition-all duration-300 group shadow-2xl relative overflow-hidden"
             >
               <div className="space-y-5">
-                {/* Visual Graphic Header — Cloud & Database Metrics Widget */}
-                <div className="p-5 rounded-2xl border border-stone-800 bg-gradient-to-b from-stone-900 via-stone-950 to-black space-y-3 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
-                  <div className="flex items-center justify-between border-b border-stone-800/80 pb-2">
-                    <div className="flex items-center gap-2">
-                      <Server size={14} className="text-[#C8956B]" />
-                      <span className="text-[10px] font-mono text-stone-400">cloud-ops-metrics.sh</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Activity size={12} className="text-emerald-400" />
-                      <span className="text-[9px] font-mono text-emerald-400">99.9% Uptime</span>
-                    </div>
-                  </div>
+                {/* Visual Graphic Header Banner */}
+                <div className="p-7 rounded-2xl border border-stone-800/80 bg-gradient-to-b from-[rgba(200,149,107,0.12)] via-stone-900/90 to-stone-950 flex flex-col items-center justify-center text-center space-y-4 relative overflow-hidden group-hover:border-[rgba(200,149,107,0.4)] transition-all">
                   
-                  <div className="font-mono text-[10px] text-stone-400 space-y-1">
-                    <div className="flex justify-between">
-                      <span>PostgreSQL DB:</span>
-                      <span className="text-emerald-400">Synchronized</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Supabase RLS:</span>
-                      <span className="text-[#C8956B]">Enforced</span>
-                    </div>
+                  {/* Subtle Background Icon Glow */}
+                  <div className="absolute inset-0 bg-radial-gradient from-[rgba(200,149,107,0.2)] to-transparent pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity" />
+
+                  {/* 3D Glowing Icon Token */}
+                  <div className="w-16 h-16 rounded-2xl bg-[rgba(200,149,107,0.15)] border border-[rgba(200,149,107,0.4)] text-[#C8956B] flex items-center justify-center shadow-lg shadow-[rgba(200,149,107,0.2)] group-hover:scale-110 transition-transform duration-300 relative z-10">
+                    <Server size={30} />
                   </div>
 
-                  <div className="pt-1 flex justify-center">
-                    <div className="text-[10px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3 py-1 rounded-full border border-[rgba(200,149,107,0.25)]">
-                      Backend &amp; Database Infrastructure
-                    </div>
+                  <div className="text-[11px] font-mono text-[#C8956B] font-bold bg-[rgba(200,149,107,0.1)] px-3.5 py-1 rounded-full border border-[rgba(200,149,107,0.25)] relative z-10">
+                    Backend &amp; Database Infrastructure
                   </div>
                 </div>
 
@@ -421,7 +386,7 @@ export default function AboutPageContent() {
                     href="https://github.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
+                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
                   >
                     <Github size={14} />
                   </a>
@@ -429,7 +394,7 @@ export default function AboutPageContent() {
                     href="https://linkedin.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
+                    className="p-2.5 rounded-lg border border-stone-800 bg-stone-900/60 text-stone-400 hover:text-[#C8956B] hover:border-[rgba(200,149,107,0.4)] transition-all"
                   >
                     <Linkedin size={14} />
                   </a>

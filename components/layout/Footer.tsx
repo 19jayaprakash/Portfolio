@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Github, Linkedin, Twitter, Mail, ArrowUpRight, Heart, Phone, MessageSquare } from "lucide-react";
 import Image from "next/image";
-import logo from "../../public/Logo.png";
+import logo from "../../public/Logo2.png";
 import Link from "next/link";
 import { useDataRefresh } from "@/lib/useDataRefresh";
 

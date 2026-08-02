@@ -74,7 +74,7 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-24 md:py-36 px-6 md:px-12 overflow-hidden"
+      className="relative py-16 md:py-24 px-6 md:px-12 overflow-hidden"
       style={{ background: "#0c0a09" }}
     >
       {/* Background Giant Watermark Typography - Approach */}

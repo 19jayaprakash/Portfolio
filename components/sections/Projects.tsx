@@ -175,7 +175,7 @@ export default function Projects() {
     <section
       id="projects"
       ref={ref}
-      className="py-32 md:py-48 px-6 md:px-12"
+      className="py-16 md:py-24 px-6 md:px-12"
       style={{ background: "var(--bg)" }}
     >
       <div className="max-w-7xl mx-auto">
@@ -235,7 +235,7 @@ export default function Projects() {
 
         {/* View all */}
         <motion.div
-          className="text-center mt-14"
+          className="text-center mt-10"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 0.8 }}

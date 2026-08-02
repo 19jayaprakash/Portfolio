@@ -135,7 +135,7 @@ export default function Pricing() {
     <section
       id="pricing"
       ref={ref}
-      className="py-32 md:py-48 px-6 md:px-12 relative overflow-hidden"
+      className="py-16 md:py-24 px-6 md:px-12 relative overflow-hidden"
       style={{ background: "var(--bg)" }}
     >
       {/* Background glowing effects */}

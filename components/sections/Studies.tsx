@@ -54,7 +54,7 @@ export default function Studies() {
     <section
       id="studies"
       ref={ref}
-      className="py-32 md:py-48 px-6 md:px-12"
+      className="py-16 md:py-24 px-6 md:px-12"
       style={{ background: "var(--bg)" }}
     >
       <div className="max-w-7xl mx-auto">

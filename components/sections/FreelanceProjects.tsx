@@ -43,7 +43,7 @@ export default function FreelanceProjects() {
     <section
       id="freelance"
       ref={ref}
-      className="py-32 md:py-48 px-6 md:px-12"
+      className="py-16 md:py-24 px-6 md:px-12"
       style={{ background: "var(--bg-secondary)" }}
     >
       <div className="max-w-7xl mx-auto">
@@ -274,7 +274,7 @@ export default function FreelanceProjects() {
 
         {/* CTA */}
         <motion.div
-          className="mt-16 text-center"
+          className="mt-10 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.8 }}

@@ -4,126 +4,136 @@ import { motion, useInView } from "framer-motion";
 import { ArrowUpRight, Code2, Palette, Smartphone, ShoppingCart, Globe, Layers, Shield } from "lucide-react";
 import { useDataRefresh } from "@/lib/useDataRefresh";
 
-function ServiceCard({ service, index, inView }: { service: any; index: number; inView: boolean }) {
+function ServiceCard({ service, index }: { service: any; index: number }) {
   const [hovered, setHovered] = useState(false);
-  const accentColor = service.accent || "#C8956B";
+  const accentColor = service.accent || "#6366F1";
   const badgeText = service.badge || (service.title ? service.title.toUpperCase() : "SERVICE");
   
   // Default fallback images matching the 4 core services
   const defaultImages = [
-    "/images/service_fullstack.jpg",
-    "/images/service_uiux.jpg",
+    "/images/service_ecommerce.jpg",
     "/images/service_mobile.jpg",
-    "/images/service_ecommerce.jpg"
+    "/images/service_fullstack.jpg",
+    "/images/service_uiux.jpg"
   ];
   const imageUrl = service.image || defaultImages[index % defaultImages.length];
   const tagsList = service.tags || [];
 
   return (
-    <motion.div
-      className="group relative rounded-3xl overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] md:min-h-[420px] p-6 md:p-8 shadow-2xl transition-all duration-500"
+    <div
+      className="sticky mb-16 md:mb-24"
       style={{
-        border: "1px solid rgba(255, 255, 255, 0.12)",
-        background: "#0d0c0b",
-      }}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
-      whileHover={{ y: -6 }}
-      onClick={() => {
-        if (service.linkUrl) {
-          window.location.href = service.linkUrl;
-        } else {
-          window.location.href = "/projects";
-        }
+        top: `calc(90px + ${index * 32}px)`,
+        zIndex: index + 1,
       }}
     >
-      {/* Background UI preview image */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <motion.img
-          src={imageUrl}
-          alt={service.title}
-          className="w-full h-full object-cover object-center opacity-35 transition-transform duration-700 filter contrast-125 brightness-90"
-          animate={{ scale: hovered ? 1.08 : 1 }}
-          transition={{ duration: 0.7 }}
-        />
-        {/* Dark vignette overlay matching user screenshot */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(180deg, rgba(13,12,11,0.65) 0%, rgba(13,12,11,0.85) 45%, rgba(13,12,11,0.98) 100%)",
-          }}
-        />
-        {/* Hover accent glow */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          animate={{ opacity: hovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          style={{
-            background: `radial-gradient(circle at 80% 90%, ${accentColor}35 0%, transparent 65%)`,
-          }}
-        />
-      </div>
-
-      {/* Top bar with category badge & optional action link */}
-      <div className="relative z-10 flex items-center justify-between gap-2 mb-6">
-        <span 
-          className="text-[10px] md:text-[11px] font-mono font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/20 text-white backdrop-blur-md"
-          style={{ background: "rgba(255, 255, 255, 0.12)" }}
-        >
-          {badgeText}
-        </span>
-
-        {service.linkText && (
-          <span
-            className="text-[11px] font-mono font-bold text-white flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-all backdrop-blur-md"
-          >
-            {service.linkText}
-          </span>
-        )}
-      </div>
-
-      {/* Main card body */}
-      <div className="relative z-10 space-y-4">
-        {/* Main Title */}
-        <h3 
-          className="font-display font-black text-2xl md:text-3xl text-white uppercase tracking-tight leading-tight group-hover:text-amber-400 transition-colors"
-        >
-          {service.title}
-        </h3>
-
-        {/* Description */}
-        <p className="text-xs md:text-sm text-neutral-300 leading-relaxed font-normal">
-          {service.desc || service.description}
-        </p>
-
-        {/* Bottom row: Tags and circular accent arrow button */}
-        <div className="pt-2 flex items-end justify-between gap-4">
-          <div className="flex flex-wrap gap-1.5">
-            {tagsList.map((tag: string) => (
-              <span
-                key={tag}
-                className="text-[10px] md:text-[11px] font-mono px-3 py-1 rounded-full border border-white/15 text-neutral-200 bg-white/10 backdrop-blur-sm"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Floating accent circle button */}
+      <motion.div
+        className="group relative rounded-[28px] md:rounded-[40px] overflow-hidden cursor-pointer flex flex-col justify-between min-h-[420px] sm:min-h-[480px] md:min-h-[520px] p-6 sm:p-10 md:p-14 shadow-2xl transition-all duration-500"
+        style={{
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          background: "#0c0b0a",
+          boxShadow: `0 30px 70px -15px rgba(0, 0, 0, 0.95), 0 0 40px -10px ${accentColor}25`,
+        }}
+        initial={{ opacity: 0, y: 70 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, margin: "-40px" }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        onHoverStart={() => setHovered(true)}
+        onHoverEnd={() => setHovered(false)}
+        whileHover={{ scale: 1.008 }}
+        onClick={() => {
+          if (service.linkUrl) {
+            window.location.href = service.linkUrl;
+          } else {
+            window.location.href = "/projects";
+          }
+        }}
+      >
+        {/* Background UI preview image */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <motion.img
+            src={imageUrl}
+            alt={service.title}
+            className="w-full h-full object-cover object-center opacity-40 transition-transform duration-700 filter contrast-125 brightness-90"
+            animate={{ scale: hovered ? 1.06 : 1 }}
+            transition={{ duration: 0.7 }}
+          />
+          {/* Dark vignette overlay matching user screenshot */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(180deg, rgba(12,11,10,0.65) 0%, rgba(12,11,10,0.85) 45%, rgba(12,11,10,0.98) 100%)",
+            }}
+          />
+          {/* Hover accent glow */}
           <motion.div
-            className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-xl transition-all"
-            style={{ background: accentColor }}
-            animate={{ scale: hovered ? 1.12 : 1 }}
+            className="absolute inset-0 pointer-events-none"
+            animate={{ opacity: hovered ? 1 : 0 }}
             transition={{ duration: 0.3 }}
-          >
-            <ArrowUpRight size={20} strokeWidth={2.5} />
-          </motion.div>
+            style={{
+              background: `radial-gradient(circle at 80% 90%, ${accentColor}35 0%, transparent 65%)`,
+            }}
+          />
         </div>
-      </div>
-    </motion.div>
+
+        {/* Top bar with category badge & action link */}
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-8 md:mb-12">
+          <span 
+            className="text-[11px] md:text-xs font-mono font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-white/20 text-white backdrop-blur-md"
+            style={{ background: "rgba(255, 255, 255, 0.12)" }}
+          >
+            {badgeText}
+          </span>
+
+          {service.linkText && (
+            <span
+              className="text-[11px] md:text-xs font-mono font-bold text-white flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-all backdrop-blur-md"
+            >
+              {service.linkText}
+            </span>
+          )}
+        </div>
+
+        {/* Main card body */}
+        <div className="relative z-10 space-y-4 md:space-y-6 max-w-4xl">
+          {/* Main Title */}
+          <h3 
+            className="font-display font-black text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white uppercase tracking-tight leading-[1.05] group-hover:text-amber-400 transition-colors"
+          >
+            {service.title}
+          </h3>
+
+          {/* Description */}
+          <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-normal max-w-3xl">
+            {service.desc || service.description}
+          </p>
+
+          {/* Bottom row: Tags and circular accent arrow button */}
+          <div className="pt-4 flex items-end justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
+              {tagsList.map((tag: string) => (
+                <span
+                  key={tag}
+                  className="text-[11px] md:text-xs font-mono px-3.5 py-1 rounded-full border border-white/15 text-neutral-200 bg-white/10 backdrop-blur-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Floating accent circle button */}
+            <motion.div
+              className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-2xl transition-all"
+              style={{ background: accentColor }}
+              animate={{ scale: hovered ? 1.15 : 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ArrowUpRight size={24} strokeWidth={2.5} />
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
@@ -135,57 +145,57 @@ export default function Services() {
     {
       id: "1",
       number: "01",
-      badge: "FULL-STACK DEVELOPMENT",
-      title: "FULL-STACK DEVELOPMENT",
-      desc: "End-to-end web applications built with modern stacks. From architecture to deployment, I handle everything with precision.",
-      icon: "Code2",
-      image: "/images/service_fullstack.jpg",
-      tags: ["React", "Next.js", "Node.js", "Java", "MySQL"],
-      accent: "#C8956B",
-      glow: "rgba(200,149,107,0.25)",
-      linkText: "",
+      badge: "E-COMMERCE UI/UX",
+      title: "LUXURA E-COMMERCE SHOPPING EXPERIENCE",
+      desc: "A sleek, conversion-focused e-commerce application featuring intuitive product discovery, visual filter systems, instant checkout flow, wishlist management, and detailed product showcase layouts.",
+      icon: "ShoppingCart",
+      image: "/images/service_ecommerce.jpg",
+      tags: ["Figma", "Adobe Illustrator", "Prototyping"],
+      accent: "#6366F1",
+      glow: "rgba(99,102,241,0.3)",
+      linkText: "Figma Design ↗",
       linkUrl: "/projects"
     },
     {
       id: "2",
       number: "02",
-      badge: "UI/UX DESIGN",
-      title: "UI/UX DESIGN",
-      desc: "Beautiful, intuitive interfaces crafted in Figma. Research, wireframing, and pixel-perfect prototypes.",
-      icon: "Palette",
-      image: "/images/service_uiux.jpg",
-      tags: ["Figma", "Prototyping", "Design Systems"],
-      accent: "#EC4899",
-      glow: "rgba(236,72,153,0.2)",
-      linkText: "",
+      badge: "MOBILE APP UI/UX",
+      title: "EVENTO | EVENT MANAGEMENT APP",
+      desc: "Designed and developed a user-friendly mobile event management app enabling organizers to create and manage events effortlessly while allowing attendees to explore, register, and check-in via dynamic QR passes.",
+      icon: "Smartphone",
+      image: "/images/service_mobile.jpg",
+      tags: ["Figma", "Balsamiq", "User Flow", "React Native"],
+      accent: "#6366F1",
+      glow: "rgba(99,102,241,0.3)",
+      linkText: "Figma Design ↗",
       linkUrl: "/projects"
     },
     {
       id: "3",
       number: "03",
-      badge: "MOBILE APP DEVELOPMENT",
-      title: "MOBILE APP DEVELOPMENT",
-      desc: "Cross-platform mobile applications built with React Native and Expo for iOS and Android with native performance.",
-      icon: "Smartphone",
-      image: "/images/service_mobile.jpg",
-      tags: ["React Native", "Expo", "iOS", "Android"],
-      accent: "#6366F1",
-      glow: "rgba(99,102,241,0.2)",
-      linkText: "",
+      badge: "FULL-STACK DEVELOPMENT",
+      title: "ASTRA CLOUD | CLOUD ARCHITECTURE",
+      desc: "End-to-end full-stack web applications built with modern architectures. From database modeling to serverless deployment, handling real-time data synchronization with sub-second speeds.",
+      icon: "Code2",
+      image: "/images/service_fullstack.jpg",
+      tags: ["React", "Next.js", "Node.js", "Java", "MySQL", "Supabase"],
+      accent: "#C8956B",
+      glow: "rgba(200,149,107,0.3)",
+      linkText: "Full-Stack System ↗",
       linkUrl: "/projects"
     },
     {
       id: "4",
       number: "04",
-      badge: "E-COMMERCE SOLUTIONS",
-      title: "E-COMMERCE SOLUTIONS",
-      desc: "A sleek, conversion-focused e-commerce application featuring intuitive product discovery, visual filter systems, instant checkout flow, wishlist management, and detailed product showcase layouts.",
-      icon: "ShoppingCart",
-      image: "/images/service_ecommerce.jpg",
-      tags: ["Figma", "Next.js", "Stripe", "Prototyping"],
-      accent: "#F59E0B",
-      glow: "rgba(245,158,11,0.2)",
-      linkText: "",
+      badge: "UI/UX DESIGN",
+      title: "STUDIO FLOW | DESIGN SYSTEM",
+      desc: "Comprehensive UI/UX design systems, component libraries, typography scale, color tokens, and pixel-perfect interactive prototypes engineered for enterprise product teams.",
+      icon: "Palette",
+      image: "/images/service_uiux.jpg",
+      tags: ["Figma", "Prototyping", "Design Systems", "Tailwind CSS"],
+      accent: "#EC4899",
+      glow: "rgba(236,72,153,0.3)",
+      linkText: "Figma System ↗",
       linkUrl: "/projects"
     }
   ];
@@ -269,16 +279,17 @@ export default function Services() {
           </motion.p>
         </div>
 
-        {/* 2-Column Cards Grid matching exact screenshot design */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+        {/* Full-width Vertical Stack with Sticky Scroll Stacking Animation */}
+        <div className="relative max-w-6xl mx-auto pb-16">
           {services.map((service, i) => (
-            <ServiceCard key={service.id || service.number || i} service={service} index={i} inView={inView} />
+            <ServiceCard key={service.id || service.number || i} service={service} index={i} />
           ))}
         </div>
       </div>
     </section>
   );
 }
+
 
 
 

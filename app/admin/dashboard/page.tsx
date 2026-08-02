@@ -67,6 +67,82 @@ function CommaSeparatedInput({ label, value, onChange, placeholder = "" }: { lab
   );
 }
 
+function ImageUploader({ label, value, onChange, folder = "portfolio" }: { label: string; value: string; onChange: (url: string) => void; folder?: string }) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadMessage("Uploading image...");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", folder);
+
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await res.json();
+      if (res.ok && json.url) {
+        onChange(json.url);
+        setUploadMessage(json.provider === "cloudinary" ? "Uploaded to Cloudinary!" : "Uploaded locally!");
+        setTimeout(() => setUploadMessage(""), 4000);
+      } else {
+        setUploadMessage("Upload failed: " + (json.error || "Unknown error"));
+      }
+    } catch (err: any) {
+      console.error(err);
+      setUploadMessage("Upload error");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-[11px] font-mono uppercase tracking-widest text-neutral-400">
+        {label}
+      </label>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <input
+          type="text"
+          value={value || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="https://res.cloudinary.com/... or /images/..."
+          className="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none transition-all duration-300 bg-neutral-900/60 text-white border border-white/5 focus:border-amber-500/50"
+        />
+        <label className="flex-shrink-0 cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-all">
+          <ImageIcon className="w-3.5 h-3.5" />
+          <span>{uploading ? "UPLOADING..." : "UPLOAD / CLOUDINARY"}</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            disabled={uploading}
+            className="hidden"
+          />
+        </label>
+      </div>
+      {uploadMessage && (
+        <p className="text-[10px] font-mono text-amber-400 flex items-center gap-1">
+          <Info className="w-3 h-3" /> {uploadMessage}
+        </p>
+      )}
+      {value && (
+        <div className="mt-2 relative w-32 h-20 rounded-xl overflow-hidden border border-white/10 bg-black/40">
+          <img src={value} alt="Preview" className="w-full h-full object-cover" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("hero");
@@ -988,7 +1064,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold font-display text-white">Dynamic Services ({data.services.length})</h2>
-                  <p className="text-xs text-neutral-400 mt-1">Manage core development offerings and skills cards.</p>
+                  <p className="text-xs text-neutral-400 mt-1">Manage core development offerings, custom UI images, and tags.</p>
                 </div>
                 <button
                   onClick={addService}
@@ -1012,12 +1088,23 @@ export default function AdminDashboard() {
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <InputField label="Service Title" value={service.title} onChange={(v: any) => updateService(index, "title", v)} />
-                      <InputField label="Icon Name (Lucide)" value={service.icon} onChange={(v: any) => updateService(index, "icon", v)} />
+                      <InputField label="Category Pill Badge (e.g. E-COMMERCE UI/UX)" value={service.badge} onChange={(v: any) => updateService(index, "badge", v)} />
                       <div className="md:col-span-2">
-                        <InputField label="Description" value={service.desc} onChange={(v: any) => updateService(index, "desc", v)} multiline />
+                        <InputField label="Description" value={service.desc || service.description} onChange={(v: any) => { updateService(index, "desc", v); updateService(index, "description", v); }} multiline />
                       </div>
-                      <CommaSeparatedInput label="Tags (comma-separated)" value={service.tags} onChange={(v) => updateService(index, "tags", v)} />
-                      <InputField label="Accent Color Hex" value={service.accent} onChange={(v: any) => updateService(index, "accent", v)} />
+                      <div className="md:col-span-2">
+                        <ImageUploader 
+                          label="Background UI Image (Upload file to Cloudinary / paste URL)" 
+                          value={service.image} 
+                          onChange={(v: string) => updateService(index, "image", v)} 
+                          folder="services"
+                        />
+                      </div>
+                      <InputField label="Action Badge Text (e.g. Figma Design ↗)" value={service.linkText} onChange={(v: any) => updateService(index, "linkText", v)} />
+                      <InputField label="Accent Color Hex (e.g. #C8956B)" value={service.accent} onChange={(v: any) => updateService(index, "accent", v)} />
+                      <div className="md:col-span-2">
+                        <CommaSeparatedInput label="Tags (comma-separated)" value={service.tags} onChange={(v) => updateService(index, "tags", v)} />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -1195,7 +1282,12 @@ export default function AdminDashboard() {
                           <InputField label="Description Text" value={project.desc} onChange={(v: any) => updateProject(project.id, "desc", v)} multiline />
                         </div>
                         <div className="md:col-span-2">
-                          <InputField label="Image URL link (optional)" value={project.image} onChange={(v: any) => updateProject(project.id, "image", v)} placeholder="https://example.com/mock.jpg" />
+                          <ImageUploader 
+                            label="Project Cover Image (Upload file to Cloudinary / paste URL)" 
+                            value={project.image} 
+                            onChange={(v: string) => updateProject(project.id, "image", v)} 
+                            folder="projects"
+                          />
                         </div>
                         <InputField label="GitHub Repo URL" value={project.github} onChange={(v: any) => updateProject(project.id, "github", v)} />
                         <InputField label="Live Site URL" value={project.live} onChange={(v: any) => updateProject(project.id, "live", v)} />

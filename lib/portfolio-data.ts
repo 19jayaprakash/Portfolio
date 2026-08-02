@@ -21,9 +21,18 @@ export interface PortfolioData {
     description: string;
     items: Array<{
       id: string;
+      number?: string;
+      badge?: string;
       title: string;
+      desc?: string;
       description: string;
       icon: string;
+      image?: string;
+      tags?: string[];
+      accent?: string;
+      glow?: string;
+      linkText?: string;
+      linkUrl?: string;
     }>;
   };
   projects: {
@@ -187,28 +196,64 @@ export const defaultPortfolioData: PortfolioData = {
     items: [
       {
         id: "1",
+        number: "01",
+        badge: "FULL-STACK DEV",
         title: "Full-Stack Development",
-        description: "End-to-end web applications with modern tech stacks",
-        icon: "Code",
+        desc: "End-to-end web applications engineered with Next.js, Node.js, and cloud database backend architectures.",
+        description: "End-to-end web applications engineered with Next.js, Node.js, and cloud database backend architectures.",
+        icon: "Code2",
+        image: "/images/service_fullstack.jpg",
+        tags: ["Next.js", "React", "Node.js", "Supabase", "TypeScript"],
+        accent: "#C8956B",
+        glow: "rgba(200,149,107,0.25)",
+        linkText: "Full-Stack Architecture ↗",
+        linkUrl: "/projects"
       },
       {
         id: "2",
+        number: "02",
+        badge: "UI/UX DESIGN",
         title: "UI/UX Design",
-        description: "Beautiful, intuitive interfaces that users love",
+        desc: "Beautiful, intuitive design systems, responsive wireframes, micro-interactions, and glassmorphic interfaces.",
+        description: "Beautiful, intuitive design systems, responsive wireframes, micro-interactions, and glassmorphic interfaces.",
         icon: "Palette",
+        image: "/images/service_uiux.jpg",
+        tags: ["Figma", "Prototyping", "Design System", "Micro-Interactions"],
+        accent: "#EC4899",
+        glow: "rgba(236,72,153,0.2)",
+        linkText: "Figma Systems ↗",
+        linkUrl: "/projects"
       },
       {
         id: "3",
-        title: "Mobile Development",
-        description: "Cross-platform mobile apps with React Native",
+        number: "03",
+        badge: "MOBILE APP DEV",
+        title: "Mobile App Development",
+        desc: "Cross-platform iOS and Android mobile applications built for high performance with React Native and Expo.",
+        description: "Cross-platform iOS and Android mobile applications built for high performance with React Native and Expo.",
         icon: "Smartphone",
+        image: "/images/service_mobile.jpg",
+        tags: ["React Native", "Expo", "iOS", "Android", "Redux"],
+        accent: "#6366F1",
+        glow: "rgba(99,102,241,0.2)",
+        linkText: "Mobile Showcase ↗",
+        linkUrl: "/projects"
       },
       {
         id: "4",
+        number: "04",
+        badge: "E-COMMERCE UI/UX",
         title: "E-Commerce Solutions",
-        description: "Scalable online stores with payment integration",
+        desc: "A sleek, conversion-focused e-commerce application featuring intuitive product discovery, visual filter systems, instant checkout flow, wishlist management, and detailed product showcase layouts.",
+        description: "A sleek, conversion-focused e-commerce application featuring intuitive product discovery, visual filter systems, instant checkout flow, wishlist management, and detailed product showcase layouts.",
         icon: "ShoppingCart",
-      },
+        image: "/images/service_ecommerce.jpg",
+        tags: ["Figma", "Next.js", "Stripe", "Prototyping", "Cart Systems"],
+        accent: "#F59E0B",
+        glow: "rgba(245,158,11,0.2)",
+        linkText: "E-Commerce Experience ↗",
+        linkUrl: "/projects"
+      }
     ],
   },
   projects: {

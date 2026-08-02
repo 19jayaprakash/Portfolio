@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
-import { Code2, Palette, Smartphone, Globe, ShoppingCart, BarChart2, Layers, Shield } from "lucide-react";
+import { ArrowUpRight, Code2, Palette, Smartphone, ShoppingCart, Globe, Layers, Shield } from "lucide-react";
 import { useDataRefresh } from "@/lib/useDataRefresh";
 
 const iconMap: any = {
@@ -10,132 +10,129 @@ const iconMap: any = {
   Smartphone,
   Globe,
   ShoppingCart,
-  BarChart2,
   Layers,
   Shield
 };
 
 function ServiceCard({ service, index, inView }: { service: any; index: number; inView: boolean }) {
   const [hovered, setHovered] = useState(false);
-  const glow = service.accent + "20";
+  const accentColor = service.accent || "#C8956B";
+  const badgeText = service.badge || (service.title ? service.title.toUpperCase() : "SERVICE");
+  
+  // Default fallback images matching the 4 core services
+  const defaultImages = [
+    "/images/service_fullstack.jpg",
+    "/images/service_uiux.jpg",
+    "/images/service_mobile.jpg",
+    "/images/service_ecommerce.jpg"
+  ];
+  const imageUrl = service.image || defaultImages[index % defaultImages.length];
+  const tagsList = service.tags || [];
 
   return (
     <motion.div
-      className="group relative rounded-2xl overflow-hidden cursor-default"
+      className="group relative rounded-3xl overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] md:min-h-[440px] p-6 md:p-8"
       style={{
-        gridColumn: service.featured ? "span 2" : "span 1",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        background: "#0d0c0b",
       }}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay: index * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileHover={{ y: -6 }}
+      onClick={() => {
+        if (service.linkUrl) {
+          window.location.href = service.linkUrl;
+        } else {
+          window.location.href = "/projects";
+        }
+      }}
     >
-      {/* Glass background */}
-      <div
-        className="absolute inset-0 transition-all duration-500"
-        style={{
-          background: hovered
-            ? `linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)`
-            : `linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)`,
-          backdropFilter: "blur(20px)",
-          border: `1px solid ${hovered ? service.accent + "50" : "rgba(255,255,255,0.08)"}`,
-        }}
-      />
+      {/* Background UI preview image */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <motion.img
+          src={imageUrl}
+          alt={service.title}
+          className="w-full h-full object-cover object-center opacity-40 transition-all duration-700 filter contrast-125 brightness-90"
+          animate={{ scale: hovered ? 1.08 : 1 }}
+          transition={{ duration: 0.7 }}
+        />
+        {/* Dark vignette overlay matching user screenshot */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(180deg, rgba(13,12,11,0.65) 0%, rgba(13,12,11,0.85) 45%, rgba(13,12,11,0.97) 100%)",
+          }}
+        />
+        {/* Hover accent glow */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          animate={{ opacity: hovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            background: `radial-gradient(circle at 80% 90%, ${accentColor}35 0%, transparent 65%)`,
+          }}
+        />
+      </div>
 
-      {/* Glow on hover */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl pointer-events-none"
-        style={{ background: `radial-gradient(circle at 50% 0%, ${service.glow} 0%, transparent 60%)` }}
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.4 }}
-      />
+      {/* Top bar with category badge & optional action link */}
+      <div className="relative z-10 flex items-center justify-between gap-2 mb-8">
+        <span 
+          className="text-[10px] font-mono font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/20 text-white backdrop-blur-md"
+          style={{ background: "rgba(255, 255, 255, 0.12)" }}
+        >
+          {badgeText}
+        </span>
 
-      {/* Top accent line */}
-      <motion.div
-        className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl"
-        style={{ background: `linear-gradient(90deg, ${service.accent}, transparent)` }}
-        animate={{ scaleX: hovered ? 1 : 0, originX: 0 }}
-        transition={{ duration: 0.4 }}
-      />
-
-      {/* Content */}
-      <div className={`relative z-10 p-7 ${service.featured ? "md:flex md:gap-10 md:items-start" : ""}`}>
-        {/* Icon + number */}
-        <div className={service.featured ? "md:flex-shrink-0" : ""}>
-          <div className="flex items-center justify-between mb-6">
-            <motion.div
-              className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{
-                background: `${service.accent}18`,
-                border: `1px solid ${service.accent}35`,
-                color: service.accent,
-              }}
-              animate={{ scale: hovered ? 1.1 : 1, rotate: hovered ? 5 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {(() => {
-                const IconComponent = iconMap[service.icon];
-                return IconComponent ? <IconComponent size={22} /> : null;
-              })()}
-            </motion.div>
-            <span
-              className="font-mono text-xs opacity-30"
-              style={{ color: "var(--text-primary)" }}
-            >
-              {service.number}
-            </span>
-          </div>
-
-          <h3
-            className="font-display font-bold mb-3 transition-colors duration-300"
-            style={{
-              fontSize: service.featured ? "clamp(1.5rem, 3vw, 2rem)" : "1.2rem",
-              color: hovered ? service.accent : "var(--text-primary)",
-              lineHeight: 1.1,
-            }}
+        {service.linkText && (
+          <span
+            className="text-[11px] font-mono font-bold text-white flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-all backdrop-blur-md"
           >
-            {service.title}
-          </h3>
-        </div>
+            {service.linkText}
+          </span>
+        )}
+      </div>
 
-        <div>
-          <p
-            className="text-sm leading-relaxed mb-5"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {service.desc}
-          </p>
+      {/* Main card body */}
+      <div className="relative z-10 space-y-4">
+        {/* Main Title */}
+        <h3 
+          className="font-display font-black text-2xl md:text-3xl text-white uppercase tracking-tight leading-tight group-hover:text-amber-400 transition-colors"
+        >
+          {service.title}
+        </h3>
 
-          {/* Tags */}
+        {/* Description */}
+        <p className="text-xs md:text-sm text-neutral-300 leading-relaxed font-normal">
+          {service.desc || service.description}
+        </p>
+
+        {/* Bottom row: Tags and circular accent arrow button */}
+        <div className="pt-2 flex items-end justify-between gap-4">
           <div className="flex flex-wrap gap-1.5">
-            {service.tags.map((tag: string) => (
+            {tagsList.map((tag: string) => (
               <span
                 key={tag}
-                className="text-xs px-2.5 py-1 rounded-full font-mono transition-all duration-300"
-                style={{
-                  background: hovered ? `${service.accent}15` : "rgba(255,255,255,0.05)",
-                  color: hovered ? service.accent : "var(--text-muted)",
-                  border: `1px solid ${hovered ? service.accent + "40" : "rgba(255,255,255,0.08)"}`,
-                }}
+                className="text-[10px] md:text-[11px] font-mono px-3 py-1 rounded-full border border-white/15 text-neutral-200 bg-white/10 backdrop-blur-sm"
               >
                 {tag}
               </span>
             ))}
           </div>
+
+          {/* Floating accent circle button */}
+          <motion.div
+            className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-xl transition-all"
+            style={{ background: accentColor }}
+            animate={{ scale: hovered ? 1.12 : 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ArrowUpRight size={20} strokeWidth={2.5} />
+          </motion.div>
         </div>
       </div>
-
-      {/* Arrow */}
-      <motion.div
-        className="absolute bottom-6 right-6 w-8 h-8 rounded-full flex items-center justify-center text-sm"
-        style={{ background: `${service.accent}20`, color: service.accent }}
-        animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : 8 }}
-        transition={{ duration: 0.3 }}
-      >
-        →
-      </motion.div>
     </motion.div>
   );
 }
@@ -145,13 +142,62 @@ export default function Services() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   const defaultServices = [
-    { icon: "Code2", number: "01", title: "Full-Stack Development", desc: "End-to-end web applications with modern stacks.", tags: ["React", "Next.js", "Node.js"], accent: "#C8956B", glow: "rgba(200,149,107,0.25)", featured: true },
-    { icon: "Palette", number: "02", title: "UI/UX Design", desc: "Beautiful, intuitive interfaces crafted in Figma.", tags: ["Figma", "Prototyping"], accent: "#EC4899", glow: "rgba(236,72,153,0.2)", featured: false },
-    { icon: "Smartphone", number: "03", title: "Mobile Development", desc: "Cross-platform mobile apps with React Native.", tags: ["React Native", "Expo"], accent: "#6366F1", glow: "rgba(99,102,241,0.2)", featured: false },
-    { icon: "Globe", number: "04", title: "Web Performance", desc: "Optimize for Core Web Vitals and SEO.", tags: ["SEO", "Performance"], accent: "#14B8A6", glow: "rgba(20,184,166,0.2)", featured: false },
-    { icon: "ShoppingCart", number: "05", title: "E-Commerce Solutions", desc: "Full-featured stores with Shopify or custom.", tags: ["Shopify", "Stripe"], accent: "#F59E0B", glow: "rgba(245,158,11,0.2)", featured: false },
-    { icon: "Layers", number: "06", title: "Design Systems", desc: "Scalable component libraries.", tags: ["Storybook", "Tailwind"], accent: "#A78BFA", glow: "rgba(167,139,250,0.2)", featured: false },
-    { icon: "Shield", number: "07", title: "Security & Auth", desc: "Authentication and security audits.", tags: ["OAuth", "JWT"], accent: "#F87171", glow: "rgba(248,113,113,0.2)", featured: false }
+    {
+      id: "1",
+      number: "01",
+      badge: "FULL-STACK DEV",
+      title: "Full-Stack Development",
+      desc: "End-to-end web applications engineered with Next.js, Node.js, and cloud database backend architectures.",
+      icon: "Code2",
+      image: "/images/service_fullstack.jpg",
+      tags: ["Next.js", "React", "Node.js", "Supabase", "TypeScript"],
+      accent: "#C8956B",
+      glow: "rgba(200,149,107,0.25)",
+      linkText: "Full-Stack Tech ↗",
+      linkUrl: "/projects"
+    },
+    {
+      id: "2",
+      number: "02",
+      badge: "UI/UX DESIGN",
+      title: "UI/UX Design",
+      desc: "Beautiful, intuitive design systems, responsive wireframes, micro-interactions, and glassmorphic interfaces.",
+      icon: "Palette",
+      image: "/images/service_uiux.jpg",
+      tags: ["Figma", "Prototyping", "Design System", "Micro-Interactions"],
+      accent: "#EC4899",
+      glow: "rgba(236,72,153,0.2)",
+      linkText: "Figma Design ↗",
+      linkUrl: "/projects"
+    },
+    {
+      id: "3",
+      number: "03",
+      badge: "MOBILE APP DEV",
+      title: "Mobile App Development",
+      desc: "Cross-platform iOS and Android mobile applications built for high performance with React Native and Expo.",
+      icon: "Smartphone",
+      image: "/images/service_mobile.jpg",
+      tags: ["React Native", "Expo", "iOS", "Android", "Redux"],
+      accent: "#6366F1",
+      glow: "rgba(99,102,241,0.2)",
+      linkText: "Mobile Specs ↗",
+      linkUrl: "/projects"
+    },
+    {
+      id: "4",
+      number: "04",
+      badge: "E-COMMERCE UI/UX",
+      title: "E-Commerce Solutions",
+      desc: "A sleek, conversion-focused e-commerce application featuring intuitive product discovery, visual filter systems, instant checkout flow, wishlist management, and detailed product showcase layouts.",
+      icon: "ShoppingCart",
+      image: "/images/service_ecommerce.jpg",
+      tags: ["Figma", "Next.js", "Stripe", "Prototyping", "Cart Systems"],
+      accent: "#F59E0B",
+      glow: "rgba(245,158,11,0.2)",
+      linkText: "Storefront UI ↗",
+      linkUrl: "/projects"
+    }
   ];
 
   const [services, setServices] = useState<any[]>(defaultServices);
@@ -160,13 +206,17 @@ export default function Services() {
     fetch(`/api/portfolio?t=${Date.now()}`)
       .then(res => res.json())
       .then(result => {
-        if (result.data && result.data.services) {
-          setServices(result.data.services);
+        if (result.data) {
+          const list = Array.isArray(result.data.services) 
+            ? result.data.services 
+            : (result.data.services?.items || []);
+          if (list && list.length > 0) {
+            setServices(list);
+          }
         }
       })
       .catch(err => {
         console.error("Error loading services:", err);
-        // Keep default services on error
       });
   }, []);
 
@@ -181,7 +231,7 @@ export default function Services() {
     <section
       id="services"
       ref={ref}
-      className="py-32 md:py-48 px-6 md:px-12 relative overflow-hidden"
+      className="py-24 md:py-36 px-6 md:px-12 relative overflow-hidden"
       style={{ background: "var(--bg-secondary)" }}
     >
       {/* BG decoration */}
@@ -225,17 +275,18 @@ export default function Services() {
             style={{ color: "var(--text-secondary)" }}
             initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.3 }}
           >
-            Comprehensive digital services from concept to launch. Products that users love and businesses rely on.
+            Comprehensive digital services from concept to launch. Production-grade software applications built to scale.
           </motion.p>
         </div>
 
-        {/* Glass grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* 2x2 Sleek UI Cards Grid matching reference design */}
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
           {services.map((service, i) => (
-            <ServiceCard key={service.number} service={service} index={i} inView={inView} />
+            <ServiceCard key={service.id || service.number || i} service={service} index={i} inView={inView} />
           ))}
         </div>
       </div>
     </section>
   );
 }
+

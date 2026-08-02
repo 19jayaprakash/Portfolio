@@ -1,5 +1,6 @@
 import ProjectDetailsClient from "./page.client";
 import { getPortfolioData } from "@/lib/portfolio-data-server";
+import { findProjectById } from "@/lib/portfolio-data";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -11,15 +12,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const data = await getPortfolioData();
-  const featuredList = data.projects?.items || [];
-  const freelanceList = data.freelance?.items || [];
-  
-  const allProjects = [
-    ...featuredList,
-    ...freelanceList
-  ];
-  
-  const project = allProjects.find((p: any) => String(p.id) === params.id) as any;
+  const project = findProjectById(data, params.id);
   
   if (!project) {
     return {
@@ -29,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const title = project.title || "Case Study";
-  const desc = project.description || `Case study and implementation details for ${title} project built by AeroPeak.`;
+  const desc = project.description || project.desc || `Case study and implementation details for ${title} project built by AeroPeak.`;
 
   let imageUrl = project.image || "/Logo2.jpg";
   if (imageUrl.startsWith("/")) {
@@ -67,15 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const data = await getPortfolioData();
-  const featuredList = data.projects?.items || [];
-  const freelanceList = data.freelance?.items || [];
-  
-  const allProjects = [
-    ...featuredList,
-    ...freelanceList
-  ];
-  
-  const project = allProjects.find((p: any) => String(p.id) === params.id) as any;
+  const project = findProjectById(data, params.id);
   
   if (!project) {
     notFound();

@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getPortfolioData } from "@/lib/portfolio-data-server";
+import { getAllProjectsList } from "@/lib/portfolio-data";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://aeropeak.tech";
@@ -35,13 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     // Dynamic project routes
     const data = await getPortfolioData();
-    const featuredList = data.projects?.items || [];
-    const freelanceList = data.freelance?.items || [];
-    
-    const allProjects = [
-      ...featuredList,
-      ...freelanceList
-    ];
+    const allProjects = getAllProjectsList(data);
 
     const projectRoutes: MetadataRoute.Sitemap = allProjects.map((project: any) => ({
       url: `${siteUrl}/project/${project.id}`,

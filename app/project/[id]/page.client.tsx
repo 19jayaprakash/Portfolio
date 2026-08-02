@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ExternalLink, Github, ArrowLeft, ArrowRight, Calendar, Clock, Monitor, Globe, ShieldAlert, Cpu, Sparkles, AlertCircle, Play, Eye } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { findProjectById } from "@/lib/portfolio-data";
 
 export default function ProjectDetailsPage() {
   const params = useParams();
@@ -41,15 +42,7 @@ export default function ProjectDetailsPage() {
     );
   }
 
-  // Gather and find the project by ID from both arrays
-  const featuredList = data ? (data.projects?.items || data.projects || []) : [];
-  const freelanceList = data ? (data.freelance?.projects || []) : [];
-  const allProjects = [
-    ...featuredList.map((p: any) => ({ ...p, type: "Featured" })),
-    ...freelanceList.map((p: any) => ({ ...p, type: "Freelance" }))
-  ];
-
-  const project = allProjects.find((p: any) => String(p.id) === id);
+  const project = findProjectById(data, id);
 
   if (!project) {
     return (

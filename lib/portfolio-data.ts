@@ -519,3 +519,33 @@ export const defaultPortfolioData: PortfolioData = {
     }
   }
 };
+
+export function getFeaturedProjectsList(data: any): any[] {
+  if (!data) return [];
+  if (Array.isArray(data.projects)) return data.projects;
+  if (data.projects && Array.isArray(data.projects.items)) return data.projects.items;
+  if (data.projects && Array.isArray(data.projects.projects)) return data.projects.projects;
+  return [];
+}
+
+export function getFreelanceProjectsList(data: any): any[] {
+  if (!data) return [];
+  if (Array.isArray(data.freelance)) return data.freelance;
+  if (data.freelance && Array.isArray(data.freelance.projects)) return data.freelance.projects;
+  if (data.freelance && Array.isArray(data.freelance.items)) return data.freelance.items;
+  return [];
+}
+
+export function getAllProjectsList(data: any): any[] {
+  const featured = getFeaturedProjectsList(data).map((p: any) => ({ ...p, type: p.type || "Featured" }));
+  const freelance = getFreelanceProjectsList(data).map((p: any) => ({ ...p, type: p.type || "Freelance" }));
+  return [...featured, ...freelance];
+}
+
+export function findProjectById(data: any, id: string | number): any | null {
+  if (!id) return null;
+  const allProjects = getAllProjectsList(data);
+  const targetId = String(id).trim();
+  return allProjects.find((p: any) => p && String(p.id).trim() === targetId) || null;
+}
+

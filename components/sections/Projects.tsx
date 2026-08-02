@@ -3,6 +3,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
 import { useDataRefresh } from "@/lib/useDataRefresh";
+import { getFeaturedProjectsList } from "@/lib/portfolio-data";
 
 const categories = ["All", "Web App", "Mobile", "Design", "E-Commerce", "Product"];
 
@@ -30,24 +31,24 @@ function ProjectCard({ project, index, inView }: { project: any; index: number; 
       {/* Color band */}
       <div
         className="h-1 w-full"
-        style={{ background: `linear-gradient(90deg, ${project.color}, transparent)` }}
+        style={{ background: `linear-gradient(90deg, ${project.color || "#C8956B"}, transparent)` }}
       />
 
       {/* Preview area */}
       <div
         className="h-48 flex items-center justify-center relative overflow-hidden"
-        style={{ background: `${project.color}10` }}
+        style={{ background: `${project.color || "#C8956B"}10` }}
       >
         {project.image ? (
           <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
         ) : (
           <motion.div
             className="font-display font-bold opacity-10"
-            style={{ fontSize: "8rem", color: project.color, lineHeight: 1 }}
+            style={{ fontSize: "8rem", color: project.color || "#C8956B", lineHeight: 1 }}
             animate={{ scale: hovered ? 1.1 : 1, rotate: hovered ? 3 : 0 }}
             transition={{ duration: 0.4 }}
           >
-            {project.title[0]}
+            {project.title ? project.title[0] : "P"}
           </motion.div>
         )}
 
@@ -57,7 +58,7 @@ function ProjectCard({ project, index, inView }: { project: any; index: number; 
           initial={{ opacity: 0 }}
           animate={{ opacity: hovered ? 1 : 0 }}
           transition={{ duration: 0.25 }}
-          style={{ background: `${project.color}20`, backdropFilter: "blur(4px)" }}
+          style={{ background: `${project.color || "#C8956B"}20`, backdropFilter: "blur(4px)" }}
         >
           {project.live && (
             <a
@@ -90,8 +91,8 @@ function ProjectCard({ project, index, inView }: { project: any; index: number; 
       <div className="p-6">
         <div className="flex items-start justify-between gap-2 mb-3">
           <div>
-            <span className="font-mono text-xs" style={{ color: project.color }}>
-              {project.category} · {project.year}
+            <span className="font-mono text-xs" style={{ color: project.color || "#C8956B" }}>
+              {project.category || "Web App"} · {project.year || "2024"}
             </span>
             <h3
               className="font-display font-bold text-xl mt-1"
@@ -101,17 +102,17 @@ function ProjectCard({ project, index, inView }: { project: any; index: number; 
             </h3>
           </div>
           <motion.div
-            animate={{ rotate: hovered ? 45 : 0, color: hovered ? project.color : "var(--text-muted)" }}
+            animate={{ rotate: hovered ? 45 : 0, color: hovered ? (project.color || "#C8956B") : "var(--text-muted)" }}
             transition={{ duration: 0.3 }}
           >
             <ArrowUpRight size={20} style={{ color: "inherit" }} />
           </motion.div>
         </div>
         <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>
-          {project.desc}
+          {project.desc || project.description || ""}
         </p>
         <div className="flex flex-wrap gap-1">
-          {project.tags.map((tag: string) => (
+          {(project.tags || []).map((tag: string) => (
             <span
               key={tag}
               className="text-xs px-2 py-0.5 rounded-full"
@@ -146,13 +147,15 @@ export default function Projects() {
     fetch(`/api/portfolio?t=${Date.now()}`)
       .then(res => res.json())
       .then(result => {
-        if (result.data && result.data.projects) {
-          setProjects(result.data.projects);
+        if (result.data) {
+          const list = getFeaturedProjectsList(result.data);
+          if (list && list.length > 0) {
+            setProjects(list);
+          }
         }
       })
       .catch(err => {
         console.error("Error loading projects:", err);
-        // Keep default projects on error
       });
   }, []);
 
@@ -163,7 +166,9 @@ export default function Projects() {
   // Auto-refresh when admin updates data
   useDataRefresh(fetchData);
 
-  const featuredProjects = projects.filter((p: any) => p.featured);
+  const featuredProjects = projects.some((p: any) => p.featured)
+    ? projects.filter((p: any) => p.featured)
+    : projects;
   const filtered = activeCategory === "All" ? featuredProjects : featuredProjects.filter((p: any) => p.category === activeCategory);
 
   return (

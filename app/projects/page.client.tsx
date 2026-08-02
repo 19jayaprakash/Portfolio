@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Search, SlidersHorizontal } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { getAllProjectsList } from "@/lib/portfolio-data";
 
 export default function ProjectsPage() {
   const [data, setData] = useState<any>(null);
@@ -29,42 +30,23 @@ export default function ProjectsPage() {
   const getProjectsList = useCallback(() => {
     if (!data) return [];
     
-    // Normalize Featured Projects
-    const featuredList = (data.projects?.items || data.projects || []).map((p: any) => ({
+    const rawList = getAllProjectsList(data);
+    return rawList.map((p: any) => ({
       id: String(p.id),
       title: p.title || "Untitled Project",
       desc: p.description || p.desc || "",
-      category: p.category || "Web App",
+      category: p.category || (p.type === "Freelance" ? "Freelance" : "Web App"),
       tags: p.tags || [],
-      color: p.color || "#C8956B",
-      year: p.year || "2024",
-      image: p.image || "",
-      github: p.github || "",
-      live: p.live || "",
-      duration: p.duration || "",
-      featured: !!p.featured,
-      type: "Featured"
-    }));
-
-    // Normalize Freelance Projects
-    const freelanceList = (data.freelance?.projects || data.freelance?.items || []).map((p: any) => ({
-      id: String(p.id),
-      title: p.title || "Untitled Freelance",
-      desc: p.desc || p.description || "",
-      category: p.category || "Freelance",
-      tags: p.tags || [],
-      color: p.color || "#6366F1",
-      year: p.year || "2024",
+      color: p.color || (p.type === "Freelance" ? "#6366F1" : "#C8956B"),
+      year: p.year || p.duration || "2024",
       image: p.image || "",
       github: p.github || "",
       live: p.live || "",
       duration: p.duration || "",
       client: p.client || "",
-      featured: false,
-      type: "Freelance"
+      featured: !!p.featured,
+      type: p.type || "Featured"
     }));
-
-    return [...featuredList, ...freelanceList];
   }, [data]);
 
   const allProjects = getProjectsList();

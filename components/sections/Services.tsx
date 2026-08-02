@@ -30,110 +30,120 @@ function ServiceCard({ service, index, inView }: { service: any; index: number; 
   const tagsList = service.tags || [];
 
   return (
-    <motion.div
-      className="group relative rounded-3xl overflow-hidden cursor-pointer flex flex-col justify-between min-h-[380px] md:min-h-[440px] p-6 md:p-8"
+    <div
+      className="sticky mb-12 md:mb-20"
       style={{
-        border: "1px solid rgba(255, 255, 255, 0.1)",
-        background: "#0d0c0b",
-      }}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
-      whileHover={{ y: -6 }}
-      onClick={() => {
-        if (service.linkUrl) {
-          window.location.href = service.linkUrl;
-        } else {
-          window.location.href = "/projects";
-        }
+        top: `calc(100px + ${index * 28}px)`,
+        zIndex: index + 1,
       }}
     >
-      {/* Background UI preview image */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <motion.img
-          src={imageUrl}
-          alt={service.title}
-          className="w-full h-full object-cover object-center opacity-40 transition-all duration-700 filter contrast-125 brightness-90"
-          animate={{ scale: hovered ? 1.08 : 1 }}
-          transition={{ duration: 0.7 }}
-        />
-        {/* Dark vignette overlay matching user screenshot */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(180deg, rgba(13,12,11,0.65) 0%, rgba(13,12,11,0.85) 45%, rgba(13,12,11,0.97) 100%)",
-          }}
-        />
-        {/* Hover accent glow */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          animate={{ opacity: hovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          style={{
-            background: `radial-gradient(circle at 80% 90%, ${accentColor}35 0%, transparent 65%)`,
-          }}
-        />
-      </div>
-
-      {/* Top bar with category badge & optional action link */}
-      <div className="relative z-10 flex items-center justify-between gap-2 mb-8">
-        <span 
-          className="text-[10px] font-mono font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/20 text-white backdrop-blur-md"
-          style={{ background: "rgba(255, 255, 255, 0.12)" }}
-        >
-          {badgeText}
-        </span>
-
-        {service.linkText && (
-          <span
-            className="text-[11px] font-mono font-bold text-white flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-all backdrop-blur-md"
-          >
-            {service.linkText}
-          </span>
-        )}
-      </div>
-
-      {/* Main card body */}
-      <div className="relative z-10 space-y-4">
-        {/* Main Title */}
-        <h3 
-          className="font-display font-black text-2xl md:text-3xl text-white uppercase tracking-tight leading-tight group-hover:text-amber-400 transition-colors"
-        >
-          {service.title}
-        </h3>
-
-        {/* Description */}
-        <p className="text-xs md:text-sm text-neutral-300 leading-relaxed font-normal">
-          {service.desc || service.description}
-        </p>
-
-        {/* Bottom row: Tags and circular accent arrow button */}
-        <div className="pt-2 flex items-end justify-between gap-4">
-          <div className="flex flex-wrap gap-1.5">
-            {tagsList.map((tag: string) => (
-              <span
-                key={tag}
-                className="text-[10px] md:text-[11px] font-mono px-3 py-1 rounded-full border border-white/15 text-neutral-200 bg-white/10 backdrop-blur-sm"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Floating accent circle button */}
+      <motion.div
+        className="group relative rounded-3xl md:rounded-[36px] overflow-hidden cursor-pointer flex flex-col justify-between min-h-[400px] sm:min-h-[460px] md:min-h-[500px] p-6 sm:p-8 md:p-12 shadow-2xl transition-all duration-500"
+        style={{
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          background: "#0d0c0b",
+          boxShadow: `0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 30px -10px ${accentColor}25`,
+        }}
+        initial={{ opacity: 0, y: 80 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, margin: "-50px" }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        onHoverStart={() => setHovered(true)}
+        onHoverEnd={() => setHovered(false)}
+        whileHover={{ y: -4 }}
+        onClick={() => {
+          if (service.linkUrl) {
+            window.location.href = service.linkUrl;
+          } else {
+            window.location.href = "/projects";
+          }
+        }}
+      >
+        {/* Background UI preview image */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <motion.img
+            src={imageUrl}
+            alt={service.title}
+            className="w-full h-full object-cover object-center opacity-40 transition-transform duration-700 filter contrast-125 brightness-90"
+            animate={{ scale: hovered ? 1.06 : 1 }}
+            transition={{ duration: 0.7 }}
+          />
+          {/* Dark vignette overlay matching user screenshot */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(180deg, rgba(13,12,11,0.65) 0%, rgba(13,12,11,0.85) 45%, rgba(13,12,11,0.98) 100%)",
+            }}
+          />
+          {/* Hover accent glow */}
           <motion.div
-            className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-xl transition-all"
-            style={{ background: accentColor }}
-            animate={{ scale: hovered ? 1.12 : 1 }}
+            className="absolute inset-0 pointer-events-none"
+            animate={{ opacity: hovered ? 1 : 0 }}
             transition={{ duration: 0.3 }}
-          >
-            <ArrowUpRight size={20} strokeWidth={2.5} />
-          </motion.div>
+            style={{
+              background: `radial-gradient(circle at 80% 90%, ${accentColor}35 0%, transparent 65%)`,
+            }}
+          />
         </div>
-      </div>
-    </motion.div>
+
+        {/* Top bar with category badge & action link */}
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-8 md:mb-12">
+          <span 
+            className="text-[11px] md:text-xs font-mono font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-white/20 text-white backdrop-blur-md"
+            style={{ background: "rgba(255, 255, 255, 0.12)" }}
+          >
+            {badgeText}
+          </span>
+
+          {service.linkText && (
+            <span
+              className="text-[11px] md:text-xs font-mono font-bold text-white flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-all backdrop-blur-md"
+            >
+              {service.linkText}
+            </span>
+          )}
+        </div>
+
+        {/* Main card body */}
+        <div className="relative z-10 space-y-4 md:space-y-6 max-w-4xl">
+          {/* Main Title */}
+          <h3 
+            className="font-display font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-tight leading-[1.05] group-hover:text-amber-400 transition-colors"
+          >
+            {service.title}
+          </h3>
+
+          {/* Description */}
+          <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-normal max-w-3xl">
+            {service.desc || service.description}
+          </p>
+
+          {/* Bottom row: Tags and circular accent arrow button */}
+          <div className="pt-4 flex items-end justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
+              {tagsList.map((tag: string) => (
+                <span
+                  key={tag}
+                  className="text-[11px] md:text-xs font-mono px-3.5 py-1 rounded-full border border-white/15 text-neutral-200 bg-white/10 backdrop-blur-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Floating accent circle button */}
+            <motion.div
+              className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-2xl transition-all"
+              style={{ background: accentColor }}
+              animate={{ scale: hovered ? 1.15 : 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ArrowUpRight size={24} strokeWidth={2.5} />
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
@@ -279,8 +289,8 @@ export default function Services() {
           </motion.p>
         </div>
 
-        {/* 2x2 Sleek UI Cards Grid matching reference design */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+        {/* Full-width Vertical Stack with Sticky Scroll Stacking Animation */}
+        <div className="relative max-w-5xl mx-auto">
           {services.map((service, i) => (
             <ServiceCard key={service.id || service.number || i} service={service} index={i} inView={inView} />
           ))}
@@ -289,4 +299,5 @@ export default function Services() {
     </section>
   );
 }
+
 

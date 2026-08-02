@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
@@ -13,47 +14,89 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    // Option A: Supabase Storage Upload (100% Reliable, Works on Vercel & Serverless)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://ounhqugnzmhciqwanhgt.supabase.co";
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (supabaseUrl && supabaseServiceKey) {
+      try {
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        const bucketName = "portfolio-images";
+
+        // Ensure bucket exists
+        const { data: buckets } = await supabase.storage.listBuckets();
+        if (!buckets?.some(b => b.name === bucketName)) {
+          await supabase.storage.createBucket(bucketName, { public: true });
+        }
+
+        const fileExt = path.extname(file.name) || ".png";
+        const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(2, 7)}${fileExt}`;
+
+        const { data: uploadData, error: uploadErr } = await supabase.storage
+          .from(bucketName)
+          .upload(fileName, buffer, {
+            contentType: file.type || "image/png",
+            upsert: true
+          });
+
+        if (!uploadErr && uploadData) {
+          const { data: publicUrlData } = supabase.storage
+            .from(bucketName)
+            .getPublicUrl(fileName);
+
+          if (publicUrlData?.publicUrl) {
+            return NextResponse.json({ 
+              url: publicUrlData.publicUrl, 
+              provider: "supabase" 
+            });
+          }
+        } else {
+          console.error("Supabase storage error:", uploadErr);
+        }
+      } catch (spErr) {
+        console.error("Supabase client error:", spErr);
+      }
+    }
+
+    // Option B: Cloudinary Signed Upload
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME || "drni46zvq";
     const apiKey = process.env.CLOUDINARY_API_KEY || "585472775914165";
     const apiSecret = process.env.CLOUDINARY_API_SECRET || "nHfZ52iswAjjr5jMVBZwmUzaF9M";
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Option A: Cloudinary Signed Upload
     if (cloudName && apiKey && apiSecret) {
-      const timestamp = Math.floor(Date.now() / 1000);
-      const strToSign = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
-      const signature = crypto.createHash("sha1").update(strToSign).digest("hex");
+      try {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const strToSign = `timestamp=${timestamp}${apiSecret}`;
+        const signature = crypto.createHash("sha1").update(strToSign).digest("hex");
 
-      const cloudFormData = new FormData();
-      const blob = new Blob([buffer], { type: file.type || "image/png" });
-      cloudFormData.append("file", blob, file.name || "upload.png");
-      cloudFormData.append("api_key", apiKey);
-      cloudFormData.append("timestamp", timestamp.toString());
-      cloudFormData.append("signature", signature);
-      cloudFormData.append("folder", folder);
+        const cloudFormData = new FormData();
+        const blob = new Blob([buffer], { type: file.type || "image/png" });
+        cloudFormData.append("file", blob, file.name || "upload.png");
+        cloudFormData.append("api_key", apiKey);
+        cloudFormData.append("timestamp", timestamp.toString());
+        cloudFormData.append("signature", signature);
 
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: cloudFormData,
-      });
-
-      const json = await res.json();
-      if (json.secure_url || json.url) {
-        return NextResponse.json({ 
-          url: json.secure_url || json.url, 
-          provider: "cloudinary" 
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: "POST",
+          body: cloudFormData,
         });
-      } else {
-        console.error("Cloudinary upload error:", json);
-        return NextResponse.json({ 
-          error: json.error?.message || json.message || "Cloudinary upload failed" 
-        }, { status: 400 });
+
+        const json = await res.json();
+        if (json.secure_url || json.url) {
+          return NextResponse.json({ 
+            url: json.secure_url || json.url, 
+            provider: "cloudinary" 
+          });
+        }
+      } catch (cErr) {
+        console.error("Cloudinary fetch error:", cErr);
       }
     }
 
-    // Option B: Local Fallback (for local development only)
+    // Option C: Local Fallback
     try {
       const uploadsDir = path.join(process.cwd(), "public", "uploads");
       if (!fs.existsSync(uploadsDir)) {
@@ -72,9 +115,8 @@ export async function POST(req: NextRequest) {
         provider: "local" 
       });
     } catch (fsErr: any) {
-      console.error("Local storage error:", fsErr);
       return NextResponse.json({ 
-        error: "Serverless filesystem is read-only. Cloudinary configuration is required." 
+        error: "Upload failed: Please check storage configuration." 
       }, { status: 500 });
     }
 

@@ -22,14 +22,14 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
 
   return (
     <div
-      className="sticky mb-6 last:mb-0"
+      className="sticky mb-8 last:mb-0"
       style={{
-        top: `calc(90px + ${index * 24}px)`,
+        top: `calc(90px + ${index * 30}px)`,
         zIndex: index + 1,
       }}
     >
       <div
-        className="group relative rounded-3xl md:rounded-[32px] overflow-hidden cursor-pointer flex flex-col justify-between p-6 sm:p-8 md:p-10 transition-all duration-300"
+        className="group relative rounded-3xl md:rounded-[36px] overflow-hidden cursor-pointer flex flex-col justify-between min-h-[460px] sm:min-h-[520px] md:min-h-[580px] lg:min-h-[620px] p-8 sm:p-12 md:p-16 transition-all duration-300"
         style={{
           border: "1px solid rgba(255, 255, 255, 0.12)",
           background: "#0c0b0a",

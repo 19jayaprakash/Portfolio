@@ -216,7 +216,7 @@ export default function Services() {
               style={{ fontSize: "clamp(2.5rem, 6vw, 6rem)", lineHeight: 0.9, color: "var(--text-primary)" }}
               initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }}
             >
-              What I{" "}
+              What We{" "}
               <em style={{ color: "var(--accent)" }}>offer</em>
             </motion.h2>
           </div>

@@ -29,6 +29,7 @@ export interface PortfolioData {
       icon: string;
       image?: string;
       tags?: string[];
+      features?: string[];
       accent?: string;
       glow?: string;
       linkText?: string;

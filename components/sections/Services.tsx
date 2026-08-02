@@ -18,6 +18,7 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
   ];
   const imageUrl = service.image || defaultImages[index % defaultImages.length];
   const tagsList = service.tags || [];
+  const featuresList = service.features || [];
 
   return (
     <div
@@ -28,11 +29,11 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
       }}
     >
       <div
-        className="group relative rounded-3xl md:rounded-[36px] overflow-hidden cursor-pointer flex flex-col justify-between min-h-[400px] sm:min-h-[460px] md:min-h-[500px] p-6 sm:p-10 md:p-14 shadow-2xl transition-all duration-500"
+        className="group relative rounded-3xl md:rounded-[36px] overflow-hidden cursor-pointer flex flex-col justify-between min-h-[440px] sm:min-h-[500px] md:min-h-[540px] p-6 sm:p-10 md:p-14 transition-all duration-500"
         style={{
           border: "1px solid rgba(255, 255, 255, 0.12)",
           background: "#0c0b0a",
-          boxShadow: `0 30px 70px -15px rgba(0, 0, 0, 0.95), 0 0 40px -10px ${accentColor}25`,
+          boxShadow: "none", // Removed background drop shadows as requested
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -45,30 +46,23 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
         }}
       >
         {/* Background UI preview image */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img
             src={imageUrl}
             alt={service.title}
-            className={`w-full h-full object-cover object-center opacity-40 transition-transform duration-700 filter contrast-125 brightness-90 ${hovered ? 'scale-105' : 'scale-100'}`}
+            className={`w-full h-full object-cover object-center opacity-30 transition-transform duration-700 filter contrast-125 brightness-90 ${hovered ? 'scale-105' : 'scale-100'}`}
           />
-          {/* Dark vignette overlay matching user screenshot */}
+          {/* Dark vignette overlay */}
           <div 
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(180deg, rgba(12,11,10,0.65) 0%, rgba(12,11,10,0.85) 45%, rgba(12,11,10,0.98) 100%)",
-            }}
-          />
-          {/* Hover accent glow */}
-          <div
-            className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${hovered ? 'opacity-100' : 'opacity-0'}`}
-            style={{
-              background: `radial-gradient(circle at 80% 90%, ${accentColor}35 0%, transparent 65%)`,
+              background: "linear-gradient(180deg, rgba(12,11,10,0.7) 0%, rgba(12,11,10,0.88) 50%, rgba(12,11,10,0.98) 100%)",
             }}
           />
         </div>
 
         {/* Top bar with category badge & action link */}
-        <div className="relative z-10 flex items-center justify-between gap-2 mb-8 md:mb-12">
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-6 md:mb-8">
           <span 
             className="text-[11px] md:text-xs font-mono font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-white/20 text-white backdrop-blur-md"
             style={{ background: "rgba(255, 255, 255, 0.12)" }}
@@ -89,17 +83,29 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
         <div className="relative z-10 space-y-4 md:space-y-6 max-w-4xl">
           {/* Main Title */}
           <h3 
-            className="font-display font-black text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white uppercase tracking-tight leading-[1.05] group-hover:text-amber-400 transition-colors"
+            className="font-display font-black text-2xl sm:text-4xl md:text-5xl text-white uppercase tracking-tight leading-[1.05] group-hover:text-amber-400 transition-colors"
           >
             {service.title}
           </h3>
 
-          {/* Description */}
+          {/* Detailed Description */}
           <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-normal max-w-3xl">
             {service.desc || service.description}
           </p>
 
-          {/* Bottom row: Tags and circular accent arrow button */}
+          {/* Key Capabilities / Features Bullets */}
+          {featuresList.length > 0 && (
+            <div className="pt-2 flex flex-wrap gap-2 sm:gap-2.5">
+              {featuresList.map((feat: string, fIdx: number) => (
+                <div key={fIdx} className="flex items-center gap-2 text-xs font-mono text-neutral-300 bg-white/[0.04] border border-white/10 px-3.5 py-1.5 rounded-xl">
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: accentColor }} />
+                  {feat}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Bottom row: Tech Tags and circular accent arrow button */}
           <div className="pt-4 flex items-end justify-between gap-4">
             <div className="flex flex-wrap gap-2">
               {tagsList.map((tag: string) => (
@@ -114,7 +120,7 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
 
             {/* Floating accent circle button */}
             <div
-              className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-2xl transition-transform duration-300 ${hovered ? 'scale-110' : 'scale-100'}`}
+              className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-lg transition-transform duration-300 ${hovered ? 'scale-110' : 'scale-100'}`}
               style={{ background: accentColor }}
             >
               <ArrowUpRight size={24} strokeWidth={2.5} />
@@ -134,12 +140,19 @@ export default function Services() {
     {
       id: "1",
       number: "01",
-      badge: "FULL-STACK DEV",
-      title: "Full-Stack Development",
-      desc: "End-to-end web applications built with modern stacks. From architecture to deployment, I handle everything with precision.",
+      badge: "FULL-STACK DEVELOPMENT",
+      title: "Full-Stack Web Development",
+      desc: "End-to-end web applications built with modern architectures. From complex relational & document database modeling to high-speed serverless deployment, I engineer production-grade web platforms with seamless real-time data pipelines and robust security.",
       icon: "Code2",
       image: "/images/service_fullstack.jpg",
-      tags: ["React", "Next.js", "Node.js", "Java", "MySQL"],
+      features: [
+        "Custom Web Applications",
+        "RESTful & GraphQL APIs",
+        "Database Architecture & Supabase",
+        "Serverless Cloud Infrastructure",
+        "Authentication & OAuth Security"
+      ],
+      tags: ["React", "Next.js", "Node.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind CSS"],
       accent: "#C8956B",
       glow: "rgba(200,149,107,0.3)",
       linkText: "",
@@ -149,11 +162,18 @@ export default function Services() {
       id: "2",
       number: "02",
       badge: "UI/UX DESIGN",
-      title: "UI/UX Design",
-      desc: "Beautiful, intuitive interfaces crafted in Figma. Research, wireframing, and pixel-perfect prototypes.",
+      title: "UI/UX Design & Product Systems",
+      desc: "Beautiful, conversion-oriented digital product design. Crafting intuitive user journeys, wireframes, interactive high-fidelity Figma prototypes, comprehensive design systems, color tokens, and micro-animations tailored for web & mobile apps.",
       icon: "Palette",
       image: "/images/service_uiux.jpg",
-      tags: ["Figma", "Prototyping", "Design Systems"],
+      features: [
+        "Figma Design Systems & UI Kits",
+        "Wireframing & High-Fidelity Prototypes",
+        "User Research & Journey Mapping",
+        "Micro-Interactions & Motion Specs",
+        "WCAG Accessibility Standards"
+      ],
+      tags: ["Figma", "Prototyping", "Design Systems", "User Research", "Wireframing", "Micro-Interactions"],
       accent: "#EC4899",
       glow: "rgba(236,72,153,0.3)",
       linkText: "",
@@ -162,12 +182,19 @@ export default function Services() {
     {
       id: "3",
       number: "03",
-      badge: "MOBILE APP DEV",
-      title: "Mobile App Development",
-      desc: "Cross-platform mobile applications built with React Native and Expo for iOS and Android with native performance.",
+      badge: "MOBILE APP DEVELOPMENT",
+      title: "Cross-Platform Mobile App Development",
+      desc: "Native-quality mobile applications for iOS and Android engineered with React Native and Expo. Seamless native device hardware integrations, offline-first storage pipelines, smooth 60fps animations, push notifications, and App Store / Google Play publishing.",
       icon: "Smartphone",
       image: "/images/service_mobile.jpg",
-      tags: ["React Native", "Expo", "iOS", "Android"],
+      features: [
+        "Cross-Platform iOS & Android Apps",
+        "React Native & Expo Ecosystem",
+        "Offline-First & Local DB Caching",
+        "Push Notifications & Camera/GPS",
+        "App Store & Play Store Publishing"
+      ],
+      tags: ["React Native", "Expo", "iOS", "Android", "Redux Toolkit", "SQLite", "Push API"],
       accent: "#6366F1",
       glow: "rgba(99,102,241,0.3)",
       linkText: "",
@@ -177,11 +204,18 @@ export default function Services() {
       id: "4",
       number: "04",
       badge: "E-COMMERCE SOLUTIONS",
-      title: "E-Commerce Solutions",
-      desc: "A sleek, conversion-focused e-commerce application featuring intuitive product discovery, visual filter systems, instant checkout flow, wishlist management, and detailed product showcase layouts.",
+      title: "E-Commerce & Digital Storefronts",
+      desc: "High-performance e-commerce platforms engineered to maximize conversions. Featuring intuitive catalog browsing, instant multi-faceted filter search, multi-currency Stripe payment gateway integration, wishlist management, cart checkout optimization, and automated inventory sync.",
       icon: "ShoppingCart",
       image: "/images/service_ecommerce.jpg",
-      tags: ["Figma", "Next.js", "Stripe", "Prototyping"],
+      features: [
+        "Custom High-Speed Storefronts",
+        "Stripe & Multi-Currency Payment Checkout",
+        "Faceted Filtering & Product Search",
+        "Cart & Wishlist Systems",
+        "Order Management & Analytics"
+      ],
+      tags: ["Next.js", "Stripe", "Figma", "Prototyping", "Cart Checkout", "Shopify API"],
       accent: "#F59E0B",
       glow: "rgba(245,158,11,0.3)",
       linkText: "",

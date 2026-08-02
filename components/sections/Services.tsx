@@ -22,18 +22,18 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
 
   return (
     <div
-      className="sticky mb-12 md:mb-20"
+      className="sticky mb-6 last:mb-0"
       style={{
-        top: `calc(100px + ${index * 32}px)`,
+        top: `calc(90px + ${index * 24}px)`,
         zIndex: index + 1,
       }}
     >
       <div
-        className="group relative rounded-3xl md:rounded-[36px] overflow-hidden cursor-pointer flex flex-col justify-between min-h-[440px] sm:min-h-[500px] md:min-h-[540px] p-6 sm:p-10 md:p-14 transition-all duration-500"
+        className="group relative rounded-3xl md:rounded-[32px] overflow-hidden cursor-pointer flex flex-col justify-between p-6 sm:p-8 md:p-10 transition-all duration-300"
         style={{
           border: "1px solid rgba(255, 255, 255, 0.12)",
           background: "#0c0b0a",
-          boxShadow: "none", // Removed background drop shadows as requested
+          boxShadow: "none",
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -62,9 +62,9 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
         </div>
 
         {/* Top bar with category badge & action link */}
-        <div className="relative z-10 flex items-center justify-between gap-2 mb-6 md:mb-8">
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-4 md:mb-6">
           <span 
-            className="text-[11px] md:text-xs font-mono font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-white/20 text-white backdrop-blur-md"
+            className="text-[10px] md:text-[11px] font-mono font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/20 text-white backdrop-blur-md"
             style={{ background: "rgba(255, 255, 255, 0.12)" }}
           >
             {badgeText}
@@ -72,7 +72,7 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
 
           {service.linkText && (
             <span
-              className="text-[11px] md:text-xs font-mono font-bold text-white flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-all backdrop-blur-md"
+              className="text-[11px] font-mono font-bold text-white flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 transition-all backdrop-blur-md"
             >
               {service.linkText}
             </span>
@@ -80,24 +80,24 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
         </div>
 
         {/* Main card body */}
-        <div className="relative z-10 space-y-4 md:space-y-6 max-w-4xl">
+        <div className="relative z-10 space-y-3 md:space-y-4 max-w-4xl">
           {/* Main Title */}
           <h3 
-            className="font-display font-black text-2xl sm:text-4xl md:text-5xl text-white uppercase tracking-tight leading-[1.05] group-hover:text-amber-400 transition-colors"
+            className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-white uppercase tracking-tight leading-[1.05] group-hover:text-amber-400 transition-colors"
           >
             {service.title}
           </h3>
 
           {/* Detailed Description */}
-          <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed font-normal max-w-3xl">
+          <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-normal max-w-3xl">
             {service.desc || service.description}
           </p>
 
           {/* Key Capabilities / Features Bullets */}
           {featuresList.length > 0 && (
-            <div className="pt-2 flex flex-wrap gap-2 sm:gap-2.5">
+            <div className="pt-1 flex flex-wrap gap-2">
               {featuresList.map((feat: string, fIdx: number) => (
-                <div key={fIdx} className="flex items-center gap-2 text-xs font-mono text-neutral-300 bg-white/[0.04] border border-white/10 px-3.5 py-1.5 rounded-xl">
+                <div key={fIdx} className="flex items-center gap-1.5 text-[11px] md:text-xs font-mono text-neutral-300 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-lg">
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: accentColor }} />
                   {feat}
                 </div>
@@ -106,12 +106,12 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
           )}
 
           {/* Bottom row: Tech Tags and circular accent arrow button */}
-          <div className="pt-4 flex items-end justify-between gap-4">
-            <div className="flex flex-wrap gap-2">
+          <div className="pt-2 flex items-end justify-between gap-4">
+            <div className="flex flex-wrap gap-1.5">
               {tagsList.map((tag: string) => (
                 <span
                   key={tag}
-                  className="text-[11px] md:text-xs font-mono px-3.5 py-1 rounded-full border border-white/15 text-neutral-200 bg-white/10 backdrop-blur-sm"
+                  className="text-[10px] md:text-[11px] font-mono px-3 py-1 rounded-full border border-white/15 text-neutral-200 bg-white/10 backdrop-blur-sm"
                 >
                   {tag}
                 </span>
@@ -120,10 +120,10 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
 
             {/* Floating accent circle button */}
             <div
-              className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-lg transition-transform duration-300 ${hovered ? 'scale-110' : 'scale-100'}`}
+              className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-md transition-transform duration-300 ${hovered ? 'scale-110' : 'scale-100'}`}
               style={{ background: accentColor }}
             >
-              <ArrowUpRight size={24} strokeWidth={2.5} />
+              <ArrowUpRight size={20} strokeWidth={2.5} />
             </div>
           </div>
         </div>
@@ -254,7 +254,7 @@ export default function Services() {
     <section
       id="services"
       ref={ref}
-      className="py-24 md:py-36 px-6 md:px-12 relative"
+      className="py-16 md:py-24 px-6 md:px-12 relative"
       style={{ background: "var(--bg-secondary)" }}
     >
       {/* BG decoration */}
@@ -275,7 +275,7 @@ export default function Services() {
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
           <div>
             <motion.span
               className="font-mono text-xs tracking-[0.3em] uppercase block mb-4"
@@ -303,7 +303,7 @@ export default function Services() {
         </div>
 
         {/* Full-width Vertical Stack with Sticky Scroll Stacking Animation */}
-        <div className="relative max-w-6xl mx-auto pb-24">
+        <div className="relative max-w-6xl mx-auto">
           {services.map((service, i) => (
             <ServiceCard key={service.id || service.number || i} service={service} index={i} />
           ))}

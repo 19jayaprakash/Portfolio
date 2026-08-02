@@ -1,46 +1,41 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
-import { ArrowUpRight, Code2, Palette, Smartphone, ShoppingCart, Globe, Layers, Shield } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useDataRefresh } from "@/lib/useDataRefresh";
 
 function ServiceCard({ service, index }: { service: any; index: number }) {
   const [hovered, setHovered] = useState(false);
-  const accentColor = service.accent || "#6366F1";
+  const accentColor = service.accent || "#C8956B";
   const badgeText = service.badge || (service.title ? service.title.toUpperCase() : "SERVICE");
   
   // Default fallback images matching the 4 core services
   const defaultImages = [
-    "/images/service_ecommerce.jpg",
-    "/images/service_mobile.jpg",
     "/images/service_fullstack.jpg",
-    "/images/service_uiux.jpg"
+    "/images/service_uiux.jpg",
+    "/images/service_mobile.jpg",
+    "/images/service_ecommerce.jpg"
   ];
   const imageUrl = service.image || defaultImages[index % defaultImages.length];
   const tagsList = service.tags || [];
 
   return (
     <div
-      className="sticky mb-16 md:mb-24"
+      className="sticky mb-12 md:mb-20"
       style={{
-        top: `calc(90px + ${index * 32}px)`,
+        top: `calc(100px + ${index * 32}px)`,
         zIndex: index + 1,
       }}
     >
-      <motion.div
-        className="group relative rounded-[28px] md:rounded-[40px] overflow-hidden cursor-pointer flex flex-col justify-between min-h-[420px] sm:min-h-[480px] md:min-h-[520px] p-6 sm:p-10 md:p-14 shadow-2xl transition-all duration-500"
+      <div
+        className="group relative rounded-3xl md:rounded-[36px] overflow-hidden cursor-pointer flex flex-col justify-between min-h-[400px] sm:min-h-[460px] md:min-h-[500px] p-6 sm:p-10 md:p-14 shadow-2xl transition-all duration-500"
         style={{
           border: "1px solid rgba(255, 255, 255, 0.12)",
           background: "#0c0b0a",
           boxShadow: `0 30px 70px -15px rgba(0, 0, 0, 0.95), 0 0 40px -10px ${accentColor}25`,
         }}
-        initial={{ opacity: 0, y: 70 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, margin: "-40px" }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        onHoverStart={() => setHovered(true)}
-        onHoverEnd={() => setHovered(false)}
-        whileHover={{ scale: 1.008 }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         onClick={() => {
           if (service.linkUrl) {
             window.location.href = service.linkUrl;
@@ -51,12 +46,10 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
       >
         {/* Background UI preview image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <motion.img
+          <img
             src={imageUrl}
             alt={service.title}
-            className="w-full h-full object-cover object-center opacity-40 transition-transform duration-700 filter contrast-125 brightness-90"
-            animate={{ scale: hovered ? 1.06 : 1 }}
-            transition={{ duration: 0.7 }}
+            className={`w-full h-full object-cover object-center opacity-40 transition-transform duration-700 filter contrast-125 brightness-90 ${hovered ? 'scale-105' : 'scale-100'}`}
           />
           {/* Dark vignette overlay matching user screenshot */}
           <div 
@@ -66,10 +59,8 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
             }}
           />
           {/* Hover accent glow */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            animate={{ opacity: hovered ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
+          <div
+            className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${hovered ? 'opacity-100' : 'opacity-0'}`}
             style={{
               background: `radial-gradient(circle at 80% 90%, ${accentColor}35 0%, transparent 65%)`,
             }}
@@ -122,17 +113,15 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
             </div>
 
             {/* Floating accent circle button */}
-            <motion.div
-              className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-2xl transition-all"
+            <div
+              className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-2xl transition-transform duration-300 ${hovered ? 'scale-110' : 'scale-100'}`}
               style={{ background: accentColor }}
-              animate={{ scale: hovered ? 1.15 : 1 }}
-              transition={{ duration: 0.3 }}
             >
               <ArrowUpRight size={24} strokeWidth={2.5} />
-            </motion.div>
+            </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -145,57 +134,57 @@ export default function Services() {
     {
       id: "1",
       number: "01",
-      badge: "E-COMMERCE UI/UX",
-      title: "LUXURA E-COMMERCE SHOPPING EXPERIENCE",
-      desc: "A sleek, conversion-focused e-commerce application featuring intuitive product discovery, visual filter systems, instant checkout flow, wishlist management, and detailed product showcase layouts.",
-      icon: "ShoppingCart",
-      image: "/images/service_ecommerce.jpg",
-      tags: ["Figma", "Adobe Illustrator", "Prototyping"],
-      accent: "#6366F1",
-      glow: "rgba(99,102,241,0.3)",
-      linkText: "Figma Design ↗",
+      badge: "FULL-STACK DEV",
+      title: "Full-Stack Development",
+      desc: "End-to-end web applications built with modern stacks. From architecture to deployment, I handle everything with precision.",
+      icon: "Code2",
+      image: "/images/service_fullstack.jpg",
+      tags: ["React", "Next.js", "Node.js", "Java", "MySQL"],
+      accent: "#C8956B",
+      glow: "rgba(200,149,107,0.3)",
+      linkText: "",
       linkUrl: "/projects"
     },
     {
       id: "2",
       number: "02",
-      badge: "MOBILE APP UI/UX",
-      title: "EVENTO | EVENT MANAGEMENT APP",
-      desc: "Designed and developed a user-friendly mobile event management app enabling organizers to create and manage events effortlessly while allowing attendees to explore, register, and check-in via dynamic QR passes.",
-      icon: "Smartphone",
-      image: "/images/service_mobile.jpg",
-      tags: ["Figma", "Balsamiq", "User Flow", "React Native"],
-      accent: "#6366F1",
-      glow: "rgba(99,102,241,0.3)",
-      linkText: "Figma Design ↗",
+      badge: "UI/UX DESIGN",
+      title: "UI/UX Design",
+      desc: "Beautiful, intuitive interfaces crafted in Figma. Research, wireframing, and pixel-perfect prototypes.",
+      icon: "Palette",
+      image: "/images/service_uiux.jpg",
+      tags: ["Figma", "Prototyping", "Design Systems"],
+      accent: "#EC4899",
+      glow: "rgba(236,72,153,0.3)",
+      linkText: "",
       linkUrl: "/projects"
     },
     {
       id: "3",
       number: "03",
-      badge: "FULL-STACK DEVELOPMENT",
-      title: "ASTRA CLOUD | CLOUD ARCHITECTURE",
-      desc: "End-to-end full-stack web applications built with modern architectures. From database modeling to serverless deployment, handling real-time data synchronization with sub-second speeds.",
-      icon: "Code2",
-      image: "/images/service_fullstack.jpg",
-      tags: ["React", "Next.js", "Node.js", "Java", "MySQL", "Supabase"],
-      accent: "#C8956B",
-      glow: "rgba(200,149,107,0.3)",
-      linkText: "Full-Stack System ↗",
+      badge: "MOBILE APP DEV",
+      title: "Mobile App Development",
+      desc: "Cross-platform mobile applications built with React Native and Expo for iOS and Android with native performance.",
+      icon: "Smartphone",
+      image: "/images/service_mobile.jpg",
+      tags: ["React Native", "Expo", "iOS", "Android"],
+      accent: "#6366F1",
+      glow: "rgba(99,102,241,0.3)",
+      linkText: "",
       linkUrl: "/projects"
     },
     {
       id: "4",
       number: "04",
-      badge: "UI/UX DESIGN",
-      title: "STUDIO FLOW | DESIGN SYSTEM",
-      desc: "Comprehensive UI/UX design systems, component libraries, typography scale, color tokens, and pixel-perfect interactive prototypes engineered for enterprise product teams.",
-      icon: "Palette",
-      image: "/images/service_uiux.jpg",
-      tags: ["Figma", "Prototyping", "Design Systems", "Tailwind CSS"],
-      accent: "#EC4899",
-      glow: "rgba(236,72,153,0.3)",
-      linkText: "Figma System ↗",
+      badge: "E-COMMERCE SOLUTIONS",
+      title: "E-Commerce Solutions",
+      desc: "A sleek, conversion-focused e-commerce application featuring intuitive product discovery, visual filter systems, instant checkout flow, wishlist management, and detailed product showcase layouts.",
+      icon: "ShoppingCart",
+      image: "/images/service_ecommerce.jpg",
+      tags: ["Figma", "Next.js", "Stripe", "Prototyping"],
+      accent: "#F59E0B",
+      glow: "rgba(245,158,11,0.3)",
+      linkText: "",
       linkUrl: "/projects"
     }
   ];
@@ -231,7 +220,7 @@ export default function Services() {
     <section
       id="services"
       ref={ref}
-      className="py-24 md:py-36 px-6 md:px-12 relative overflow-hidden"
+      className="py-24 md:py-36 px-6 md:px-12 relative"
       style={{ background: "var(--bg-secondary)" }}
     >
       {/* BG decoration */}
@@ -280,7 +269,7 @@ export default function Services() {
         </div>
 
         {/* Full-width Vertical Stack with Sticky Scroll Stacking Animation */}
-        <div className="relative max-w-6xl mx-auto pb-16">
+        <div className="relative max-w-6xl mx-auto pb-24">
           {services.map((service, i) => (
             <ServiceCard key={service.id || service.number || i} service={service} index={i} />
           ))}
